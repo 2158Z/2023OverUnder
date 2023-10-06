@@ -1,6 +1,8 @@
 #pragma once
 #include "main.h"
 
+int auton;
+
 lv_obj_t *tabView;
 lv_obj_t *redBtn;
 lv_obj_t *blueBtn;

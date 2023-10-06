@@ -23,10 +23,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+	selector::init()
 }
 
 /**
@@ -58,7 +55,33 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	switch(selector::auton) {
+		case 1:
+			// code block
+			break;
+		case 2:
+			// code block
+			break;
+		case 3:
+			// code block
+			break;
+		case -1:
+			// code block
+			break;
+		case -2:
+			// code block
+			break;
+		case -3:
+			// code block
+			break;
+		case 0:
+			// code block
+			break;
+		default:
+			// code block
+	}
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
