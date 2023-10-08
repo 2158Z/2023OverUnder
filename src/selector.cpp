@@ -1,4 +1,6 @@
 #include "main.h"
+
+int auton;
 #include "selector.h"
 namespace selector{
     int auton;
