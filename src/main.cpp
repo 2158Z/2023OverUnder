@@ -24,7 +24,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	selector::init()
+	selector::init();
 }
 
 /**
@@ -81,6 +81,7 @@ void autonomous() {
 			break;
 		default:
 			// code block
+			break;
 	}
 }
 

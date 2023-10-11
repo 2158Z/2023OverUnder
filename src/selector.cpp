@@ -10,8 +10,8 @@ namespace selector{
     lv_obj_t *tabView;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
-    double batteryLevel = pros::battery::get_current()
-    double batteryTemp = pros::battery::get_temperature()
+    // double batteryLevel = pros::battery::get_current();
+    // double batteryTemp = pros::battery::get_temperature();
 
     lv_res_t redBtnAction(lv_obj_t *btnm, const char *txt){
         for(int i = 0; i < autonCount; i++){
@@ -40,11 +40,11 @@ namespace selector{
 
     int tabWatcher(){
         int activeTab = lv_tabview_get_tab_act(tabView);
-        lv_obj_t * batteryLabel = lv_label_create(miscTab, NULL);
-        lv_label_set_text(batteryLabel, batteryLevel)
-        lv_obj_set_size(batteryLabel, 450, 50);
-        lv_obj_set_pos(batteryLabel, 0, 100);
-        lv_obj_align(batteryLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+        // lv_obj_t * batteryLabel = lv_label_create(miscTab, NULL);
+        // lv_label_set_text(batteryLabel, batteryLevel)
+        // lv_obj_set_size(batteryLabel, 450, 50);
+        // lv_obj_set_pos(batteryLabel, 0, 100);
+        // lv_obj_align(batteryLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
         
         while(1){
             int currentTab = lv_tabview_get_tab_act(tabView);
@@ -66,17 +66,17 @@ namespace selector{
                         auton = 0;
                         break;
                     case 3:
-                        if(batteryLevel > 80){
-                            lv_label_set_text(batteryLabel, SYMBOL_BATTERY_FULL);
-                        }else if (batteryLevel > 60 || batteryLevel < 80){
-                            lv_label_set_text(batteryLabel, SYMBOL_BATTERY_3);
-                        }else if (batteryLevel > 40 || batteryLevel < 60){
-                            lv_label_set_text(batteryLabel, SYMBOL_BATTERY_2);
-                        }else if (batteryLevel > 20 || batteryLevel < 40){
-                            lv_label_set_text(batteryLabel, SYMBOL_BATTERY_1);
-                        }else if (batteryLevel < 20){
-                            lv_label_set_text(batteryLabel, SYMBOL_BATTERY_EMPTY);
-                        }
+                        // if(batteryLevel > 80){
+                        //     lv_label_set_text(batteryLabel, SYMBOL_BATTERY_FULL);
+                        // }else if (batteryLevel > 60 || batteryLevel < 80){
+                        //     lv_label_set_text(batteryLabel, SYMBOL_BATTERY_3);
+                        // }else if (batteryLevel > 40 || batteryLevel < 60){
+                        //     lv_label_set_text(batteryLabel, SYMBOL_BATTERY_2);
+                        // }else if (batteryLevel > 20 || batteryLevel < 40){
+                        //     lv_label_set_text(batteryLabel, SYMBOL_BATTERY_1);
+                        // }else if (batteryLevel < 20){
+                        //     lv_label_set_text(batteryLabel, SYMBOL_BATTERY_EMPTY);
+                        // }
                         break;
                 }
             }
@@ -85,6 +85,11 @@ namespace selector{
     }
 
     void init(int defaultAuton, const char **autons){
+        lv_style_copy(&myButtonStyleREL, &lv_style_plain);
+        myButtonStyleREL.body.main_color = LV_COLOR_MAKE(150, 0, 0);
+        myButtonStyleREL.body.grad_color = LV_COLOR_MAKE(0, 0, 150);
+        myButtonStyleREL.body.radius = 0;
+        myButtonStyleREL.text.color = LV_COLOR_MAKE(255, 255, 255);
         int i = 0;
         do{
             memcpy(&btnMap[i], &autons[i], sizeof(&autons));
@@ -102,7 +107,7 @@ namespace selector{
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Red");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Blue");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
-        lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc")
+        lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         if(auton < 0){
             lv_tabview_set_tab_act(tabView, 1, LV_ANIM_NONE);

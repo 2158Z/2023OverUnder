@@ -8,5 +8,5 @@
 namespace selector{
     extern int auton;
     static const char *b[] = {AUTONS, ""};
-    void init(int defaultAuton=DEFAULT, const char **autons = b)
+    void init(int defaultAuton=DEFAULT, const char **autons = b);
 }
