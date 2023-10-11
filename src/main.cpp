@@ -1,5 +1,7 @@
 #include "main.h"
 #include "selector.h"
+// #include "api.h"
+// #include "okapi/api.hpp"
 
 /**
  * A callback function for LLEMU's center button.
@@ -99,20 +101,74 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
+	//controller initiation
+    pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-		int left = master.get_analog(ANALOG_LEFT_Y);
-		int right = master.get_analog(ANALOG_RIGHT_Y);
 
-		left_mtr = left;
-		right_mtr = right;
+    //left side motor group
+    pros::Motor left1(8, true);
+    pros::Motor left2(9, false);
+    pros::Motor left3(10, true);
+    pros::Motor_Group left ({left1, left2, left3});
 
-		pros::delay(20);
-	}
+
+    //right side motor group
+    pros::Motor right1(1, false);
+    pros::Motor right2(2, true);
+    pros::Motor right3(3, false);
+    pros::Motor_Group right ({right1, right2, right3});
+
+
+    left.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+    right.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+
+
+    while(true) {
+
+        //naturalize input to a range between -1 and 1
+        double leftInput = (double)master.get_analog(ANALOG_LEFT_Y) / 127;
+        double rightInput = (double)master.get_analog(ANALOG_RIGHT_X) / 127;
+
+
+        //joystick curve
+        leftInput = pow(leftInput, 3); //cubic function passthrough
+        rightInput = pow(rightInput, 3) * (3/3); //amplitude change for turning
+
+
+        //arcade control + joystick input to voltage conversion
+        double leftVoltage = (leftInput + rightInput) * 12000;
+        double rightVoltage = (leftInput - rightInput) * 12000;
+
+
+        //limit max voltage to 12000mV i dont think this is actually needed
+        if(leftVoltage > 12000) {
+            leftVoltage = 12000;
+        }
+        if(rightVoltage > 12000) {
+            rightVoltage = 12000;
+        }
+
+
+        //move motors
+        left.move_voltage(leftVoltage);
+        right.move_voltage(rightVoltage);
+
+
+        pros::delay(20);
+    }
+
+
+
+	// while (true) {
+	// 	pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+	// 	                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+	// 	                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+	// 	int left = master.get_analog(ANALOG_LEFT_Y);
+	// 	int right = master.get_analog(ANALOG_RIGHT_Y);
+
+	// 	left_mtr = left;
+	// 	right_mtr = right;
+
+	// 	pros::delay(20);
+	// }
 }
