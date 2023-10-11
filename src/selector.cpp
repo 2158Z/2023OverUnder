@@ -1,6 +1,4 @@
 #include "main.h"
-
-int auton;
 #include "selector.h"
 namespace selector{
     int auton;
@@ -14,8 +12,8 @@ namespace selector{
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
 
-    // double batteryLevel = pros::battery::get_current();
-    // double batteryTemp = pros::battery::get_temperature();
+    double batteryCurrent = pros::battery::get_current();
+    double batteryTemp = pros::battery::get_temperature();
 
     lv_res_t redBtnAction(lv_obj_t *btnm, const char *txt){
         for(int i = 0; i < autonCount; i++){
@@ -125,14 +123,21 @@ namespace selector{
         lv_obj_align(blueBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
         lv_obj_t *skillsBtn = lv_btn_create(skillsTab, NULL);
-        lv_obj_t *label = lv_label_create(skillsBtn, NULL);
+        lv_obj_t *skillLabel = lv_label_create(skillsBtn, NULL);
         lv_btnm_set_style(skillsBtn, LV_BTN_STYLE_REL, &relButtonStyle);
         lv_btnm_set_style(skillsBtn, LV_BTN_STYLE_PR, &prButtonStyle);
-        lv_label_set_text(label, "Skills");
+        lv_label_set_text(skillLabel, "Skills");
         lv_btn_set_action(skillsBtn, LV_BTN_ACTION_CLICK, *skillsBtnAction);
         lv_obj_set_size(skillsBtn, 450, 50);
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
+
+        char* batteryChar;
+        sprintf(batteryChar, "Battery: Current #ffff00 %d#, Temp #ffff00 %d#", batteryCurrent, batteryTemp);
+        lv_obj_t *batteryLabel = lv_label_create(miscTab, NULL);
+        lv_obj_align(batteryLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+        lv_obj_set_pos(batteryLabel, 0, 100);
+        lv_label_set_text(batteryLabel, batteryChar);
 
         pros::Task tabWatcher_task(tabWatcher);
 
