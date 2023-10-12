@@ -61,7 +61,7 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:
-			// code block
+			auton();
 			break;
 		case 2:
 			// code block
