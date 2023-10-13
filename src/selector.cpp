@@ -12,6 +12,7 @@ namespace selector{
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
 
+    //Sets auton value to red side auton
     lv_res_t redBtnAction(lv_obj_t *btnm, const char *txt){
         for(int i = 0; i < autonCount; i++){
             if(strcmp(txt, btnMap[i]) == 0){
@@ -22,6 +23,7 @@ namespace selector{
         return LV_RES_OK;
     }
 
+    //Sets auton value to blue side auton
     lv_res_t blueBtnAction(lv_obj_t *btnm, const char *txt){
         for(int i = 0; i < autonCount; i++){
             if(strcmp(txt, btnMap[i]) == 0){
@@ -32,6 +34,7 @@ namespace selector{
         return LV_RES_OK;
     }
 
+    //Sets auton value to skills auton
     lv_res_t skillsBtnAction(lv_obj_t *btn){
         auton = 0;
         return LV_RES_OK;
@@ -41,7 +44,7 @@ namespace selector{
         int activeTab = lv_tabview_get_tab_act(tabView);
         while(1){
             int currentTab = lv_tabview_get_tab_act(tabView);
-
+            //Changes auton value to be valid for current tab selected
             if(currentTab != activeTab){
                 activeTab = currentTab;
                 switch(activeTab){
@@ -70,6 +73,7 @@ namespace selector{
     }
 
     void init(int defaultAuton, const char **autons){
+        //Map autons to buttons array
         int i = 0;
         do{
             memcpy(&btnMap[i], &autons[i], sizeof(&autons));
@@ -79,22 +83,27 @@ namespace selector{
         autonCount = i;
         auton = defaultAuton;
 
+        //Set theme to yellow
         lv_theme_t *th = lv_theme_alien_init(60, NULL);
         lv_theme_set_current(th);
 
+        //Create tabview
         tabView = lv_tabview_create(lv_scr_act(), NULL);
 
+        //Initiate Tabs
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Red");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Blue");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
         lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc");
 
+        //Check if default auton is at a different tab and change tabs
         if(auton < 0){
             lv_tabview_set_tab_act(tabView, 1, LV_ANIM_NONE);
         }else if(auton == 0){
             lv_tabview_set_tab_act(tabView, 2, LV_ANIM_NONE);
         }
 
+        //Create Red Button Tab
         redBtn = lv_btnm_create(redTab, NULL);
         lv_btnm_set_map(redBtn, btnMap);
         lv_btnm_set_action(redBtn, *redBtnAction);
@@ -103,6 +112,7 @@ namespace selector{
         lv_obj_set_pos(redBtn, 0, 100);
         lv_obj_align(redBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
+        //Create Blue Button Tab
         blueBtn = lv_btnm_create(blueTab, NULL);
         lv_btnm_set_map(blueBtn, btnMap);
         lv_btnm_set_action(blueBtn, *blueBtnAction);
@@ -111,8 +121,10 @@ namespace selector{
         lv_obj_set_pos(blueBtn, 0, 100);
         lv_obj_align(blueBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        lv_obj_t *skillsBtn = lv_btn_create(skillsTab, NULL);
+        //Create Skills Tab
         lv_obj_t *skillLabel = lv_label_create(skillsBtn, NULL);
+        //Create Skills Button
+        lv_obj_t *skillsBtn = lv_btn_create(skillsTab, NULL);
         lv_label_set_text(skillLabel, "Skills");
         lv_btn_set_action(skillsBtn, LV_BTN_ACTION_CLICK, *skillsBtnAction);
         lv_obj_set_size(skillsBtn, 450, 50);
