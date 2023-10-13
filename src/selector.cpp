@@ -1,4 +1,5 @@
 #include "main.h"
+#include "pid.h"
 #include "selector.h"
 namespace selector{
     int auton;
@@ -12,8 +13,10 @@ namespace selector{
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
 
+    lv_obj_t *Pspinbox;
+
     //Sets auton value to red side auton
-    lv_res_t redBtnAction(lv_obj_t *btnm, const char *txt){
+    lv_res_t redBtnAction(lv_obj_t *btn, const char *txt){
         for(int i = 0; i < autonCount; i++){
             if(strcmp(txt, btnMap[i]) == 0){
                 auton = i+1;
@@ -24,7 +27,7 @@ namespace selector{
     }
 
     //Sets auton value to blue side auton
-    lv_res_t blueBtnAction(lv_obj_t *btnm, const char *txt){
+    lv_res_t blueBtnAction(lv_obj_t *btn, const char *txt){
         for(int i = 0; i < autonCount; i++){
             if(strcmp(txt, btnMap[i]) == 0){
                 auton = -(i+1);
@@ -94,7 +97,6 @@ namespace selector{
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Red");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Blue");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
-        lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         //Check if default auton is at a different tab and change tabs
         if(auton < 0){
@@ -121,22 +123,16 @@ namespace selector{
         lv_obj_set_pos(blueBtn, 0, 100);
         lv_obj_align(blueBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        //Create Skills Tab
-        lv_obj_t *skillLabel = lv_label_create(skillsBtn, NULL);
         //Create Skills Button
         lv_obj_t *skillsBtn = lv_btn_create(skillsTab, NULL);
+        lv_obj_t *skillLabel = lv_label_create(skillsBtn, NULL);
         lv_label_set_text(skillLabel, "Skills");
         lv_btn_set_action(skillsBtn, LV_BTN_ACTION_CLICK, *skillsBtnAction);
         lv_obj_set_size(skillsBtn, 450, 50);
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        // char* batteryChar;
-        // sprintf(batteryChar, "Battery: Current #ffff00 %d#, Temp #ffff00 %d#", batteryCurrent, batteryTemp);
-        lv_obj_t *batteryLabel = lv_label_create(miscTab, NULL);
-        lv_obj_align(batteryLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-        lv_obj_set_pos(batteryLabel, 0, 100);
-        // lv_label_set_text(batteryLabel, batteryChar);
+        pid::initPID();
 
         pros::Task tabWatcher_task(tabWatcher);
 

@@ -128,6 +128,7 @@ void opcontrol() {
 			.withMotors(leftMotorGroup, rightMotorGroup)
 			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
 			.withDimensions(AbstractMotor::gearset::blue, scale)
+			.withMaxVoltage((double) 12000)
 			.build();
 
     leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
@@ -135,26 +136,10 @@ void opcontrol() {
 
     while(true) {
         //naturalize input to a range between -1 and 1
-        double leftInput = (double)master.getAnalog(ControllerAnalog::leftY) / 127;
-        double rightInput = (double)master.getAnalog(ControllerAnalog::rightX) / 127;
+        int leftInput = master.getAnalog(ControllerAnalog::leftY);
+        int rightInput = master.getAnalog(ControllerAnalog::rightX);
 
-        //joystick curve
-        leftInput = pow(leftInput, 3); //cubic function passthrough
-        rightInput = pow(rightInput, 3) * (3/3); //amplitude change for turning
-
-        //arcade control + joystick input to voltage conversion
-        double leftVoltage = (leftInput + rightInput) * 12000;
-        double rightVoltage = (leftInput - rightInput) * 12000;
-
-        //limit max voltage to 12000mV i dont think this is actually needed
-        if(leftVoltage > 12000) {
-            leftVoltage = 12000;
-        }
-        if(rightVoltage > 12000) {
-            rightVoltage = 12000;
-        }
-
-		drive->getModel()->tank(master.getAnalog(ControllerAnalog::leftY), master.getAnalog(ControllerAnalog::rightX));
+		drive->getModel()->tank(leftInput + rightInput, leftInput - rightInput);
         pros::delay(20);
     }
 
