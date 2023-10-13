@@ -12,9 +12,6 @@ namespace selector{
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
 
-    // double batteryCurrent = pros::battery::get_current();
-    // double batteryTemp = pros::battery::get_temperature();
-
     lv_res_t redBtnAction(lv_obj_t *btnm, const char *txt){
         for(int i = 0; i < autonCount; i++){
             if(strcmp(txt, btnMap[i]) == 0){

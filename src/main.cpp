@@ -1,8 +1,9 @@
 #include "main.h"
 #include "selector.h"
-// #include "api.h"
-// #include "okapi/api.hpp"
-
+#include "api.h"
+#include "okapi/api.hpp"
+#include "auton.h"
+using namespace okapi;
 /**
  * A callback function for LLEMU's center button.
  *
@@ -61,7 +62,7 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:
-			auton();
+			// code block
 			break;
 		case 2:
 			// code block
@@ -101,44 +102,49 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	//controller initiation
-    pros::Controller master(pros::E_CONTROLLER_MASTER);
 
+	//controller initiation
+    Controller master;
 
     //left side motor group
-    pros::Motor left1(8, true);
-    pros::Motor left2(9, false);
-    pros::Motor left3(10, true);
-    pros::Motor_Group left ({left1, left2, left3});
-
+    Motor leftMotor1(8, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor2(9, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor3(10, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
 
     //right side motor group
-    pros::Motor right1(1, false);
-    pros::Motor right2(2, true);
-    pros::Motor right3(3, false);
-    pros::Motor_Group right ({right1, right2, right3});
+    Motor rightMotor1(1, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor2(2, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor3(3, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
 
+	//Chassis scale 
+	// TODO - Get correct dimensions
+	ChassisScales scale({2.783_in, 12.20_in, 3_in, 2.783_in}, imev5BlueTPR);
 
-    left.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
-    right.set_brake_modes(pros::E_MOTOR_BRAKE_COAST);
+// Chassis Controller - lets us drive the robot around with open- or closed-loop control
+	std::shared_ptr<ChassisController> drive =
+		ChassisControllerBuilder()
+			.withMotors(leftMotorGroup, rightMotorGroup)
+			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
+			.withDimensions(AbstractMotor::gearset::blue, scale)
+			.build();
 
+    leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
+    rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
 
     while(true) {
-
         //naturalize input to a range between -1 and 1
-        double leftInput = (double)master.get_analog(ANALOG_LEFT_Y) / 127;
-        double rightInput = (double)master.get_analog(ANALOG_RIGHT_X) / 127;
-
+        double leftInput = (double)master.getAnalog(ControllerAnalog::leftY) / 127;
+        double rightInput = (double)master.getAnalog(ControllerAnalog::rightX) / 127;
 
         //joystick curve
         leftInput = pow(leftInput, 3); //cubic function passthrough
         rightInput = pow(rightInput, 3) * (3/3); //amplitude change for turning
 
-
         //arcade control + joystick input to voltage conversion
         double leftVoltage = (leftInput + rightInput) * 12000;
         double rightVoltage = (leftInput - rightInput) * 12000;
-
 
         //limit max voltage to 12000mV i dont think this is actually needed
         if(leftVoltage > 12000) {
@@ -148,12 +154,7 @@ void opcontrol() {
             rightVoltage = 12000;
         }
 
-
-        //move motors
-        left.move_voltage(leftVoltage);
-        right.move_voltage(rightVoltage);
-
-
+		drive->getModel()->tank(master.getAnalog(ControllerAnalog::leftY), master.getAnalog(ControllerAnalog::rightX));
         pros::delay(20);
     }
 
