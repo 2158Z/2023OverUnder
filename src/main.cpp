@@ -4,6 +4,9 @@
 #include "okapi/api.hpp"
 #include "auton.h"
 using namespace okapi;
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+std::shared_ptr<ChassisController> chassis;
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -28,6 +31,45 @@ void on_center_button() {
  */
 void initialize() {
 	selector::init();
+	Logger::setDefaultLogger(
+		std::make_shared<Logger>(
+			TimeUtilFactory::createDefault().getTimer(), // It needs a Timer
+			"/ser/sout", // Output to the PROS terminal
+			Logger::LogLevel::error
+		)
+	);
+	
+    //left side motor group
+    Motor leftMotor1(8, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor2(9, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor3(10, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
+
+    //right side motor group
+    Motor rightMotor1(1, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor2(2, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor3(3, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
+
+	//Chassis scale 
+	// TODO - Get correct dimensions
+	ChassisScales scale({3.25_in, 12.5_in, 3_in, 3.25_in}, imev5BlueTPR);
+
+// Chassis Controller - lets us chassis the robot around with open- or closed-loop control
+	chassis =
+		ChassisControllerBuilder()
+			.withMotors(leftMotorGroup, rightMotorGroup)
+			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
+			.withDimensions(AbstractMotor::gearset::blue, scale)
+			.withMaxVoltage((double) 12000)
+			.withGains(
+				{1.5, 0, 10},
+				{0, 0, 0})
+			.withSensors(RotationSensor(7), RotationSensor(4), RotationSensor(5))
+			.withOdometry()
+			.buildOdometry();
+    leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
+    rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
 }
 
 /**
@@ -62,7 +104,6 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:
-			// code block
 			break;
 		case 2:
 			// code block
@@ -80,7 +121,7 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			// code block
+			auton::test(chassis);
 			break;
 		default:
 			// code block
@@ -102,44 +143,11 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-
-	//controller initiation
-    Controller master;
-
-    //left side motor group
-    Motor leftMotor1(8, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor2(9, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor3(10, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
-
-    //right side motor group
-    Motor rightMotor1(1, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor2(2, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor3(3, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
-
-	//Chassis scale 
-	// TODO - Get correct dimensions
-	ChassisScales scale({2.783_in, 12.20_in, 3_in, 2.783_in}, imev5BlueTPR);
-
-// Chassis Controller - lets us drive the robot around with open- or closed-loop control
-	std::shared_ptr<ChassisController> drive =
-		ChassisControllerBuilder()
-			.withMotors(leftMotorGroup, rightMotorGroup)
-			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
-			.withDimensions(AbstractMotor::gearset::blue, scale)
-			.withMaxVoltage((double) 12000)
-			.build();
-
-    leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
-    rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
-
     while(true) {
         //naturalize input to a range between -1 and 1
-        int leftInput = master.getAnalog(ControllerAnalog::leftY);
-        int rightInput = master.getAnalog(ControllerAnalog::rightX);
-
-		drive->getModel()->tank(leftInput + rightInput, leftInput - rightInput);
+        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
+        double rightInput = (double) master.get_analog(ANALOG_RIGHT_X)/127;
+		chassis->getModel()->arcade(leftInput, rightInput);
         pros::delay(20);
     }
 

@@ -29,25 +29,38 @@ namespace pid{
 
         lv_coord_t h = lv_obj_get_height(Pspinbox);
 
-        lv_obj_t * btnPlus = lv_btn_create(miscTab, NULL);
-        lv_obj_t * labelPlus = lv_label_create(btnPlus, NULL);
+        lv_obj_t * PbtnPlus = lv_btn_create(miscTab, NULL);
+        lv_obj_t * PlabelPlus = lv_label_create(PbtnPlus, NULL);
 
-        lv_obj_set_size(btnPlus, h/1.5, h/1.5);
-        lv_obj_align(btnPlus, Pspinbox, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
-        lv_btn_set_action(btnPlus, LV_BTN_ACTION_CLICK, *lv_spinbox_increment_event_cb);
-        lv_label_set_text(labelPlus, SYMBOL_PLUS);
+        lv_obj_set_size(PbtnPlus, h/1.5, h/1.5);
+        lv_obj_align(PbtnPlus, Pspinbox, LV_ALIGN_OUT_RIGHT_MID, 5, 0);
+        lv_btn_set_action(PbtnPlus, LV_BTN_ACTION_CLICK, *lv_spinbox_increment_event_cb);
+        lv_label_set_text(PlabelPlus, SYMBOL_PLUS);
 
-        lv_obj_t * btnMinus = lv_btn_create(miscTab, NULL);
-        lv_obj_t * labelMinus = lv_label_create(btnMinus, NULL);
+        lv_obj_t * PbtnMinus = lv_btn_create(miscTab, NULL);
+        lv_obj_t * PlabelMinus = lv_label_create(PbtnMinus, NULL);
 
-        lv_obj_set_size(btnMinus, h/1.5, h/1.5);
-        lv_obj_align(btnMinus, Pspinbox, LV_ALIGN_OUT_LEFT_MID, -5, 0);
-        lv_btn_set_action(btnMinus, LV_BTN_ACTION_CLICK, *lv_spinbox_decrement_event_cb);
-        lv_label_set_text(labelMinus, SYMBOL_MINUS);
+        lv_obj_set_size(PbtnMinus, h/1.5, h/1.5);
+        lv_obj_align(PbtnMinus, Pspinbox, LV_ALIGN_OUT_LEFT_MID, -5, 0);
+        lv_btn_set_action(PbtnMinus, LV_BTN_ACTION_CLICK, *lv_spinbox_decrement_event_cb);
+        lv_label_set_text(PlabelMinus, SYMBOL_MINUS);
 
-        // lv_obj_t * Ispinbox = lv_spinbox_create(miscTab, Pspinbox);
-        // lv_obj_t * Ilabel = lv_label_create(Ispinbox, Plabel);
-        // lv_label_set_text(Plabel, "I");
-        // lv_obj_align(Ispinbox, NULL, LV_ALIGN_IN_TOP_LEFT, 205, 10);
+        lv_obj_t * Ispinbox = lv_spinbox_create(miscTab, Pspinbox);
+        lv_obj_t * Ilabel = lv_label_create(Ispinbox, Plabel);
+        lv_obj_t * IbtnPlus = lv_btn_create(miscTab, PbtnPlus);
+        lv_obj_t * IlabelPlus = lv_label_create(IbtnPlus, PlabelPlus);
+        lv_obj_t * IbtnMinus = lv_btn_create(miscTab, PbtnMinus);
+        lv_obj_t * IlabelMinus = lv_label_create(IbtnMinus, PlabelMinus);
+        lv_label_set_text(Plabel, "I");
+        lv_obj_align(Ispinbox, NULL, LV_ALIGN_IN_TOP_LEFT, 205, 10);
+
+        lv_obj_t * Dspinbox = lv_spinbox_create(miscTab, Pspinbox);
+        lv_obj_t * Dlabel = lv_label_create(Dspinbox, Plabel);
+        lv_obj_t * DbtnPlus = lv_btn_create(miscTab, PbtnPlus);
+        lv_obj_t * DlabelPlus = lv_label_create(DbtnPlus, PlabelPlus);
+        lv_obj_t * DbtnMinus = lv_btn_create(miscTab, PbtnMinus);
+        lv_obj_t * DlabelMinus = lv_label_create(DbtnMinus, PlabelMinus);
+        lv_label_set_text(Plabel, "D");
+        lv_obj_align(Dspinbox, NULL, LV_ALIGN_IN_TOP_LEFT, 205, 10);
     }      
 }

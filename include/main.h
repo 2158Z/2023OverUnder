@@ -37,6 +37,7 @@
 #include "api.h"
 #include "selector.h"
 #include "pid.h"
+#include "okapi/api.hpp"
 
 /**
  * You should add more #includes here
