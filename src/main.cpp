@@ -39,16 +39,22 @@ void initialize() {
 		)
 	);
 	
+	//Cata limit switch
+	pros::ADIDigitalIn cataSwitch(pros::DIGITAL_A);
+
+	//Catapult motor
+	Motor cata(10,true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
+
     //left side motor group
-    Motor leftMotor1(8, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor2(9, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor3(10, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
 
     //right side motor group
-    Motor rightMotor1(1, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor2(2, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor3(3, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+    Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
 
 	//Chassis scale 
@@ -61,11 +67,11 @@ void initialize() {
 			.withMotors(leftMotorGroup, rightMotorGroup)
 			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
 			.withDimensions(AbstractMotor::gearset::blue, scale)
-			.withMaxVoltage((double) 12000)
+			.withMaxVoltage((double) 12000) //Motor's max voltage
 			.withGains(
-				{1.5, 0, 10},
-				{0, 0, 0})
-			.withSensors(RotationSensor(7), RotationSensor(4), RotationSensor(5))
+				{1.5, 0, 10}, //Driving PID
+				{0, 0, 0}) //Turning PID
+			.withSensors(RotationSensor(17), RotationSensor(14), RotationSensor(15))
 			.withOdometry()
 			.buildOdometry();
     leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
@@ -121,7 +127,7 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			auton::test(chassis);
+			auton::test(chassis, cataSwitch, cata);
 			break;
 		default:
 			// code block
@@ -144,6 +150,9 @@ void autonomous() {
  */
 void opcontrol() {
     while(true) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1{
+			cata.moveVoltage(2000);
+		}
         //naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
         double rightInput = (double) master.get_analog(ANALOG_RIGHT_X)/127;
