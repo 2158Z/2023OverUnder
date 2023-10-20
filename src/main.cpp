@@ -6,14 +6,16 @@
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 std::shared_ptr<ChassisController> chassis;
-
+pros::ADIDigitalIn cataSwitch(DIGITAL_A);
+pros::ADIDigitalOut piston(DIGITAL_B);
+Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 /**
  * A callback function for LLEMU's center button.
  *
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
-void on_center_button() {
+void on_center_button() { 
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
@@ -38,13 +40,6 @@ void initialize() {
 			Logger::LogLevel::error
 		)
 	);
-	
-	//Cata limit switch
-	pros::ADIDigitalIn cataSwitch(pros::DIGITAL_A);
-
-	//Catapult motor
-	Motor cata(10,true, AbstractMotor::gearset::green, AbstractMotor::encoderUnits::degrees);
-
     //left side motor group
     Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
@@ -127,7 +122,10 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			auton::test(chassis, cataSwitch, cata);
+			piston.set_value(true);
+			pros::delay(1000);
+			piston.set_value(false);
+			// auton::test(chassis, cata, cataSwitch);
 			break;
 		default:
 			// code block
@@ -150,8 +148,10 @@ void autonomous() {
  */
 void opcontrol() {
     while(true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1{
-			cata.moveVoltage(2000);
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			cata.moveVoltage(5000);
+		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			cata.moveVoltage(0);
 		}
         //naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
