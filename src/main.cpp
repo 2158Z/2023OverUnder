@@ -7,8 +7,8 @@ using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 std::shared_ptr<ChassisController> chassis;
 pros::ADIDigitalIn cataSwitch('A');
-pros::ADIDigitalOut leftWing('B');
-pros::ADIDigitalOut rightWing('C');
+pros::ADIDigitalOut rightWing('B');
+pros::ADIDigitalOut leftWing('C');
 pros::ADIDigitalOut odomLift('D');
 Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 /**
@@ -117,6 +117,7 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:
+			auton::autonTest(chassis);
 			break;
 		case 2:
 			// code block
@@ -134,7 +135,8 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			auton::test(chassis, cata, cataSwitch);
+			//auton::test(chassis, cata, cataSwitch);
+			auton::progSkills(chassis, cata, rightWing, leftWing);
 			break;
 		default:
 			// code block
@@ -157,26 +159,27 @@ void autonomous() {
  */
 void opcontrol() {
 	odomLift.set_value(true);
+	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
 	bool rwingOpen = false;
 	bool lwingBool = false;
     while(true) {
 		//activate catapult
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			cata.moveVoltage(10000);
-		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
+			cata.moveVoltage(9000);
+		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
 			cata.moveVoltage(0);
 		}
 		
 		//activate pistons
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1){
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
 			rightWing.set_value(true);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 0){
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 0){
 			rightWing.set_value(false);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1){
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
 			leftWing.set_value(true);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 0){
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 0){
 			leftWing.set_value(false);
 		}
 

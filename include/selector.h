@@ -3,7 +3,7 @@
 #include <string>
 
 #define DEFAULT 1
-#define AUTONS "Monkey", "Monkey2", "Monkey3"
+#define AUTONS "Auton1", "Auton2", "Auton3"
 
 namespace selector{
     extern lv_obj_t *tabView;
