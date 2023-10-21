@@ -6,8 +6,10 @@
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 std::shared_ptr<ChassisController> chassis;
-pros::ADIDigitalIn cataSwitch(DIGITAL_A);
-pros::ADIDigitalOut piston(DIGITAL_B);
+pros::ADIDigitalIn cataSwitch('A');
+pros::ADIDigitalOut leftWing('B');
+pros::ADIDigitalOut rightWing('C');
+pros::ADIDigitalOut odomLift('D');
 Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 /**
  * A callback function for LLEMU's center button.
@@ -22,6 +24,16 @@ void on_center_button() {
 		pros::lcd::set_text(2, "I was pressed!");
 	} else {
 		pros::lcd::clear_line(2);
+	}
+}
+
+//async tasks. this is used for running multiple functions at once.
+void task_limit(void* param) {
+	while(true){
+		if (cataSwitch.get_value() == 1){
+			cata.tarePosition();
+		}
+		pros::delay(20);
 	}
 }
 
@@ -122,10 +134,7 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			piston.set_value(true);
-			pros::delay(1000);
-			piston.set_value(false);
-			// auton::test(chassis, cata, cataSwitch);
+			auton::test(chassis, cata, cataSwitch);
 			break;
 		default:
 			// code block
@@ -147,12 +156,30 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	odomLift.set_value(true);
+	bool rwingOpen = false;
+	bool lwingBool = false;
     while(true) {
+		//activate catapult
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			cata.moveVoltage(5000);
+			cata.moveVoltage(10000);
 		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			cata.moveVoltage(0);
 		}
+		
+		//activate pistons
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1){
+			rightWing.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 0){
+			rightWing.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1){
+			leftWing.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 0){
+			leftWing.set_value(false);
+		}
+
         //naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
         double rightInput = (double) master.get_analog(ANALOG_RIGHT_X)/127;
