@@ -28,6 +28,16 @@ void on_center_button() {
 	}
 }
 
+//async tasks. this is used for running multiple functions at once.
+void task_limit(void* param) {
+	while(true){
+		if (cataSwitch.get_value() == 1){
+			cata.tarePosition();
+		}
+		pros::delay(20);
+	}
+}
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -157,10 +167,8 @@ void autonomous() {
 			// code block
 			break;
 		case 0:
-			piston.set_value(true);
-			pros::delay(1000);
-			piston.set_value(false);
-			// auton::test(chassis, cata, cataSwitch);
+			//auton::test(chassis, cata, cataSwitch);
+			auton::progSkills(chassis, cata, rightWing, leftWing);
 			break;
 		default:
 			// code block
@@ -182,6 +190,10 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	odomLift.set_value(true);
+	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
+	bool rwingOpen = false;
+	bool lwingBool = false;
     while(true) {
 		//Catapult
 		switch(case){
@@ -206,6 +218,20 @@ void opcontrol() {
 				leftPiston.set_value(false);
 				rightPiston.set_value(false);
 		}
+		
+		//activate pistons
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
+			rightWing.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 0){
+			rightWing.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
+			leftWing.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 0){
+			leftWing.set_value(false);
+		}
+
         //naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
         double rightInput = (double) master.get_analog(ANALOG_RIGHT_X)/127;
