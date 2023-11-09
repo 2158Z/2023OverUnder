@@ -6,9 +6,12 @@
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 std::shared_ptr<ChassisController> chassis;
+std::shared_ptr<ChassisControllerPID> chassisPID;
 pros::ADIDigitalIn cataSwitch(DIGITAL_A);
-pros::ADIDigitalOut piston(DIGITAL_B);
+pros::ADIDigitalOut leftPiston(DIGITAL_B);
+pros::ADIDigitalOut rightPiston(DIGITAL_C);
 Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+Motor intakeMotor(0,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -40,6 +43,7 @@ void initialize() {
 			Logger::LogLevel::error
 		)
 	);
+
     //left side motor group
     Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
     Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
@@ -69,6 +73,12 @@ void initialize() {
 			.withSensors(RotationSensor(17), RotationSensor(14), RotationSensor(15))
 			.withOdometry()
 			.buildOdometry();
+	chassisPID = ChassisControllerIntegrated(TimeUtilFactory::createDefault().getTimer(),
+              chassis->getModel(),
+              std::unique_ptr<AsyncPosIntegratedController> ileftController, //TODO
+              std::unique_ptr<AsyncPosIntegratedController> irightController, //TODO
+			  AbstractMotor::gearset::blue, 
+			  scale) 
     leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
     rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
 }
@@ -105,9 +115,34 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:
+			// Far Side || Offensive
+			auton::intake(intakeMotor, 1000); //Intake bar triball
+			intakeMotor.moveVoltage(2000);
+			chassis -> moveDistance(-48_in);
+			auton::wings(rightPiston, 2500);
+			chassis -> turnAngle(90_deg); //Spin triball out
+			chassis -> moveDistance(-36_in); //Score triballs
+			auton::intake(intakeMotor, 2000); //Intake front triball
+			chassis -> moveDistance(8_in);
+			chassis -> turnAngle(-90_deg);
+			chassis -> moveDistanc(60_in);
+			auton::intake(intakeMotor, 1000); //Intake Middle triball
+			chassis -> turnAngle(-45_deg);
+			chassis -> moveDistance(53.04_in); //Score Middle triball
 			break;
 		case 2:
-			// code block
+			chassis -> moveDistance(36_in); //Push matchload in
+			chassis -> moveDistance(-24_in);
+			auton::wings(leftPiston, 2000);
+			chassis -> turnAngle(90_deg); //Spin matchload out
+			chassis -> moveDistance(-52_in); //Push triballs over
+			chassis -> moveDistance(36_in);
+			chassis -> turnAngle(-90_deg);
+			chassis -> moveDistance(24_in);
+			chassis -> turnAngle(-90);
+			chassis -> moveDistance(36_in);
+			chassis -> turnAngle(90);
+			chassis -> moveDistance(-24_in)
 			break;
 		case 3:
 			// code block
@@ -148,10 +183,28 @@ void autonomous() {
  */
 void opcontrol() {
     while(true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			cata.moveVoltage(5000);
-		} else if (!master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			cata.moveVoltage(0);
+		//Catapult
+		switch(case){
+			case pros::E_CONTROLLER_DIGITAL_A:
+				cata.moveVoltage(10000);
+				break;
+			case pros::E_CONTROLLER_DIGITAL_R1:
+				intakeMotor.moveVoltage(8000);
+				break;
+			case pros::E_CONTROLLER_DIGITAL_L1:
+				intakeMotor.moveVoltage(-8000);
+				break;
+			case pros::E_CONTROLLER_DIGITAL_R2:
+				rightPiston.set_value(true);
+				break;
+			case pros::E_CONTROLLER_DIGITAL_L2:
+				leftPiston.set_value(true);
+				break;
+			default:
+				intakeMotor.moveVoltage(0);
+				cata.moveVoltage(0);
+				leftPiston.set_value(false);
+				rightPiston.set_value(false);
 		}
         //naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
@@ -159,19 +212,11 @@ void opcontrol() {
 		chassis->getModel()->arcade(leftInput, rightInput);
         pros::delay(20);
     }
-
-
-
-	// while (true) {
-	// 	pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-	// 	                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-	// 	                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-	// 	int left = master.get_analog(ANALOG_LEFT_Y);
-	// 	int right = master.get_analog(ANALOG_RIGHT_Y);
-
-	// 	left_mtr = left;
-	// 	right_mtr = right;
-
-	// 	pros::delay(20);
-	// }
+/*
+ R1 - Intake in
+ L1 - intake out
+ R2 - Right wing
+ L2 - Left wing
+ A - Cata
+*/
 }
