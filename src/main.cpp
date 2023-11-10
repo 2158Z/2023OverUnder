@@ -82,6 +82,7 @@ void initialize() {
 				{1.5, 0, 10}, //Driving PID
 				{0, 0, 0}) //Turning PID
 			.withSensors(left, right, middle)
+			// .withSensors(leftMotorGroup.getEncoder(),rightMotorGroup.getEncoder())
 			.withOdometry()
 			.buildOdometry();
 
