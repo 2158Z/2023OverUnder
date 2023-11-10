@@ -5,7 +5,7 @@
 #include "auton.h"
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-std::shared_ptr<OdomChassisController> chassis;
+std::shared_ptr<ChassisController> chassis;
 pros::ADIDigitalIn cataSwitch('A');
 pros::ADIDigitalOut leftPiston('B');
 pros::ADIDigitalOut rightPiston('C');
