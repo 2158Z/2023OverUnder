@@ -19,9 +19,6 @@ namespace auton{
     void autonTest(std::shared_ptr<okapi::ChassisController> chassis){
         chassis->moveDistance(-28_in);
     }
-
-    void neumatics(){
-    }
     void wings(pros::ADIDigitalOut wings, int time){
         wings.set_value(true);
         pros::delay(time);

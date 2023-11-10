@@ -9,8 +9,10 @@ std::shared_ptr<ChassisController> chassis;
 pros::ADIDigitalIn cataSwitch('A');
 pros::ADIDigitalOut leftPiston('B');
 pros::ADIDigitalOut rightPiston('C');
-Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-Motor intakeMotor(0,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+pros::ADIDigitalOut odomLift('E');
+Motor cata(2, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+Motor intakeMotor(16, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+IMU inertial(1);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -70,7 +72,7 @@ void initialize() {
 	ChassisScales scale({3.25_in, 12.5_in, 3_in, 3.25_in}, imev5BlueTPR);
 	auto left = RotationSensor(17);
 	auto right = RotationSensor(14);
-	auto middle = RotationSensor(15);
+	auto middle = RotationSensor(7);
 // Chassis Controller - lets us chassis the robot around with open- or closed-loop control
 	chassis =
 		ChassisControllerBuilder()
@@ -166,6 +168,7 @@ void autonomous() {
 			chassis -> moveDistance(-24_in);
 			break;
 		case 3:
+			lowerCata(cata, cataSwitch, 4000);
 			// code block
 			break;
 		case -1:
@@ -200,11 +203,21 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+void lowerCata(okapi::Motor cata, pros::ADIDigitalIn limit, int volts){
+	while (1){
+		if (limit.get_value()) {
+			break;
+		}
+		cata.moveVoltage(volts);
+	}
+}
+
 void opcontrol() {
 	// odomLift.set_value(true);
 	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
-	bool rwingOpen = false;
-	bool lwingBool = false;
+	bool leftToggle = false;
+	bool rightToggle = false;
     while(true) {
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
 			intakeMotor.moveVoltage(8000);
