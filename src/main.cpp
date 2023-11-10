@@ -5,11 +5,10 @@
 #include "auton.h"
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-std::shared_ptr<ChassisController> chassis;
-std::shared_ptr<ChassisControllerPID> chassisPID;
-pros::ADIDigitalIn cataSwitch(DIGITAL_A);
-pros::ADIDigitalOut leftPiston(DIGITAL_B);
-pros::ADIDigitalOut rightPiston(DIGITAL_C);
+std::shared_ptr<OdomChassisController> chassis;
+pros::ADIDigitalIn cataSwitch('A');
+pros::ADIDigitalOut leftPiston('B');
+pros::ADIDigitalOut rightPiston('C');
 Motor cata(10,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 Motor intakeMotor(0,true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 /**
@@ -69,7 +68,9 @@ void initialize() {
 	//Chassis scale 
 	// TODO - Get correct dimensions
 	ChassisScales scale({3.25_in, 12.5_in, 3_in, 3.25_in}, imev5BlueTPR);
-
+	auto left = RotationSensor(17);
+	auto right = RotationSensor(14);
+	auto middle = RotationSensor(15);
 // Chassis Controller - lets us chassis the robot around with open- or closed-loop control
 	chassis =
 		ChassisControllerBuilder()
@@ -80,17 +81,26 @@ void initialize() {
 			.withGains(
 				{1.5, 0, 10}, //Driving PID
 				{0, 0, 0}) //Turning PID
-			.withSensors(RotationSensor(17), RotationSensor(14), RotationSensor(15))
+			.withSensors(left, right, middle)
 			.withOdometry()
 			.buildOdometry();
-	chassisPID = ChassisControllerIntegrated(TimeUtilFactory::createDefault().getTimer(),
-              chassis->getModel(),
-              std::unique_ptr<AsyncPosIntegratedController> ileftController, //TODO
-              std::unique_ptr<AsyncPosIntegratedController> irightController, //TODO
-			  AbstractMotor::gearset::blue, 
-			  scale) 
+
     leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
     rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
+
+	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+	// std::unique_ptr<okapi::IterativePosPIDController> angle = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+
+	// chassisPID = ChassisControllerPID(
+	// 	TimeUtilFactory::createDefault().getTimer(),
+	// 	chassis->getModel(),
+	// 	distance,
+	// 	turn,
+	// 	angle,
+	// 	AbstractMotor::gearset::blue,
+	// 	scale
+	// );
 }
 
 /**
@@ -135,7 +145,7 @@ void autonomous() {
 			auton::intake(intakeMotor, 2000); //Intake front triball
 			chassis -> moveDistance(8_in);
 			chassis -> turnAngle(-90_deg);
-			chassis -> moveDistanc(60_in);
+			chassis -> moveDistance(60_in);
 			auton::intake(intakeMotor, 1000); //Intake Middle triball
 			chassis -> turnAngle(-45_deg);
 			chassis -> moveDistance(53.04_in); //Score Middle triball
@@ -149,10 +159,10 @@ void autonomous() {
 			chassis -> moveDistance(36_in);
 			chassis -> turnAngle(-90_deg);
 			chassis -> moveDistance(24_in);
-			chassis -> turnAngle(-90);
+			chassis -> turnAngle(-90_deg);
 			chassis -> moveDistance(36_in);
-			chassis -> turnAngle(90);
-			chassis -> moveDistance(-24_in)
+			chassis -> turnAngle(90_deg);
+			chassis -> moveDistance(-24_in);
 			break;
 		case 3:
 			// code block
@@ -168,7 +178,7 @@ void autonomous() {
 			break;
 		case 0:
 			//auton::test(chassis, cata, cataSwitch);
-			auton::progSkills(chassis, cata, rightWing, leftWing);
+			auton::progSkills(chassis, cata, rightPiston, leftPiston);
 			break;
 		default:
 			// code block
@@ -190,46 +200,39 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	odomLift.set_value(true);
+	// odomLift.set_value(true);
 	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
 	bool rwingOpen = false;
 	bool lwingBool = false;
     while(true) {
-		//Catapult
-		switch(case){
-			case pros::E_CONTROLLER_DIGITAL_A:
-				cata.moveVoltage(10000);
-				break;
-			case pros::E_CONTROLLER_DIGITAL_R1:
-				intakeMotor.moveVoltage(8000);
-				break;
-			case pros::E_CONTROLLER_DIGITAL_L1:
-				intakeMotor.moveVoltage(-8000);
-				break;
-			case pros::E_CONTROLLER_DIGITAL_R2:
-				rightPiston.set_value(true);
-				break;
-			case pros::E_CONTROLLER_DIGITAL_L2:
-				leftPiston.set_value(true);
-				break;
-			default:
-				intakeMotor.moveVoltage(0);
-				cata.moveVoltage(0);
-				leftPiston.set_value(false);
-				rightPiston.set_value(false);
-		}
-		
-		//activate pistons
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
-			rightWing.set_value(true);
+			intakeMotor.moveVoltage(8000);
 		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 0){
-			rightWing.set_value(false);
+			intakeMotor.moveVoltage(0);
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
-			leftWing.set_value(true);
+			intakeMotor.moveVoltage(-8000);
 		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 0){
-			leftWing.set_value(false);
+			intakeMotor.moveVoltage(-8000);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1){
+			rightPiston.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 0){
+			rightPiston.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1){
+			leftPiston.set_value(true);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 0){
+			leftPiston.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 1){
+			cata.moveVoltage(8000);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 0){
+			cata.moveVoltage(0);
 		}
 
         //naturalize input to a range between -1 and 1

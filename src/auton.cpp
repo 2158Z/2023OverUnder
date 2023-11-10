@@ -23,13 +23,13 @@ namespace auton{
     void neumatics(){
     }
     void wings(pros::ADIDigitalOut wings, int time){
-        piston.set_value(true);
+        wings.set_value(true);
         pros::delay(time);
-        piston.set_value(false);
+        wings.set_value(false);
     }
     void intake(okapi::Motor intake, int time){
-        intake.moveVoltage(8000)
+        intake.moveVoltage(8000);
         pros::delay(time);
-        intake.moveVoltage(0)
+        intake.moveVoltage(0);
     }
 }
