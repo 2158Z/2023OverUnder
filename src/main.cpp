@@ -19,6 +19,16 @@ IMU inertial(1);
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
+
+void lowerCata(okapi::Motor cata, pros::ADIDigitalIn limit, int volts){
+	while (1){
+		if (limit.get_value()) {
+			break;
+		}
+		cata.moveVoltage(volts);
+	}
+}
+
 void on_center_button() { 
 	static bool pressed = false;
 	pressed = !pressed;
@@ -203,15 +213,6 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-
-void lowerCata(okapi::Motor cata, pros::ADIDigitalIn limit, int volts){
-	while (1){
-		if (limit.get_value()) {
-			break;
-		}
-		cata.moveVoltage(volts);
-	}
-}
 
 void opcontrol() {
 	// odomLift.set_value(true);
