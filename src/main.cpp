@@ -222,25 +222,21 @@ void opcontrol() {
     while(true) {
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
 			intakeMotor.moveVoltage(8000);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 0){
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
+			intakeMotor.moveVoltage(-8000);
+		} else {
 			intakeMotor.moveVoltage(0);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
-			intakeMotor.moveVoltage(-8000);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 0){
-			intakeMotor.moveVoltage(-8000);
-		}
-
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1){
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2) == 1){
 			rightPiston.set_value(true);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 0){
+		} else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2) == 0){
 			rightPiston.set_value(false);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1){
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) == 1){
 			leftPiston.set_value(true);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 0){
+		} else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) == 0){
 			leftPiston.set_value(false);
 		}
 
