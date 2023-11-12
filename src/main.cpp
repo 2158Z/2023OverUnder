@@ -5,13 +5,27 @@
 #include "auton.h"
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-std::shared_ptr<ChassisController> chassis;
+std::shared_ptr<OdomChassisController> chassis;
 pros::ADIDigitalIn cataSwitch('A');
-pros::ADIDigitalOut leftPiston('B');
-pros::ADIDigitalOut rightPiston('C');
+pros::ADIDigitalOut leftPiston('C');
+pros::ADIDigitalOut rightPiston('B');
 pros::ADIDigitalOut odomLift('E');
 Motor cata(2, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 Motor intakeMotor(16, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+//left side motor group
+Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
+
+//right side motor group
+Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
+
+MotorGroup fullMotorGroup({rightMotor1, rightMotor2, rightMotor3, leftMotor1, leftMotor2, leftMotor3});
+
 IMU inertial(1);
 /**
  * A callback function for LLEMU's center button.
@@ -65,23 +79,9 @@ void initialize() {
 		)
 	);
 
-    //left side motor group
-    Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
-
-    //right side motor group
-    Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
-
 	//Chassis scale 
 	// TODO - Get correct dimensions
-	ChassisScales scale({3.25_in, 12.5_in, 3_in, 3.25_in}, imev5BlueTPR);
-	auto left = RotationSensor(17);
-	auto right = RotationSensor(14);
+	ChassisScales scale({3.25_in, 12.5_in, 7.5_in, 3.25_in}, imev5BlueTPR);
 	auto middle = RotationSensor(7);
 // Chassis Controller - lets us chassis the robot around with open- or closed-loop control
 	chassis =
@@ -91,15 +91,16 @@ void initialize() {
 			.withDimensions(AbstractMotor::gearset::blue, scale)
 			.withMaxVoltage((double) 12000) //Motor's max voltage
 			.withGains(
-				{1.5, 0, 10}, //Driving PID
-				{0, 0, 0}) //Turning PID
-			.withSensors(left, right, middle)
-			// .withSensors(leftMotorGroup.getEncoder(),rightMotorGroup.getEncoder())
+				{0.0025, 0, 0}, //Driving PID
+				{0.0025, 0, 0}) //Turning PID
+			// .withSensors(middle, middle)
+			.withSensors(leftMotorGroup.getEncoder(),rightMotorGroup.getEncoder())
 			.withOdometry()
 			.buildOdometry();
 
     leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
     rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
+	fullMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
 
 	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
 	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
@@ -114,6 +115,8 @@ void initialize() {
 	// 	AbstractMotor::gearset::blue,
 	// 	scale
 	// );
+	inertial.calibrate();
+	inertial.reset();
 }
 
 /**
@@ -146,23 +149,37 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	chassis -> setMaxVelocity(280);
 	switch(selector::auton) {
 		case 1:
-			// Far Side || Offensive
-			auton::intake(intakeMotor, 1000); //Intake bar triball
-			intakeMotor.moveVoltage(2000);
-			chassis -> moveDistance(-48_in);
-			auton::wings(rightPiston, 2500);
-			chassis -> turnAngle(90_deg); //Spin triball out
-			chassis -> moveDistance(-36_in); //Score triballs
-			auton::intake(intakeMotor, 2000); //Intake front triball
-			chassis -> moveDistance(8_in);
-			chassis -> turnAngle(-90_deg);
-			chassis -> moveDistance(60_in);
-			auton::intake(intakeMotor, 1000); //Intake Middle triball
-			chassis -> turnAngle(-45_deg);
-			chassis -> moveDistance(53.04_in); //Score Middle triball
+			fullMotorGroup.moveVoltage(-9000);
+			pros::delay(2000);
+			fullMotorGroup.moveVoltage(0);
+			fullMotorGroup.moveVoltage(9000);
+			pros::delay(250);
+			fullMotorGroup.moveVoltage(0);
 			break;
+			// chassis -> turnAngle(90.0,_deg);
+			// Far side
+			// chassis -> turnAngle(133.4,_deg);
+			// chassis -> moveDistance(62.9,_in);
+			// chassis -> turnAngle(-164.1,_deg);
+			// chassis -> moveDistance(55.5,_in);
+			// chassis -> turnAngle(0.0,_deg);
+			// chassis -> moveDistance(20.3,_in);
+			// chassis -> turnAngle(-90.0,_deg);
+			// chassis -> moveDistance(91.4,_in);
+			// chassis -> turnAngle(180.0,_deg);
+			// chassis -> moveDistance(83.8,_in);
+			// chassis -> turnAngle(87.1,_deg);
+			// chassis -> moveDistance(50.9,_in);
+			// chassis -> turnAngle(-91.5,_deg);
+			// chassis -> moveDistance(99.1,_in);
+			// chassis -> turnAngle(104.0,_deg);
+			// chassis -> moveDistance(104.7,_in);
+			// chassis -> turnAngle(-107.6,_deg);
+			// chassis -> moveDistance(109.2,_in);
+
 		case 2:
 			chassis -> moveDistance(36_in); //Push matchload in
 			chassis -> moveDistance(-24_in);
@@ -182,20 +199,18 @@ void autonomous() {
 			// code block
 			break;
 		case -1:
-			// code block
 			break;
 		case -2:
 			// code block
 			break;
 		case -3:
-			// code block
+
 			break;
 		case 0:
 			//auton::test(chassis, cata, cataSwitch);
-			auton::progSkills(chassis, cata, rightPiston, leftPiston);
+			auton::progSkills(chassis, cata);
 			break;
 		default:
-			// code block
 			break;
 	}
 }
@@ -215,35 +230,39 @@ void autonomous() {
  */
 
 void opcontrol() {
+	chassis -> setMaxVelocity(360);
 	// odomLift.set_value(true);
 	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
 	bool leftToggle = false;
 	bool rightToggle = false;
     while(true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) == 1){
-			intakeMotor.moveVoltage(8000);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) == 1){
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			intakeMotor.moveVoltage(-8000);
+		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+			intakeMotor.moveVoltage(8000);
 		} else {
 			intakeMotor.moveVoltage(0);
 		}
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2) == 1){
-			rightPiston.set_value(true);
-		} else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2) == 0){
-			rightPiston.set_value(false);
+			rightToggle = !rightToggle;
 		}
+
+		rightPiston.set_value(rightToggle);
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) == 1){
-			leftPiston.set_value(true);
-		} else if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) == 0){
-			leftPiston.set_value(false);
+			leftToggle = !leftToggle;
 		}
+		leftPiston.set_value(leftToggle);
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 1){
-			cata.moveVoltage(8000);
+			cata.moveVoltage(9000);
 		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 0){
 			cata.moveVoltage(0);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
+			lowerCata(cata,cataSwitch,10000);
 		}
 
         //naturalize input to a range between -1 and 1

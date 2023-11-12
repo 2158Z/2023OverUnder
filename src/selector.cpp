@@ -1,5 +1,4 @@
 #include "main.h"
-#include "pid.h"
 #include "selector.h"
 namespace selector{
     int auton;
@@ -131,8 +130,6 @@ namespace selector{
         lv_obj_set_size(skillsBtn, 450, 50);
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
-
-        pid::initPID();
 
         pros::Task tabWatcher_task(tabWatcher);
 
