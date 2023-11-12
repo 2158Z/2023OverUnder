@@ -27,6 +27,7 @@ namespace auton{
     void progSkills(std::shared_ptr<okapi::ChassisController> chassis, Motor cata){
         cata.setBrakeMode(AbstractMotor::brakeMode::hold);
         cata.moveVoltage(9000);
+        
     }
 
     void autonTest(std::shared_ptr<okapi::ChassisController> chassis){
@@ -43,12 +44,12 @@ namespace auton{
         intake.moveVoltage(0);
     }
 
-    void moveDistance(std::shared_ptr<okapi::ChassisController> chassis, int inches){
+    void moveDistance(std::shared_ptr<okapi::ChassisController> chassis, double inches){
         inches = (static_cast<double>(inches)*3)/2;
         chassis -> moveDistance(inches*inch);
     }
 
-    void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, int deg){
+    void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
         inertial.reset();
         double target = inertial.get() + deg;
         deg = static_cast<double>(deg*2);

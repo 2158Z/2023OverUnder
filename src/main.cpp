@@ -151,7 +151,7 @@ void competition_initialize() {}
 void autonomous() {
 	chassis -> setMaxVelocity(280);
 	switch(selector::auton) {
-		case 1:
+		case 1:	
 			fullMotorGroup.moveVoltage(-9000);
 			pros::delay(2000);
 			fullMotorGroup.moveVoltage(0);
@@ -159,27 +159,27 @@ void autonomous() {
 			pros::delay(250);
 			fullMotorGroup.moveVoltage(0);
 			break;
-			// chassis -> turnAngle(90.0,_deg);
 			// Far side
-			// chassis -> turnAngle(133.4,_deg);
-			// chassis -> moveDistance(62.9,_in);
-			// chassis -> turnAngle(-164.1,_deg);
-			// chassis -> moveDistance(55.5,_in);
-			// chassis -> turnAngle(0.0,_deg);
-			// chassis -> moveDistance(20.3,_in);
-			// chassis -> turnAngle(-90.0,_deg);
-			// chassis -> moveDistance(91.4,_in);
-			// chassis -> turnAngle(180.0,_deg);
-			// chassis -> moveDistance(83.8,_in);
-			// chassis -> turnAngle(87.1,_deg);
-			// chassis -> moveDistance(50.9,_in);
-			// chassis -> turnAngle(-91.5,_deg);
-			// chassis -> moveDistance(99.1,_in);
-			// chassis -> turnAngle(104.0,_deg);
-			// chassis -> moveDistance(104.7,_in);
-			// chassis -> turnAngle(-107.6,_deg);
-			// chassis -> moveDistance(109.2,_in);
-
+			auton::turnAngle(chassis, 46.8);
+			auton::moveDistance(chassis, 55.7);
+			auton::turnAngle(chassis, 0.0);
+			auton::moveDistance(chassis, 58.4);
+			auton::turnAngle(chassis, 180.0);
+			auton::moveDistance(chassis, 20.3);
+			auton::turnAngle(chassis, -92.9);
+			auton::moveDistance(chassis, 99.2);
+			auton::turnAngle(chassis, -62.2);
+			auton::moveDistance(chassis, 54.5);
+			auton::turnAngle(chassis, 68.2);
+			auton::moveDistance(chassis, 109.4);
+			auton::turnAngle(chassis, -65.6);
+			auton::moveDistance(chassis, 61.4);
+			auton::turnAngle(chassis, 92.6);
+			auton::moveDistance(chassis, 55.9);
+			auton::turnAngle(chassis, -88.6);
+			auton::moveDistance(chassis, 106.7);
+			auton::turnAngle(chassis, 76.6);
+			auton::moveDistance(chassis, 109.7);
 		case 2:
 			chassis -> moveDistance(36_in); //Push matchload in
 			chassis -> moveDistance(-24_in);
@@ -196,18 +196,24 @@ void autonomous() {
 			break;
 		case 3:
 			lowerCata(cata, cataSwitch, 4000);
-			// code block
 			break;
 		case -1:
+			//Close Side
+			auton::turnAngle(chassis, 88.3);
+			auton::moveDistance(chassis, 86.4);
+			auton::turnAngle(chassis, -96.3);
+			auton::moveDistance(chassis, 115.0);
+			auton::turnAngle(chassis, -46.4);
+			auton::moveDistance(chassis, 73.7);
+			auton::turnAngle(chassis, -3.2);
+			auton::moveDistance(chassis, 45.8);
 			break;
 		case -2:
-			// code block
 			break;
 		case -3:
 
 			break;
 		case 0:
-			//auton::test(chassis, cata, cataSwitch);
 			auton::progSkills(chassis, cata);
 			break;
 		default:
