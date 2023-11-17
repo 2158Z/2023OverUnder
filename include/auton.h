@@ -52,6 +52,7 @@ namespace auton {
 
     extern float drive_desired_heading;
 
+    void position_track();
     void progSkills(std::shared_ptr<okapi::ChassisController> chassis, okapi::Motor cata);
     void wings(pros::ADIDigitalOut wings, int time);
     void intake(okapi::Motor intake, int time);

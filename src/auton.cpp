@@ -116,6 +116,13 @@ namespace auton{
     return(odom.Y_position);
     }
 
+    void position_track(){
+        while(1){
+            odom.update_position(get_ForwardTracker_position(), 0, get_absolute_heading());
+            pros::delay(5);
+        }
+    }
+
     void drive_with_voltage(float leftVoltage, float rightVoltage){
         leftMotorGroup.moveVoltage(leftVoltage);
         rightMotorGroup.moveVoltage(rightVoltage);

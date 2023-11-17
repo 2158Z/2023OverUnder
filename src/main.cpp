@@ -117,6 +117,7 @@ void initialize() {
 	// );
 	inertial.calibrate();
 	inertial.reset();
+	auton::position_track();
 }
 
 /**
