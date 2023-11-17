@@ -10,23 +10,23 @@ pros::ADIDigitalIn cataSwitch('A');
 pros::ADIDigitalOut leftPiston('C');
 pros::ADIDigitalOut rightPiston('B');
 pros::ADIDigitalOut odomLift('E');
-Motor cata(2, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-Motor intakeMotor(16, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+okapi::Motor cata(2, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
+okapi::Motor intakeMotor(16, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
 //left side motor group
-Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
+okapi::Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
 
 //right side motor group
-Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
+okapi::Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
+okapi::MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
 
-MotorGroup fullMotorGroup({rightMotor1, rightMotor2, rightMotor3, leftMotor1, leftMotor2, leftMotor3});
+okapi::MotorGroup fullMotorGroup({rightMotor1, rightMotor2, rightMotor3, leftMotor1, leftMotor2, leftMotor3});
 
-IMU inertial(1);
+okapi::IMU inertial(1);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -149,37 +149,37 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	chassis -> setMaxVelocity(280);
 	switch(selector::auton) {
 		case 1:	
-			fullMotorGroup.moveVoltage(-9000);
-			pros::delay(2000);
-			fullMotorGroup.moveVoltage(0);
-			fullMotorGroup.moveVoltage(9000);
-			pros::delay(250);
-			fullMotorGroup.moveVoltage(0);
-			break;
-			// Far side
-			auton::turnAngle(chassis, 46.8);
-			auton::moveDistance(chassis, 55.7);
-			auton::turnAngle(chassis, 0.0);
-			auton::moveDistance(chassis, 58.4);
-			auton::turnAngle(chassis, 180.0);
-			auton::moveDistance(chassis, 20.3);
-			auton::turnAngle(chassis, -92.9);
-			auton::moveDistance(chassis, 99.2);
-			auton::turnAngle(chassis, -62.2);
-			auton::moveDistance(chassis, 54.5);
-			auton::turnAngle(chassis, 68.2);
-			auton::moveDistance(chassis, 109.4);
-			auton::turnAngle(chassis, -65.6);
-			auton::moveDistance(chassis, 61.4);
-			auton::turnAngle(chassis, 92.6);
-			auton::moveDistance(chassis, 55.9);
-			auton::turnAngle(chassis, -88.6);
-			auton::moveDistance(chassis, 106.7);
-			auton::turnAngle(chassis, 76.6);
-			auton::moveDistance(chassis, 109.7);
+			auton::drive_distance(6);
+			// fullMotorGroup.moveVoltage(-9000);
+			// pros::delay(2000);
+			// fullMotorGroup.moveVoltage(0);
+			// fullMotorGroup.moveVoltage(9000);
+			// pros::delay(250);
+			// fullMotorGroup.moveVoltage(0);
+			// break;
+			// // Far side
+			// auton::turnAngle(chassis, 46.8);
+			// auton::moveDistance(chassis, 55.7);
+			// auton::turnAngle(chassis, 0.0);
+			// auton::moveDistance(chassis, 58.4);
+			// auton::turnAngle(chassis, 180.0);
+			// auton::moveDistance(chassis, 20.3);
+			// auton::turnAngle(chassis, -92.9);
+			// auton::moveDistance(chassis, 99.2);
+			// auton::turnAngle(chassis, -62.2);
+			// auton::moveDistance(chassis, 54.5);
+			// auton::turnAngle(chassis, 68.2);
+			// auton::moveDistance(chassis, 109.4);
+			// auton::turnAngle(chassis, -65.6);
+			// auton::moveDistance(chassis, 61.4);
+			// auton::turnAngle(chassis, 92.6);
+			// auton::moveDistance(chassis, 55.9);
+			// auton::turnAngle(chassis, -88.6);
+			// auton::moveDistance(chassis, 106.7);
+			// auton::turnAngle(chassis, 76.6);
+			// auton::moveDistance(chassis, 109.7);
 		case 2:
 			chassis -> moveDistance(36_in); //Push matchload in
 			chassis -> moveDistance(-24_in);
@@ -199,14 +199,14 @@ void autonomous() {
 			break;
 		case -1:
 			//Close Side
-			auton::turnAngle(chassis, 88.3);
-			auton::moveDistance(chassis, 86.4);
-			auton::turnAngle(chassis, -96.3);
-			auton::moveDistance(chassis, 115.0);
-			auton::turnAngle(chassis, -46.4);
-			auton::moveDistance(chassis, 73.7);
-			auton::turnAngle(chassis, -3.2);
-			auton::moveDistance(chassis, 45.8);
+			// auton::turnAngle(chassis, 88.3);
+			// auton::moveDistance(chassis, 86.4);
+			// auton::turnAngle(chassis, -96.3);
+			// auton::moveDistance(chassis, 115.0);
+			// auton::turnAngle(chassis, -46.4);
+			// auton::moveDistance(chassis, 73.7);
+			// auton::turnAngle(chassis, -3.2);
+			// auton::moveDistance(chassis, 45.8);
 			break;
 		case -2:
 			break;
