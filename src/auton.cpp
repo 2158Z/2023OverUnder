@@ -50,8 +50,8 @@ namespace auton{
     float drive_turn_starti = 0;
 
     float drive_turn_settle_error = 1;
-    float drive_turn_settle_time = 300;
-    float drive_turn_timeout = 500;
+    float drive_turn_settle_time = 600;
+    float drive_turn_timeout = 1000;
 
     float drive_drive_max_voltage = 8000;
     float drive_drive_kp = 1.5;
@@ -60,7 +60,7 @@ namespace auton{
     float drive_drive_starti = 0;
 
     float drive_drive_settle_error = 1.5;
-    float drive_drive_settle_time = 500;
+    float drive_drive_settle_time = 750;
     float drive_drive_timeout = 2000;
 
     float drive_heading_max_voltage = 12000;
@@ -163,7 +163,7 @@ namespace auton{
 
     void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
         drive_desired_heading = angle;
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti);
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
         while(turnPID.is_settled() == false){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
             float output = turnPID.compute(error) * 1000;
