@@ -8,7 +8,7 @@ PID::PID(float error, float kp, float ki, float kd, float starti) :
   starti(starti)
 {};
 
-PID::PID(float error, float kp, float ki, float kd, float starti, float settle_error, float settle_time, float timeout) :
+PID::PID(float error, float kp, float ki, float kd, float starti, float settle_time, float settle_error, float timeout) :
   error(error),
   kp(kp),
   ki(ki),
@@ -19,24 +19,19 @@ PID::PID(float error, float kp, float ki, float kd, float starti, float settle_e
   timeout(timeout)
 {};
 
-float PID::compute(float error){
-  if (fabs(error) < starti){
-    accumulated_error+=error;
-  }
-  if ((error>0 && previous_error<0)||(error<0 && previous_error>0)){ 
-    accumulated_error = 0; 
-  }
-  output = kp*error + ki*accumulated_error + kd*(error-previous_error);
+float PID::compute(float error) {
+  accumulated_error += (fabs(error) < starti) ? error : 0;
 
-  previous_error=error;
-
-  if(fabs(error)<settle_error){
-    time_spent_settled+=10;
-  } else {
-    time_spent_settled = 0;
+  if ((error > 0 && previous_error < 0) || (error < 0 && previous_error > 0)) {
+    accumulated_error = 0;
   }
 
-  time_spent_running+=10;
+  output = kp * error + ki * accumulated_error + kd * (error - previous_error);
+  previous_error = error;
+
+  time_spent_settled = (fabs(error) < settle_error) ? time_spent_settled + 10 : 0;
+
+  time_spent_running += 10;
 
   return output;
 }

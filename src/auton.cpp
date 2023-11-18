@@ -1,20 +1,22 @@
 #include "main.h"
 using namespace okapi;
 namespace auton{
-    okapi::Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
+    pros::Motor driveLeftMotorBottom(18, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveLeftMotorMiddle(19, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveLeftMotorTop(20, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
-    //right side motor group
-    okapi::Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-    okapi::MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
+    //individual motors for drive right side
+    pros::Motor driveRightMotorBottom(11, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveRightMotorMiddle(12, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveRightMotorTop(13, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+        
+    //motor groups for drive left and rights sides
+    pros::Motor_Group leftMotorGroup( {driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop} );
+    pros::Motor_Group rightMotorGroup( {driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop} );
 
-    okapi::MotorGroup fullMotorGroup({rightMotor1, rightMotor2, rightMotor3, leftMotor1, leftMotor2, leftMotor3});
+    pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
 
-    okapi::IMU inertial(1);
+    pros::IMU inertial(1);
     Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
@@ -30,16 +32,16 @@ namespace auton{
     QAngle radian(1.0);
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
-    float wheel_diameter = 3.125;
+    float wheel_diameter = 3.25;
     float wheel_ratio = 0.6;
     float gyro_scale = 1;
     float drive_in_to_deg_ratio = wheel_ratio/360.0*M_PI*wheel_diameter;
-    float ForwardTracker_center_distance(ForwardTracker_center_distance);
-    float ForwardTracker_diameter = 0;
-    float ForwardTracker_in_to_deg_ratio = M_PI*ForwardTracker_diameter/360.0;
+    float forwardTrackerCenterDistance = 0;
+    float forwardTrackerDiameter = 0;
+    float forwardTrackerInToDegRatio = M_PI*forwardTrackerDiameter/360.0;
     float SidewaysTracker_center_distance = 0;
-    float SidewaysTracker_diameter = 0;
-    float SidewaysTracker_in_to_deg_ratio = M_PI*SidewaysTracker_diameter/360.0;
+    float sidewaysTrackerDiameter = 0;
+    float sidewaysTrackerInToDegRatio = M_PI*sidewaysTrackerDiameter/360.0;
 
     float drive_turn_max_voltage = 12000;
     float drive_turn_kp = 0;
@@ -58,7 +60,7 @@ namespace auton{
     float drive_drive_starti = 0;
 
     float drive_drive_settle_error = 1.5;
-    float drive_drive_settle_time = 300;
+    float drive_drive_settle_time = 500;
     float drive_drive_timeout = 5000;
 
     float drive_heading_max_voltage = 12000;
@@ -79,9 +81,11 @@ namespace auton{
 
     float drive_desired_heading = 0;
 
-    void progSkills(std::shared_ptr<okapi::ChassisController> chassis, okapi::Motor cata){
-        cata.setBrakeMode(AbstractMotor::brakeMode::hold);
-        cata.moveVoltage(9000);
+    int counter = 0;
+
+    void progSkills(pros::Motor cata){
+        cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+        cata.move_voltage(9000);
         
     }
 
@@ -90,22 +94,28 @@ namespace auton{
         pros::delay(time);
         wings.set_value(false);
     }
-    void intake(okapi::Motor intake, int time){
-        intake.moveVoltage(8000);
+    void intake(pros::Motor intake, int time){
+        intake.move_voltage(8000);
         pros::delay(time);
-        intake.moveVoltage(0);
+        intake.move_voltage(0);
     }
 
     float get_absolute_heading(){ 
-        return reduce_0_to_360(inertial.get()); 
+        return reduce_0_to_360(inertial.get_heading()); 
     }
 
     float get_left_position_in(){
-        return( leftMotor2.getPosition()*drive_in_to_deg_ratio );
+        if (counter % 100 == 0){
+            //printf("%f Left\n", ( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;
+        }
+        return( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio);
         }
 
     float get_right_position_in(){
-        return( rightMotor2.getPosition()*drive_in_to_deg_ratio );
+        if (counter % 100 == 0){
+            //printf("%f Right\n", -1 * ( (driveRightMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio)/2);
+        }
+        return -1 * ( (driveRightMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio);
     }
 
     float get_X_position(){
@@ -118,38 +128,35 @@ namespace auton{
 
     void position_track(){
         while(1){
-            odom.update_position(get_ForwardTracker_position(), 0, get_absolute_heading());
+            odom.update_position(-1 * get_right_position_in(), 0, get_absolute_heading());
             pros::delay(5);
         }
     }
 
     void drive_with_voltage(float leftVoltage, float rightVoltage){
-        leftMotorGroup.moveVoltage(leftVoltage);
-        rightMotorGroup.moveVoltage(rightVoltage);
+        leftMotorGroup.move_voltage(leftVoltage);
+        rightMotorGroup.move_voltage(-1 * rightVoltage);
     }
 
-    void drive_distance(float distance, float heading = drive_desired_heading, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
-        drive_desired_heading = heading;
-        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_error, drive_settle_time, drive_timeout);
-        PID headingPID(reduce_negative_180_to_180(heading - get_absolute_heading()), heading_kp, heading_ki, heading_kd, heading_starti);
+    void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
+        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti);
+        driveLeftMotorMiddle.tare_position();
+        driveRightMotorMiddle.tare_position();
         float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
         float average_position = start_average_position;
         while(drivePID.is_settled() == false){
             average_position = (get_left_position_in()+get_right_position_in())/2.0;
             float drive_error = distance+start_average_position-average_position;
-            float heading_error = reduce_negative_180_to_180(heading - get_absolute_heading());
-            float drive_output = drivePID.compute(drive_error);
-            float heading_output = headingPID.compute(heading_error);
-
-            drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
-            heading_output = clamp(heading_output, -heading_max_voltage, heading_max_voltage);
-
-            drive_with_voltage(drive_output+heading_output, drive_output-heading_output);
-            printf("f%\n", (drive_error));
+            float drive_output = drivePID.compute(drive_error) * 1000;
+            drive_with_voltage(drive_output, drive_output);
+            counter += 1;
+            if (counter % 10 == 0){
+                printf("%f Error \n", drive_error);
+            }
             delay(10);
         }
-        leftMotorGroup.moveVoltage(0);
-        rightMotorGroup.moveVoltage(0);
+        leftMotorGroup.move_voltage(0);
+        rightMotorGroup.move_voltage(0);
     }
 
     void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
@@ -162,8 +169,8 @@ namespace auton{
         drive_with_voltage(output, -output);
         delay(10);
     }
-    leftMotorGroup.moveVoltage(0);
-    rightMotorGroup.moveVoltage(0);
+    leftMotorGroup.move_voltage(0);
+    rightMotorGroup.move_voltage(0);
 }
 
     // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){

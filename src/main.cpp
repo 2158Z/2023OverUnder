@@ -5,28 +5,31 @@
 #include "auton.h"
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
-std::shared_ptr<OdomChassisController> chassis;
+
 pros::ADIDigitalIn cataSwitch('A');
 pros::ADIDigitalOut leftPiston('C');
 pros::ADIDigitalOut rightPiston('B');
 pros::ADIDigitalOut odomLift('E');
-okapi::Motor cata(2, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-okapi::Motor intakeMotor(16, true, AbstractMotor::gearset::red, AbstractMotor::encoderUnits::degrees);
-//left side motor group
-okapi::Motor leftMotor1(18, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::Motor leftMotor2(19, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::Motor leftMotor3(20, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::MotorGroup leftMotorGroup ({leftMotor1, leftMotor2, leftMotor3});
 
-//right side motor group
-okapi::Motor rightMotor1(11, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::Motor rightMotor2(12, true, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::Motor rightMotor3(13, false, AbstractMotor::gearset::blue, AbstractMotor::encoderUnits::degrees);
-okapi::MotorGroup rightMotorGroup ({rightMotor1, rightMotor2, rightMotor3});
+pros::Motor driveLeftMotorBottom(18, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorMiddle(19, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorTop(20, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
-okapi::MotorGroup fullMotorGroup({rightMotor1, rightMotor2, rightMotor3, leftMotor1, leftMotor2, leftMotor3});
+//individual motors for drive right side
+pros::Motor driveRightMotorBottom(11, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorMiddle(12, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorTop(13, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+	
+//motor groups for drive left and rights sides
+pros::Motor_Group leftMotorGroup( {driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop} );
+pros::Motor_Group rightMotorGroup( {driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop} );
+pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
 
-okapi::IMU inertial(1);
+//motors for intake and catapult
+pros::Motor intakeMotor(16, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata(2, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
+
+pros::IMU inertial(1);
 /**
  * A callback function for LLEMU's center button.
  *
@@ -34,12 +37,12 @@ okapi::IMU inertial(1);
  * "I was pressed!" and nothing.
  */
 
-void lowerCata(okapi::Motor cata, pros::ADIDigitalIn limit, int volts){
+void lowerCata(pros::Motor cata, pros::ADIDigitalIn limit, int volts){
 	while (1){
 		if (limit.get_value()) {
 			break;
 		}
-		cata.moveVoltage(volts);
+		cata.move_voltage(volts);
 	}
 }
 
@@ -57,7 +60,7 @@ void on_center_button() {
 void task_limit(void* param) {
 	while(true){
 		if (cataSwitch.get_value() == 1){
-			cata.tarePosition();
+			cata.tare_position();
 		}
 		pros::delay(20);
 	}
@@ -79,28 +82,9 @@ void initialize() {
 		)
 	);
 
-	//Chassis scale 
-	// TODO - Get correct dimensions
-	ChassisScales scale({3.25_in, 12.5_in, 7.5_in, 3.25_in}, imev5BlueTPR);
-	auto middle = RotationSensor(7);
-// Chassis Controller - lets us chassis the robot around with open- or closed-loop control
-	chassis =
-		ChassisControllerBuilder()
-			.withMotors(leftMotorGroup, rightMotorGroup)
-			// Blue gearset, 3.25 in wheel diam, 11.7 in wheel track
-			.withDimensions(AbstractMotor::gearset::blue, scale)
-			.withMaxVoltage((double) 12000) //Motor's max voltage
-			.withGains(
-				{0.0025, 0, 0}, //Driving PID
-				{0.0025, 0, 0}) //Turning PID
-			// .withSensors(middle, middle)
-			.withSensors(leftMotorGroup.getEncoder(),rightMotorGroup.getEncoder())
-			.withOdometry()
-			.buildOdometry();
-
-    leftMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
-    rightMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
-	fullMotorGroup.setBrakeMode(AbstractMotor::brakeMode::coast);
+    leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
+    rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
+	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 
 	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
 	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
@@ -115,9 +99,18 @@ void initialize() {
 	// 	AbstractMotor::gearset::blue,
 	// 	scale
 	// );
-	inertial.calibrate();
+	
+	driveLeftMotorBottom.set_zero_position(0);
+	driveLeftMotorMiddle.set_zero_position(0);
+	driveLeftMotorTop.set_zero_position(0);
+
+	//individual motors for drive right side
+	driveRightMotorBottom.set_zero_position(0);
+	driveRightMotorMiddle.set_zero_position(0);
+	driveRightMotorTop.set_zero_position(0);
+
 	inertial.reset();
-	auton::position_track();
+	// auton::position_track();
 }
 
 /**
@@ -152,7 +145,7 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			auton::drive_distance(6);
+			auton::drive_distance(12);
 			// fullMotorGroup.moveVoltage(-9000);
 			// pros::delay(2000);
 			// fullMotorGroup.moveVoltage(0);
@@ -182,18 +175,6 @@ void autonomous() {
 			// auton::turnAngle(chassis, 76.6);
 			// auton::moveDistance(chassis, 109.7);
 		case 2:
-			chassis -> moveDistance(36_in); //Push matchload in
-			chassis -> moveDistance(-24_in);
-			auton::wings(leftPiston, 2000);
-			chassis -> turnAngle(90_deg); //Spin matchload out
-			chassis -> moveDistance(-52_in); //Push triballs over
-			chassis -> moveDistance(36_in);
-			chassis -> turnAngle(-90_deg);
-			chassis -> moveDistance(24_in);
-			chassis -> turnAngle(-90_deg);
-			chassis -> moveDistance(36_in);
-			chassis -> turnAngle(90_deg);
-			chassis -> moveDistance(-24_in);
 			break;
 		case 3:
 			lowerCata(cata, cataSwitch, 4000);
@@ -215,7 +196,7 @@ void autonomous() {
 
 			break;
 		case 0:
-			auton::progSkills(chassis, cata);
+			auton::progSkills(cata);
 			break;
 		default:
 			break;
@@ -237,45 +218,49 @@ void autonomous() {
  */
 
 void opcontrol() {
-	chassis -> setMaxVelocity(360);
 	// odomLift.set_value(true);
-	cata.setBrakeMode(AbstractMotor::brakeMode::hold);
+	cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
 	bool leftToggle = false;
 	bool rightToggle = false;
     while(true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			intakeMotor.moveVoltage(-8000);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-			intakeMotor.moveVoltage(8000);
+		// Intake control
+		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -8000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 8000 : 0));
+
+		// Trigger right piston
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1) {
+			rightPiston.set_value(true);
 		} else {
-			intakeMotor.moveVoltage(0);
+			rightPiston.set_value(false);
 		}
+		
 
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R2) == 1){
-			rightToggle = !rightToggle;
+		// Trigger left piston
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1) {
+			leftPiston.set_value(true);
+		} else {
+			leftPiston.set_value(false);
 		}
+		
 
-		rightPiston.set_value(rightToggle);
-
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2) == 1){
-			leftToggle = !leftToggle;
+		// Catapult control
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+			cata.move_voltage(11000);
+		} else {
+			cata.move_voltage(0);
 		}
-		leftPiston.set_value(leftToggle);
+		
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 1){
-			cata.moveVoltage(9000);
-		} else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) == 0){
-			cata.moveVoltage(0);
-		}
+		// Lower catapult
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) lowerCata(cata, cataSwitch, 10000);
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)){
-			lowerCata(cata,cataSwitch,10000);
-		}
 
         //naturalize input to a range between -1 and 1
-        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y)/127;
-        double rightInput = (double) master.get_analog(ANALOG_RIGHT_X)/127;
-		chassis->getModel()->arcade(leftInput, rightInput);
+        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127;
+        double rightInput = (double) 0.75 * master.get_analog(ANALOG_RIGHT_X) / 127;
+		
+		rightMotorGroup.move_voltage(12000 * (rightInput - leftInput));
+		leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
+
         pros::delay(20);
     }
 /*
