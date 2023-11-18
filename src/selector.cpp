@@ -93,8 +93,8 @@ namespace selector{
         tabView = lv_tabview_create(lv_scr_act(), NULL);
 
         //Initiate Tabs
-        lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Red");
-        lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Blue");
+        lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Close");
+        lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Far");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
 
         //Check if default auton is at a different tab and change tabs

@@ -145,6 +145,17 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
+			auton::turn_to_angle(-57.5 + 180);
+			auton::drive_distance(-66.2);
+			auton::turn_to_angle(2.4+180);
+			auton::drive_distance(-61.0);
+			auton::turn_to_angle(-161.6+180);
+			auton::drive_distance(-56.2);
+			rightPiston.set_value(true);
+			auton::turn_to_angle(133.4+180);
+			auton::drive_distance(-62.9);
+			auton::turn_to_angle(87.3 + 180);
+			auton::drive_distance(-109.3);
 			auton::turn_to_angle(90);
 			// fullMotorGroup.moveVoltage(-9000);
 			// pros::delay(2000);

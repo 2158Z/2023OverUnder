@@ -51,7 +51,7 @@ namespace auton{
 
     float drive_turn_settle_error = 1;
     float drive_turn_settle_time = 300;
-    float drive_turn_timeout = 5000;
+    float drive_turn_timeout = 500;
 
     float drive_drive_max_voltage = 8000;
     float drive_drive_kp = 1.5;
@@ -139,6 +139,7 @@ namespace auton{
     }
 
     void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
+        distance = distance /  2.54; //Conversion from Centimeter to Inch
         PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_settle_time);
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
