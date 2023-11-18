@@ -16,7 +16,7 @@ namespace auton{
 
     pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
 
-    pros::IMU inertial(1);
+    pros::IMU inertial(4);
     Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
@@ -33,7 +33,7 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     float wheel_diameter = 3.25;
-    float wheel_ratio = 0.6;
+    float wheel_ratio = 0.3;
     float gyro_scale = 1;
     float drive_in_to_deg_ratio = wheel_ratio/360.0*M_PI*wheel_diameter;
     float forwardTrackerCenterDistance = 0;
@@ -44,24 +44,24 @@ namespace auton{
     float sidewaysTrackerInToDegRatio = M_PI*sidewaysTrackerDiameter/360.0;
 
     float drive_turn_max_voltage = 12000;
-    float drive_turn_kp = 0;
-    float drive_turn_ki = 0;    
-    float drive_turn_kd = 0;
+    float drive_turn_kp = 0.35;
+    float drive_turn_ki = 0.25;    
+    float drive_turn_kd = 2;
     float drive_turn_starti = 0;
 
     float drive_turn_settle_error = 1;
     float drive_turn_settle_time = 300;
     float drive_turn_timeout = 5000;
 
-    float drive_drive_max_voltage = 12000;
-    float drive_drive_kp = 1;
+    float drive_drive_max_voltage = 8000;
+    float drive_drive_kp = 1.5;
     float drive_drive_ki = 0;
-    float drive_drive_kd = 0;
+    float drive_drive_kd = .85;
     float drive_drive_starti = 0;
 
     float drive_drive_settle_error = 1.5;
     float drive_drive_settle_time = 500;
-    float drive_drive_timeout = 5000;
+    float drive_drive_timeout = 2000;
 
     float drive_heading_max_voltage = 12000;
     float drive_heading_kp = 0;
@@ -101,7 +101,7 @@ namespace auton{
     }
 
     float get_absolute_heading(){ 
-        return reduce_0_to_360(inertial.get_heading()); 
+        return inertial.get_heading(); 
     }
 
     float get_left_position_in(){
@@ -139,7 +139,7 @@ namespace auton{
     }
 
     void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
-        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti);
+        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_settle_time);
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
         float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
@@ -148,11 +148,12 @@ namespace auton{
             average_position = (get_left_position_in()+get_right_position_in())/2.0;
             float drive_error = distance+start_average_position-average_position;
             float drive_output = drivePID.compute(drive_error) * 1000;
+            drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
             drive_with_voltage(drive_output, drive_output);
-            counter += 1;
-            if (counter % 10 == 0){
-                printf("%f Error \n", drive_error);
-            }
+            // counter += 1;
+            // if (counter % 10 == 0){
+                printf("%f \n", drive_error);
+            // }
             delay(10);
         }
         leftMotorGroup.move_voltage(0);
@@ -160,18 +161,19 @@ namespace auton{
     }
 
     void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
-    drive_desired_heading = angle;
-    PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_error, turn_settle_time, turn_timeout);
-    while(turnPID.is_settled() == false){
-        float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-        float output = turnPID.compute(error);
-        output = clamp(output, -turn_max_voltage, turn_max_voltage);
-        drive_with_voltage(output, -output);
-        delay(10);
+        drive_desired_heading = angle;
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti);
+        while(turnPID.is_settled() == false){
+            float error = reduce_negative_180_to_180(angle - get_absolute_heading());
+            float output = turnPID.compute(error) * 1000;
+            printf("%f \n", error);
+            output = clamp(output, -turn_max_voltage, turn_max_voltage);
+            drive_with_voltage(output, -output);
+            delay(10);
+        }
+        leftMotorGroup.move_voltage(0);
+        rightMotorGroup.move_voltage(0);
     }
-    leftMotorGroup.move_voltage(0);
-    rightMotorGroup.move_voltage(0);
-}
 
     // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
     //     inertial.reset();

@@ -145,7 +145,7 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			auton::drive_distance(12);
+			auton::turn_to_angle(90);
 			// fullMotorGroup.moveVoltage(-9000);
 			// pros::delay(2000);
 			// fullMotorGroup.moveVoltage(0);
