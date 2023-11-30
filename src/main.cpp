@@ -154,11 +154,15 @@ void autonomous() {
 			auton::turn_to_angle(0);
 			auton::drive_distance(-20.2);
 			rightPiston.set_value(true);
-			auton::turn_to_angle(133.4+180);
-			auton::drive_distance(-62.9);
+			auton::turn_to_angle(133.4-180);
+			auton::drive_distance(-63/2);
+			auton::turn_to_angle(133.4-270);
+			auton::turn_to_angle(133.4-360);
+			auton::turn_to_angle(133.4-180);
 			rightPiston.set_value(false);
+			auton::drive_distance(-78/2);
 			auton::turn_to_angle(87.3 + 180);
-			auton::drive_distance(-100.3);
+			auton::drive_distance(-65.3);
 			auton::turn_to_angle(-90);
 			// fullMotorGroup.moveVoltage(-9000);
 			// pros::delay(2000);
@@ -194,23 +198,88 @@ void autonomous() {
 			lowerCata(cata, cataSwitch, 4000);
 			break;
 		case -1:
-			//Close Side
-			// auton::turnAngle(chassis, 88.3);
-			// auton::moveDistance(chassis, 86.4);
-			// auton::turnAngle(chassis, -96.3);
-			// auton::moveDistance(chassis, 115.0);
-			// auton::turnAngle(chassis, -46.4);
-			// auton::moveDistance(chassis, 73.7);
-			// auton::turnAngle(chassis, -3.2);
-			// auton::moveDistance(chassis, 45.8);
+			auton::turn_to_angle(90.0);
+			auton::drive_distance(8.9);
+			auton::turn_to_angle(47.1);
+			leftPiston.set_value(true);
+			auton::drive_distance(48.5);
+			leftPiston.set_value(false);
+			auton::turn_to_angle(0.0);
+			intakeMotor.move_voltage(10000);
+			delay(1000);
+			intakeMotor.move_voltage(0);
+			auton::turn_to_angle(180.0);
+			rightPiston.set_value(true);
+			auton::drive_distance(-55.9);
+			rightPiston.set_value(false);
+			auton::drive_distance(25.4);
+			auton::turn_to_angle(-90.0);
+			auton::drive_distance(64.0);
+			auton::turn_to_angle(0.0);
+			auton::drive_distance(30.5);
+			auton::turn_to_angle(-90.0);
+			intakeMotor.move_voltage(-9000);
+			auton::drive_distance(30.5);
+			intakeMotor.move_voltage(0);
+			auton::turn_to_angle(-12.6);
+			auton::drive_distance(26.7);
+			auton::turn_to_angle(90.0);
+			intakeMotor.move_voltage(9000);
+			delay(500);
+			auton::turn_to_angle(-90);
+			leftPiston.set_value(true);
+			auton::drive_distance(-88.9);
+			intakeMotor.move_voltage(0);
+			leftPiston.set_value(false);
 			break;
 		case -2:
 			break;
 		case -3:
-
+			cata.move_voltage(10000);
+			auton::drive_with_voltage(1000,1000);
 			break;
 		case 0:
+			auton::turn_to_angle(-62.4);
+			auton::drive_distance(65.9);
+			auton::turn_to_angle(255.0, 2000);
 			auton::progSkills(cata);
+			pros::delay(40000);
+			cata.move_voltage(0);
+			while (!cataSwitch.get_value()){
+				cata.move_voltage(4000);
+			}
+			auton::turn_to_angle(-90.0);
+			auton::drive_distance(-58.4);
+			auton::turn_to_angle(0);
+			auton::drive_distance(-33.0);
+			auton::turn_to_angle(-90);
+			auton::drive_distance(-185.4);
+			auton::turn_to_angle(180.0);
+			auton::setWingState(rightPiston, leftPiston, true);
+			auton::drive_distance(-63.5);
+			auton::setWingState(rightPiston, leftPiston, false);
+			auton::turn_to_angle(-94.6);
+			auton::drive_distance(63.7);
+			auton::turn_to_angle(37.4-180);
+			auton::setWingState(rightPiston, leftPiston, true);
+			auton::drive_distance(-54.4);
+			auton::setWingState(rightPiston, leftPiston, false);
+			auton::turn_to_angle(-82.4);
+			auton::drive_distance(38.4);
+			auton::turn_to_angle(180-3.2);
+			auton::drive_distance(45.8);
+			auton::turn_to_angle(-88.4);
+			auton::setWingState(rightPiston, leftPiston, true);
+			auton::drive_distance(-88.9);
+			auton::setWingState(rightPiston, leftPiston, false);
+			auton::turn_to_angle(-90.0);
+			auton::drive_distance(78.7);
+			auton::turn_to_angle(-8.1);
+			auton::drive_distance(71.8);
+			auton::turn_to_angle(115.9-180);
+			auton::setWingState(rightPiston, leftPiston, true);
+			auton::drive_distance(-98.8);
+			auton::setWingState(rightPiston, leftPiston, false);
 			break;
 		default:
 			break;
@@ -238,7 +307,7 @@ void opcontrol() {
 	bool rightToggle = false;
     while(true) {
 		// Intake control
-		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -8000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 8000 : 0));
+		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -10000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 10000 : 0));
 
 		// Trigger right piston
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1) {

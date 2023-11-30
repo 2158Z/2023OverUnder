@@ -53,7 +53,7 @@ namespace auton{
     float drive_turn_settle_time = 600;
     float drive_turn_timeout = 1000;
 
-    float drive_drive_max_voltage = 8000;
+    float drive_drive_max_voltage = 11000;
     float drive_drive_kp = 1.5;
     float drive_drive_ki = 0;
     float drive_drive_kd = .85;
@@ -85,8 +85,7 @@ namespace auton{
 
     void progSkills(pros::Motor cata){
         cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
-        cata.move_voltage(9000);
-        
+        cata.move_voltage(11000);
     }
 
     void wings(pros::ADIDigitalOut wings, int time){
@@ -94,6 +93,12 @@ namespace auton{
         pros::delay(time);
         wings.set_value(false);
     }
+
+    void setWingState(pros::ADIDigitalOut Rwings, pros::ADIDigitalOut Lwings, bool state){
+        Rwings.set_value(state);
+        Lwings.set_value(state);
+    }
+
     void intake(pros::Motor intake, int time){
         intake.move_voltage(8000);
         pros::delay(time);

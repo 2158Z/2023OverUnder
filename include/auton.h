@@ -55,6 +55,7 @@ namespace auton {
     void position_track();
     void progSkills(pros::Motor cata);
     void wings(pros::ADIDigitalOut wings, int time);
+    void setWingState(pros::ADIDigitalOut Rwings, pros::ADIDigitalOut Lwings, bool state);
     void intake(pros::Motor intake, int time);
     float get_absolute_heading();
     float get_left_position_in();
