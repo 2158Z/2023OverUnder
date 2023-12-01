@@ -16,7 +16,7 @@ namespace auton{
 
     pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
 
-    pros::IMU inertial(4);
+    pros::IMU inertial(14);
     Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
@@ -166,7 +166,7 @@ namespace auton{
         rightMotorGroup.move_voltage(0);
     }
 
-    void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
+    void turn_to_angle(float angle, bool turn_bias = false, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
         drive_desired_heading = angle;
         PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
         while(turnPID.is_settled() == false){

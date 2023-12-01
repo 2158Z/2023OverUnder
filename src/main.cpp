@@ -150,17 +150,15 @@ void autonomous() {
 			auton::turn_to_angle(0+180);
 			auton::drive_distance(-50.0);
 			auton::drive_distance(14);
-			auton::turn_to_angle(90);
-			auton::turn_to_angle(0);
-			auton::drive_distance(-20.2);
-			rightPiston.set_value(true);
+			auton::drive_distance(20.2);
+			leftPiston.set_value(true);
+			auton::turn_to_angle(133.4);
+			auton::drive_distance(63/2);
+			auton::turn_to_angle(133.4-90);
 			auton::turn_to_angle(133.4-180);
-			auton::drive_distance(-63/2);
-			auton::turn_to_angle(133.4-270);
-			auton::turn_to_angle(133.4-360);
-			auton::turn_to_angle(133.4-180);
-			rightPiston.set_value(false);
-			auton::drive_distance(-78/2);
+			auton::turn_to_angle(133.4);
+			leftPiston.set_value(false);
+			auton::drive_distance(78/2);
 			auton::turn_to_angle(87.3 + 180);
 			auton::drive_distance(-65.3);
 			auton::turn_to_angle(-90);
@@ -326,15 +324,15 @@ void opcontrol() {
 		
 
 		// Catapult control
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
 			cata.move_voltage(11000);
 		} else {
 			cata.move_voltage(0);
 		}
-		
+	
 
 		// Lower catapult
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) lowerCata(cata, cataSwitch, 10000);
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) lowerCata(cata, cataSwitch, 10000);
 
 
         //naturalize input to a range between -1 and 1
