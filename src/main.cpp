@@ -148,9 +148,6 @@ void autonomous() {
 			auton::turn_to_angle(-55 + 180);
 			auton::drive_distance(-62.2);
 			auton::turn_to_angle(0+180);
-			auton::drive_distance(-50.0);
-			auton::drive_distance(14);
-			auton::drive_distance(20.2);
 			leftPiston.set_value(true);
 			auton::turn_to_angle(133.4);
 			auton::drive_distance(63/2);
@@ -159,9 +156,11 @@ void autonomous() {
 			auton::turn_to_angle(133.4);
 			leftPiston.set_value(false);
 			auton::drive_distance(78/2);
-			auton::turn_to_angle(87.3 + 180);
-			auton::drive_distance(-65.3);
-			auton::turn_to_angle(-90);
+			auton::turn_to_angle(90 + 180);
+			auton::drive_distance(-50.3);
+			// auton::drive_distance(-55.3);
+			// auton::turn_to_angle(-90);
+			break;
 			// fullMotorGroup.moveVoltage(-9000);
 			// pros::delay(2000);
 			// fullMotorGroup.moveVoltage(0);
@@ -206,9 +205,8 @@ void autonomous() {
 			leftPiston.set_value(false);
 			break;
 		case 3:
-			lowerCata(cata, cataSwitch, 4000);
 			break;
-		case -1: //  12/1/2023
+		case -1: //  Farside
 			auton::turn_to_angle(-180);
 			auton::drive_distance(-56.6,8000);
 			delay(250);
@@ -277,38 +275,42 @@ void autonomous() {
 			leftPiston.set_value(false);
 			break;
 		case -3:
+			cata.move_voltage(9000);
+			auton::drive_with_voltage(1000, 1000);
 			break;
 		case 0:
-			auton::turn_to_angle(-62.4);
-			auton::drive_distance(65.9);
-			auton::turn_to_angle(255.0, 2000);
-			auton::progSkills(cata);
-			pros::delay(40000);
-			cata.move_voltage(0);
-			while (!cataSwitch.get_value()){
-				cata.move_voltage(4000);
-			}
-			auton::turn_to_angle(-90.0);
-			auton::drive_distance(-58.4);
-			auton::turn_to_angle(0);
-			auton::drive_distance(-33.0);
-			auton::turn_to_angle(-90);
-			auton::drive_distance(-185.4);
+			auton::turn_to_angle(-55 + 180);
+			auton::drive_distance(-62.2);
+			auton::turn_to_angle(0+180);
+			auton::drive_distance(-50.0);
+			auton::drive_distance(35);
+			auton::turn_to_angle(180+75);
+			auton::drive_distance(-28);
+			auton::setWingState(rightPiston, leftPiston, true);
+			cata.move_voltage(11000);
+			delay(45000);
+			auton::setWingState(rightPiston, leftPiston, false);
+			auton::turn_to_angle(90.0);
+			auton::drive_distance(65.4);
 			auton::turn_to_angle(180.0);
+			auton::drive_distance(45.0);
+			auton::turn_to_angle(90);
+			auton::drive_distance(185.4);
+			auton::turn_to_angle(0.0+180);
 			auton::setWingState(rightPiston, leftPiston, true);
 			auton::drive_distance(-63.5);
 			auton::setWingState(rightPiston, leftPiston, false);
 			auton::turn_to_angle(-94.6);
 			auton::drive_distance(63.7);
-			auton::turn_to_angle(37.4-180);
+			auton::turn_to_angle(180+37.4);
 			auton::setWingState(rightPiston, leftPiston, true);
 			auton::drive_distance(-54.4);
 			auton::setWingState(rightPiston, leftPiston, false);
 			auton::turn_to_angle(-82.4);
 			auton::drive_distance(38.4);
-			auton::turn_to_angle(180-3.2);
+			auton::turn_to_angle(-3.2);
 			auton::drive_distance(45.8);
-			auton::turn_to_angle(-88.4);
+			auton::turn_to_angle(180+90.4);
 			auton::setWingState(rightPiston, leftPiston, true);
 			auton::drive_distance(-88.9);
 			auton::setWingState(rightPiston, leftPiston, false);
@@ -316,7 +318,7 @@ void autonomous() {
 			auton::drive_distance(78.7);
 			auton::turn_to_angle(-8.1);
 			auton::drive_distance(71.8);
-			auton::turn_to_angle(115.9-180);
+			auton::turn_to_angle(180+115.9);
 			auton::setWingState(rightPiston, leftPiston, true);
 			auton::drive_distance(-98.8);
 			auton::setWingState(rightPiston, leftPiston, false);
