@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #define DEFAULT 1
 #define AUTONS "Auton1", "Auton2", "Auton3"
 

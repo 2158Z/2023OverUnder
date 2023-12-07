@@ -1,5 +1,6 @@
 #include "main.h"
 #include "selector.h"
+LV_IMG_DECLARE(zerotwo);
 namespace selector{
     int auton;
     int autonCount;
@@ -8,6 +9,7 @@ namespace selector{
     lv_obj_t *tabView;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
+    lv_obj_t *zewoTwo;
 
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
@@ -96,6 +98,7 @@ namespace selector{
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Close");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Far");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
+        lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         //Check if default auton is at a different tab and change tabs
         if(auton < 0){
@@ -131,7 +134,14 @@ namespace selector{
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        pros::Task tabWatcher_task(tabWatcher);
+        zewoTwo = lv_img_create(lv_scr_act(), NULL);
+        lv_img_set_src(zewoTwo, &zerotwo);
+        lv_obj_set_width( zewoTwo, 240);
+        lv_obj_set_height( zewoTwo, 282);
+        lv_obj_set_x( zewoTwo, 167 );
+        lv_obj_set_y( zewoTwo, 65 );
+        lv_obj_align( zewoTwo, NULL, LV_ALIGN_CENTER, 0, 0 );
 
+        pros::Task tabWatcher_task(tabWatcher);
     }
 }
