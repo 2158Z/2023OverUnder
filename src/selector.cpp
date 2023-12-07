@@ -74,6 +74,9 @@ namespace selector{
             }
             pros::delay(20);
         }
+        if (!competition_is_disabled() || competition_is_autonomous()){
+            lv_tabview_set_tab_act(tabView, 4, true)
+        }
     }
 
     void init(int defaultAuton, const char **autons){
