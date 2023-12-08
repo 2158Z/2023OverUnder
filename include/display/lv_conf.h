@@ -81,9 +81,7 @@
 
 /*Color settings*/
 #define LV_COLOR_DEPTH 32 /*Color depth: 1/8/16/24*/
-#define LV_COLOR_TRANSP                                                        \
-  LV_COLOR_LIME /*Images pixels with this color will not be drawn (with chroma \
-                   keying)*/
+#define LV_COLOR_TRANSP LV_COLOR_LIME /*Images pixels with this color will not be drawn (with chroma \ keying)*/
 
 /*Text settings*/
 #define LV_TXT_UTF8 1 /*Enable UTF-8 coded Unicode character usage */

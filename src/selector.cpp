@@ -1,6 +1,8 @@
 #include "main.h"
+#include "display/lv_objx/lv_img.h"
 #include "selector.h"
 LV_IMG_DECLARE(zerotwo);
+LV_IMG_DECLARE(canman_left);
 namespace selector{
     int auton;
     int autonCount;
@@ -9,7 +11,7 @@ namespace selector{
     lv_obj_t *tabView;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
-    lv_obj_t *zewoTwo;
+    lv_obj_t *canman;
 
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
@@ -74,9 +76,6 @@ namespace selector{
             }
             pros::delay(20);
         }
-        if (!competition_is_disabled() || competition_is_autonomous()){
-            lv_tabview_set_tab_act(tabView, 4, true)
-        }
     }
 
     void init(int defaultAuton, const char **autons){
@@ -137,13 +136,12 @@ namespace selector{
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        zewoTwo = lv_img_create(lv_scr_act(), NULL);
-        lv_img_set_src(zewoTwo, &zerotwo);
-        lv_obj_set_width( zewoTwo, 240);
-        lv_obj_set_height( zewoTwo, 282);
-        lv_obj_set_x( zewoTwo, 167 );
-        lv_obj_set_y( zewoTwo, 65 );
-        lv_obj_align( zewoTwo, NULL, LV_ALIGN_CENTER, 0, 0 );
+        canman = lv_img_create(lv_scr_act(), NULL);
+        lv_img_set_src(canman, &canman_left);
+        lv_img_set_auto_size(canman, true);
+        lv_obj_set_x( canman, 167 );
+        lv_obj_set_y( canman, 65 );
+        lv_obj_align( canman, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, 0, 0 );
 
         pros::Task tabWatcher_task(tabWatcher);
     }
