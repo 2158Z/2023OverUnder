@@ -5,6 +5,7 @@
 
 namespace selector{
     extern lv_obj_t *tabView;
+    extern lv_obj_t *miscTab;
     extern int auton;
     static const char *b[] = {AUTONS, ""};
     void init(int defaultAuton=DEFAULT, const char **autons = b);

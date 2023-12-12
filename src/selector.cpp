@@ -9,6 +9,7 @@ namespace selector{
     const char *btnMap[] = {"","","","","","","","","","",""};
 
     lv_obj_t *tabView;
+    lv_obj_t *miscTab;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
     lv_obj_t *canman;
@@ -100,7 +101,7 @@ namespace selector{
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Close");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Far");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
-        lv_obj_t *miscTab = lv_tabview_add_tab(tabView, "Misc");
+        miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         //Check if default auton is at a different tab and change tabs
         if(auton < 0){
