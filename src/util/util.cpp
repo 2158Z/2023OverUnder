@@ -1,4 +1,5 @@
 #include "main.h"
+#include <math.h>
 
 float reduce_0_to_360(float angle) {
   while(!(angle >= 0 && angle < 360)) {

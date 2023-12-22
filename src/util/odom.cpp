@@ -1,7 +1,14 @@
 #include "main.h"
+#include "odom.h"
+#include <math.h>
 
-void Odom::set_physical_distances(float forwardTrackerCenterDistance, float SidewaysTracker_center_distance){
-  this->forwardTrackerCenterDistance = forwardTrackerCenterDistance;
+float SidewaysTracker_diameter = 3.25;
+float SidewaysTracker_in_to_deg_ratio = M_PI*SidewaysTracker_diameter/360.0;
+float ForwardTracker_diameter = 3.25;
+float ForwardTracker_in_to_deg_ratio = M_PI*ForwardTracker_diameter/360.0;
+
+void Odom::set_physical_distances(float ForwardTracker_center_distance, float SidewaysTracker_center_distance){
+  this->ForwardTracker_center_distance = ForwardTracker_center_distance;
   this->SidewaysTracker_center_distance = SidewaysTracker_center_distance;
 }
 
@@ -30,8 +37,8 @@ void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_
     local_X_position = Sideways_delta;
     local_Y_position = Forward_delta;
   } else {
-    local_X_position = (2*sin(orientation_delta_rad/2))*((Sideways_delta/orientation_delta_rad)+SidewaysTracker_center_distance); 
-    local_Y_position = (2*sin(orientation_delta_rad/2))*((Forward_delta/orientation_delta_rad)+forwardTrackerCenterDistance);
+    local_X_position = (2*sin(orientation_delta_rad/2))*((Sideways_delta/orientation_delta_rad)); 
+    local_Y_position = (2*sin(orientation_delta_rad/2))*((Forward_delta/orientation_delta_rad));
   }
 
   float local_polar_angle;
@@ -52,4 +59,20 @@ void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_
 
   X_position+=X_position_delta;
   Y_position+=Y_position_delta;
+}
+
+float Odom::get_ForwardTracker_position(float deg){
+    return(deg*ForwardTracker_in_to_deg_ratio);
+}
+
+float Odom::get_SidewaysTracker_position(float deg){
+    return(deg*SidewaysTracker_in_to_deg_ratio);
+}
+
+float Odom::get_Xposition(){
+  return this->X_position;
+}
+
+float Odom::get_Yposition(){
+  return this->Y_position;
 }

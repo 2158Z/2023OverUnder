@@ -8,6 +8,8 @@
 namespace selector{
     extern lv_obj_t *tabView;
     extern int auton;
+    extern lv_obj_t *miscTab;
+    extern lv_obj_t *cordLabel;
     static const char *b[] = {AUTONS, ""};
     void init(int defaultAuton=DEFAULT, const char **autons = b);
 }

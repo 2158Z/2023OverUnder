@@ -1,13 +1,20 @@
 #include "main.h"
+#include "display/lv_objx/lv_img.h"
 #include "selector.h"
+LV_IMG_DECLARE(zerotwo);
+LV_IMG_DECLARE(canman_left);
 namespace selector{
     int auton;
     int autonCount;
     const char *btnMap[] = {"","","","","","","","","","",""};
 
     lv_obj_t *tabView;
+    lv_obj_t *miscTab;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
+    lv_obj_t *canman;
+    
+    lv_obj_t *cordLabel;
 
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
@@ -96,6 +103,7 @@ namespace selector{
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Close");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Far");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
+        miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         //Check if default auton is at a different tab and change tabs
         if(auton < 0){
@@ -131,7 +139,16 @@ namespace selector{
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
 
-        pros::Task tabWatcher_task(tabWatcher);
+        canman = lv_img_create(lv_scr_act(), NULL);
+        lv_img_set_src(canman, &canman_left);
+        lv_img_set_auto_size(canman, true);
+        lv_obj_set_x( canman, 167 );
+        lv_obj_set_y( canman, 65 );
+        lv_obj_align( canman, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, 0, 0 );
 
+        cordLabel = lv_label_create(miscTab, NULL);
+        lv_obj_align( cordLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 0 );
+
+        pros::Task tabWatcher_task(tabWatcher);
     }
 }

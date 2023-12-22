@@ -3,6 +3,8 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
+#include "util/odom.h"
+#include <string>
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -30,6 +32,8 @@ pros::Motor intakeMotor(16, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DE
 pros::Motor cata(2, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
 pros::IMU inertial(1);
+
+Odom odom;
 /**
  * A callback function for LLEMU's center button.
  *
@@ -65,7 +69,6 @@ void task_limit(void* param) {
 		pros::delay(20);
 	}
 }
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -81,6 +84,23 @@ void initialize() {
 			Logger::LogLevel::error
 		)
 	);
+	
+	pros::Task task{[=] {
+		while(1){
+			pros::delay(10);
+			odom.update_position(odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0, auton::get_absolute_heading());
+			float x = odom.get_Xposition();
+			float y = odom.get_Yposition();
+			char str[1024];
+			sprintf(str, "X: %s Y: %s", x, y);
+			lv_label_set_text(selector::cordLabel, str);
+	
+		}
+    }, "Odom Task"
+	};
+
+	odom.set_physical_distances(6.5, 6.5);
+	odom.set_position(0, 0, auton::get_absolute_heading(), odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0);
 
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
@@ -110,7 +130,6 @@ void initialize() {
 	driveRightMotorTop.set_zero_position(0);
 
 	inertial.reset();
-	// auton::position_track();
 }
 
 /**
