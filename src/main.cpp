@@ -34,33 +34,30 @@ pros::Motor cata(2, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::IMU inertial(1);
 
 Odom odom;
+
 /**
- * A callback function for LLEMU's center button.
+ * @brief Lower the catapult motor until the limit switch is triggered.
  *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
+ * Moves the catapult motor at a specified voltage until the limit switch is triggered.
+ *
+ * @param cata A pros::Motor object representing the catapult motor.
+ * @param limit A pros::ADIDigitalIn object representing the limit switch.
+ * @param volts The voltage value used to move the catapult motor.
  */
 
-void lowerCata(pros::Motor cata, pros::ADIDigitalIn limit, int volts){
-	while (1){
-		if (limit.get_value()) {
-			break;
-		}
-		cata.move_voltage(volts);
-	}
+void lowerCata(pros::Motor cata, pros::ADIDigitalIn limit, int volts) {
+    while (1) {
+        // Check if the limit switch is triggered. If true, break out of the loop.
+        if (limit.get_value()) {
+            break;
+        }
+
+        // Move the cata motor at the specified voltage.
+        cata.move_voltage(volts);
+    }
 }
 
-void on_center_button() { 
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
 
-//async tasks. this is used for running multiple functions at once.
 void task_limit(void* param) {
 	while(true){
 		if (cataSwitch.get_value() == 1){
@@ -69,6 +66,32 @@ void task_limit(void* param) {
 		pros::delay(20);
 	}
 }
+
+/**
+ * @brief Updates the label with the current X and Y positions from odometery.
+ *
+ * Retrieves the X and Y positions from the odometery, formats them into a string,
+ * and updates the label (selector::cordLabel) with the formatted information.
+ *
+ * @param p A pointer to additional parameters (not used).
+ */
+
+void updateLabel(void* p) {
+    // Get the current X and Y positions from the odometer.
+    float x = odom.get_Xposition();
+    float y = odom.get_Yposition();
+
+    // Create a string to hold the formatted position information.
+    char str[1024];
+    
+    // Format the X and Y positions into the string.
+    sprintf(str, "X: %s Y: %s", x, y);
+
+    // Set the text of the label (selector::cordLabel) with the formatted position information.
+    lv_label_set_text(selector::cordLabel, str);
+}
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -84,41 +107,28 @@ void initialize() {
 			Logger::LogLevel::error
 		)
 	);
-	
-	pros::Task task{[=] {
-		while(1){
-			pros::delay(10);
-			odom.update_position(odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0, auton::get_absolute_heading());
-			float x = odom.get_Xposition();
-			float y = odom.get_Yposition();
-			char str[1024];
-			sprintf(str, "X: %s Y: %s", x, y);
-			lv_label_set_text(selector::cordLabel, str);
-	
-		}
-    }, "Odom Task"
-	};
 
+	lv_task_create(updateLabel, 1000, LV_TASK_PRIO_LOW, NULL);
+
+	// pros::Task task{[=] {
+	// 		while(1){
+	// 			pros::delay(10);
+	// 			odom.update_position(odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0, auton::get_absolute_heading());
+	// 			float x = odom.get_Xposition();
+	// 			float y = odom.get_Yposition();
+	// 			char str[1024];
+	// 			sprintf(str, "X: %s Y: %s", x, y);
+	// 			lv_label_set_text(selector::cordLabel, str);
+		
+	// 		}
+	// 	}, "Odom Task"
+	// };
 	odom.set_physical_distances(6.5, 6.5);
 	odom.set_position(0, 0, auton::get_absolute_heading(), odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0);
 
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
-
-	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-	// std::unique_ptr<okapi::IterativePosPIDController> angle = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-
-	// chassisPID = ChassisControllerPID(
-	// 	TimeUtilFactory::createDefault().getTimer(),
-	// 	chassis->getModel(),
-	// 	distance,
-	// 	turn,
-	// 	angle,
-	// 	AbstractMotor::gearset::blue,
-	// 	scale
-	// );
 	
 	driveLeftMotorBottom.set_zero_position(0);
 	driveLeftMotorMiddle.set_zero_position(0);

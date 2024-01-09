@@ -116,7 +116,7 @@ namespace auton{
             //printf("%f Left\n", ( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;
         }
         return( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio);
-        }
+    }
 
     float get_right_position_in(){
         if (counter % 100 == 0){
@@ -145,78 +145,140 @@ namespace auton{
         rightMotorGroup.move_voltage(-1 * rightVoltage);
     }
 
-    void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
-        distance = distance /  2.54; //Conversion from Centimeter to Inch
-        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_timeout);
+    void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage,
+                        float heading_max_voltage = drive_heading_max_voltage,
+                        float drive_settle_error = drive_drive_settle_error,
+                        float drive_settle_time = drive_drive_settle_time,
+                        float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp,
+                        float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd,
+                        float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp,
+                        float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd,
+                        float heading_starti = drive_heading_starti) {
+        // Convert distance from centimeters to inches
+        distance = distance / 2.54;
+
+        // Initialize PID controller for drive
+        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error,
+                    drive_timeout);
+
+        // Reset the position of the middle motors
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
-        float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
+
+        // Calculate the initial average position of the left and right motors
+        float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
         float average_position = start_average_position;
-        while(drivePID.is_settled() == false){
-            average_position = (get_left_position_in()+get_right_position_in())/2.0;
-            float drive_error = distance+start_average_position-average_position;
+
+        // Continue driving until the drive PID controller is settled
+        while (drivePID.is_settled() == false) {
+            // Recalculate the average position of the left and right motors.
+            average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
+
+            // Calculate the drive error based on the desired distance and the change in average position
+            float drive_error = distance + start_average_position - average_position;
+
+            // Compute PID output
             float drive_output = drivePID.compute(drive_error) * 1000;
             drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
+
+            // Apply the calculated voltages for driving
             drive_with_voltage(drive_output, drive_output);
-            // counter += 1;
-            // if (counter % 10 == 0){
-                printf("%f \n", drive_error);
-            // }
+
+            // Print the drive error for debugging purposes
+            printf("%f \n", drive_error);
+
+            // Introduce a delay to control loop execution speed
             delay(10);
         }
+
+        // Stop the left and right motor groups after the drive is complete
         leftMotorGroup.move_voltage(0);
         rightMotorGroup.move_voltage(0);
-    }
+}
 
-    void turn_to_angle(float angle, bool turn_bias = false, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
+    void turn_to_angle(float angle, bool turn_bias = false, float turn_max_voltage = drive_turn_max_voltage,
+                    float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time,
+                    float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp,
+                    float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti) {
+        // Set the desired heading for the turn.
         drive_desired_heading = angle;
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
-        while(turnPID.is_settled() == false){
+
+        // Initialize PID for turning
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti,
+                    turn_settle_time, turn_settle_error, turn_timeout);
+
+        // Continue turning until PID settles
+        while (turnPID.is_settled() == false) {
+            // Calculate the error between the target angle and the current heading.
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
+
+            // Compute PID output and scale
             float output = turnPID.compute(error) * 1000;
+
+            // debugging
             printf("%f \n", error);
+
+            // Force max speed
             output = clamp(output, -turn_max_voltage, turn_max_voltage);
+
+            // Apply the calculated voltages to motors for turning
             drive_with_voltage(output, -output);
+
+            // Delay to control loop execution speed
             delay(10);
         }
+
+        // Stop motorgroups on compeletion
         leftMotorGroup.move_voltage(0);
         rightMotorGroup.move_voltage(0);
     }
-
-    void driveTurn(float distance, float angle, float turnWeight, float drive_timeout = drive_drive_timeout, float turn_timeout = drive_turn_timeout, 
-    float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, 
-    float drive_starti = drive_drive_starti, float drive_settle_time = drive_drive_settle_time, float drive_settle_error = drive_drive_settle_error,
-    float drive_max_voltage = drive_drive_max_voltage,
-    float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, 
-    float turn_starti = drive_turn_starti,  float turn_settle_error = drive_turn_settle_error,
-    float turn_settle_time = drive_turn_settle_time, float turn_max_voltage = drive_turn_max_voltage) {
-
+    void driveTurn(float distance, float angle, float turnWeight, float drive_timeout = drive_drive_timeout,
+                float turn_timeout = drive_turn_timeout, float drive_kp = drive_drive_kp,
+                float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd,
+                float drive_starti = drive_drive_starti, float drive_settle_time = drive_drive_settle_time,
+                float drive_settle_error = drive_drive_settle_error, float drive_max_voltage = drive_drive_max_voltage,
+                float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd,
+                float turn_starti = drive_turn_starti, float turn_settle_error = drive_turn_settle_error,
+                float turn_settle_time = drive_turn_settle_time, float turn_max_voltage = drive_turn_max_voltage){
+        // Reset the position of the middle motors.
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
 
-        float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
+        // Calculate the initial average position of the left and right motors.
+        float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
         float average_position = start_average_position;
+
+        // Initialize PID controllers for drive and turn.
         PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_timeout);
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
-        while(turnPID.is_settled() == false || drivePID.is_settled() == false){
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti,
+                    turn_settle_time, turn_settle_error, turn_timeout);
+
+        // Continue adjusting both drive and turn until both PID controllers are settled.
+        while (turnPID.is_settled() == false || drivePID.is_settled() == false) {
+            // Calculate the error between the target angle and the current heading.
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
+
+            // Compute PID output for turning and scale it.
             float output = turnPID.compute(error) * 1000;
-            //printf("%f \n", error);
             output = clamp(output, -turn_max_voltage, turn_max_voltage);
-            
-            average_position = (get_left_position_in()+get_right_position_in())/2.0;
-            float drive_error = distance+start_average_position-average_position;
+
+            // Recalculate the average position of the left and right motors.
+            average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
+
+            // Calculate the drive error based on the desired distance and the change in average position.
+            float drive_error = distance + start_average_position - average_position;
+
+            // Compute PID output for driving and scale it.
             float drive_output = drivePID.compute(drive_error) * 1000;
             drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
+
+            // Calculate voltages for left and right motors using the weighted sum of turn and drive outputs.
             drive_with_voltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
-((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
-            // counter += 1;
-            // if (counter % 10 == 0){
-            //printf("%f \n", drive_error);
-            // }
+                            ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
+
+            // Introduce a delay to control loop execution speed.
             delay(10);
         }
-
     }
 
     // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
@@ -228,5 +290,4 @@ namespace auton{
     //     double offset = (abs(curr) - target)*2;
     //     chassis -> turnAngle(-offset*degree);
     // }
-
 }

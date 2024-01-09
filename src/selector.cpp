@@ -15,6 +15,9 @@ namespace selector{
     lv_obj_t *canman;
     
     lv_obj_t *cordLabel;
+    lv_obj_t *tempLabel;
+    lv_obj_t *autonLabel;
+    lv_obj_t *phaseLabel;
 
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
@@ -148,6 +151,15 @@ namespace selector{
 
         cordLabel = lv_label_create(miscTab, NULL);
         lv_obj_align( cordLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 0 );
+
+        tempLabel = lv_label_create(miscTab, NULL);
+        lv_obj_align(tempLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
+
+        autonLabel = lv_obj_create(miscTab, NULL);
+        lv_obj_align(autonLabel, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
+
+        phaseLabel = lv_obj_create(miscTab, NULL);
+        lv_obj_align( phaseLabel, NULL, LV_ALIGN_CENTER, 0, 0);
 
         pros::Task tabWatcher_task(tabWatcher);
     }
