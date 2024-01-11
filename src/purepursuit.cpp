@@ -3,10 +3,14 @@
 
 double k = 0.1;
 double look_distance = 2.0;
-double Kp = 1.0;
-double dt = 0.1;
-double WB = 2.9;
+double drive_kp = 1.0;
+double heading_kp = 2.0;
+double tick = 0.1;
+double wheelbase = 2.9;
 double target_voltage = 12000.0;
+
+double left_voltage = 0;
+double right_voltage = 0;
 
 class TargetCourse {
 public:
@@ -15,13 +19,16 @@ public:
 
     TargetCourse(std::vector<double> cx, std::vector<double> cy) : cx(cx), cy(cy), current_index(0) {}
 
+    // Find the index of the next point.
     std::pair<int, double> search_target_index(Odom odom) {
         double min_distance = std::numeric_limits<double>::max();
         int nearest_point_index = current_index;
 
         for (size_t i = current_index; i < cx.size(); i++) {
+            // Displacement till point
             double dx = odom.X_position - cx[i];
             double dy = odom.Y_position - cy[i];
+            // Distance to point
             double d = sqrt(dx * dx + dy * dy);
             if (d < min_distance) {
                 min_distance = d;
@@ -32,11 +39,6 @@ public:
         return std::make_pair(nearest_point_index, min_distance);
     }
 };
-
-double proportional_control(double target, double current) {
-    return Kp * (target - current);
-}
-
 std::pair<double, int> pure_pursuit_steer_control(Odom odom, TargetCourse trajectory) {
     int ind, _;
     std::tie(ind, _) = trajectory.search_target_index(odom);
@@ -50,9 +52,10 @@ std::pair<double, int> pure_pursuit_steer_control(Odom odom, TargetCourse trajec
         ty = trajectory.cy.back();
         ind = trajectory.cx.size() - 1;
     }
-
+    // Heading error
     double alpha = atan2(ty - odom.Y_position, tx - odom.X_position) - odom.orientation_deg;
-    double delta = atan2(2.0 * WB * sin(alpha) / look_distance, 1.0);
+    // Required heading correction
+    double delta = atan2(heading_kp * wheelbase * sin(alpha) / look_distance, 1.0);
 
     return std::make_pair(delta, ind);
 }
@@ -64,7 +67,6 @@ std::pair<double, int> pure_pursuit_steer_control(Odom odom, TargetCourse trajec
 //     TargetCourse target_course(cx, cy);
 
 //     while (1) {
-//         double adjusted_target_voltage = proportional_control(target_voltage, odom.get_Xposition());
 //         double di;
 //         int nearest_index, _;
 //         std::tie(di, nearest_index) = pure_pursuit_steer_control(odom, target_course);
@@ -74,11 +76,11 @@ std::pair<double, int> pure_pursuit_steer_control(Odom odom, TargetCourse trajec
 //             break;
 //         }
 
-//         double left_voltage = adjusted_target_voltage - WB * di / 2.0;
-//         double right_voltage = adjusted_target_voltage + WB * di / 2.0;
+//         left_voltage = drive_kp * (target_voltage - left_voltage) - wheelbase * di;
+//         right_voltage = drive_kp * (target_voltage - right_voltage) + wheelbase * di;
 
 //         drive_with_voltage(left_voltage, right_voltage);
-//         pros::delay(int(dt * 1000));
+//         pros::delay(int(tick * 1000));
 //     }
 
 //     return 0;
