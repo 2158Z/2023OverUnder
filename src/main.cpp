@@ -3,94 +3,34 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
-#include "util/odom.h"
-#include <string>
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::ADIDigitalIn cataSwitch('A');
-pros::ADIDigitalOut leftPiston('C');
-pros::ADIDigitalOut rightPiston('B');
-pros::ADIDigitalOut odomLift('E');
+pros::ADIDigitalOut frontPistons('G');
+pros::ADIDigitalOut backPistons('H');
 
-pros::Motor driveLeftMotorBottom(18, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveLeftMotorMiddle(19, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveLeftMotorTop(20, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorBack(driveLeftMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorMiddle(driveLeftMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorFront(driveLeftMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
-//individual motors for drive right side
-pros::Motor driveRightMotorBottom(11, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveRightMotorMiddle(12, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveRightMotorTop(13, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+// Individual motors for drive right side
+pros::Motor driveRightMotorBack(driveRightMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorMiddle(driveRightMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorFront(driveRightMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 	
-//motor groups for drive left and rights sides
-pros::Motor_Group leftMotorGroup( {driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop} );
-pros::Motor_Group rightMotorGroup( {driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop} );
-pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
+// Motor groups for drive left and rights sides
+pros::Motor_Group leftMotorGroup( {driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
+pros::Motor_Group rightMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront} );
+pros::Motor_Group fullMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront, driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
 
-//motors for intake and catapult
-pros::Motor intakeMotor(16, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor cata(2, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
+// Motors for intake and catapult
+pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata1(cata1MotorID, pros::E_MOTOR_GEAR_GREEN, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata2(cata2MotorID, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
-pros::IMU inertial(1);
+pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
-Odom odom;
-
-/**
- * @brief Lower the catapult motor until the limit switch is triggered.
- *
- * Moves the catapult motor at a specified voltage until the limit switch is triggered.
- *
- * @param cata A pros::Motor object representing the catapult motor.
- * @param limit A pros::ADIDigitalIn object representing the limit switch.
- * @param volts The voltage value used to move the catapult motor.
- */
-
-void lowerCata(pros::Motor cata, pros::ADIDigitalIn limit, int volts) {
-    while (1) {
-        // Check if the limit switch is triggered. If true, break out of the loop.
-        if (limit.get_value()) {
-            break;
-        }
-
-        // Move the cata motor at the specified voltage.
-        cata.move_voltage(volts);
-    }
-}
-
-
-void task_limit(void* param) {
-	while(true){
-		if (cataSwitch.get_value() == 1){
-			cata.tare_position();
-		}
-		pros::delay(20);
-	}
-}
-
-/**
- * @brief Updates the label with the current X and Y positions from odometery.
- *
- * Retrieves the X and Y positions from the odometery, formats them into a string,
- * and updates the label (selector::cordLabel) with the formatted information.
- *
- * @param p A pointer to additional parameters (not used).
- */
-
-void updateLabel(void* p) {
-    // Get the current X and Y positions from the odometer.
-    float x = odom.get_Xposition();
-    float y = odom.get_Yposition();
-
-    // Create a string to hold the formatted position information.
-    char str[1024];
-    
-    // Format the X and Y positions into the string.
-    sprintf(str, "X: %s Y: %s", x, y);
-
-    // Set the text of the label (selector::cordLabel) with the formatted position information.
-    lv_label_set_text(selector::cordLabel, str);
-}
-
+pros::IMU inertial(inertialID);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -108,38 +48,36 @@ void initialize() {
 		)
 	);
 
-	lv_task_create(updateLabel, 1000, LV_TASK_PRIO_LOW, NULL);
-
-	// pros::Task task{[=] {
-	// 		while(1){
-	// 			pros::delay(10);
-	// 			odom.update_position(odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0, auton::get_absolute_heading());
-	// 			float x = odom.get_Xposition();
-	// 			float y = odom.get_Yposition();
-	// 			char str[1024];
-	// 			sprintf(str, "X: %s Y: %s", x, y);
-	// 			lv_label_set_text(selector::cordLabel, str);
-		
-	// 		}
-	// 	}, "Odom Task"
-	// };
-	odom.set_physical_distances(6.5, 6.5);
-	odom.set_position(0, 0, auton::get_absolute_heading(), odom.get_ForwardTracker_position((driveLeftMotorMiddle.get_position() + driveRightMotorMiddle.get_position())/2), 0);
-
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
-	
-	driveLeftMotorBottom.set_zero_position(0);
-	driveLeftMotorMiddle.set_zero_position(0);
-	driveLeftMotorTop.set_zero_position(0);
+	cataMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 
-	//individual motors for drive right side
-	driveRightMotorBottom.set_zero_position(0);
+	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+	// std::unique_ptr<okapi::IterativePosPIDController> angle = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
+
+	// chassisPID = ChassisControllerPID(
+	// 	TimeUtilFactory::createDefault().getTimer(),
+	// 	chassis->getModel(),
+	// 	distance,
+	// 	turn,
+	// 	angle,
+	// 	AbstractMotor::gearset::blue,
+	// 	scale
+	// );
+	
+	driveLeftMotorBack.set_zero_position(0);
+	driveLeftMotorMiddle.set_zero_position(0);
+	driveLeftMotorFront.set_zero_position(0);
+
+	// Individual motors for drive right side
+	driveRightMotorBack.set_zero_position(0);
 	driveRightMotorMiddle.set_zero_position(0);
-	driveRightMotorTop.set_zero_position(0);
+	driveRightMotorFront.set_zero_position(0);
 
 	inertial.reset();
+	// auton::position_track();
 }
 
 /**
@@ -174,19 +112,33 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			auton::turn_to_angle(-55 + 180);
-			auton::drive_distance(-62.2);
-			auton::turn_to_angle(0+180);
-			leftPiston.set_value(true);
-			auton::turn_to_angle(133.4);
-			auton::drive_distance(63/2);
-			auton::turn_to_angle(133.4-90);
-			auton::turn_to_angle(133.4-180);
-			auton::turn_to_angle(133.4);
-			leftPiston.set_value(false);
-			auton::drive_distance(78/2);
-			auton::turn_to_angle(90 + 180);
-			auton::drive_distance(-50.3);
+			frontPistons.set_value(true);
+			pros::delay(1500);
+			frontPistons.set_value(false);
+			auton::driveTurn(47, -45, 0.2);
+			auton::driveTurn(0, 45, 1);
+			auton::turn_to_angle(45);
+			frontPistons.set_value(true);
+			auton::driveTurn(30, 0, 0, 500);
+			frontPistons.set_value(false);
+			//auton::drive_with_voltage(0,0);
+
+			// Untested Win Point
+			// auton::turn_to_angle(125); 
+			// auton::drive_distance(-62.2);
+			// auton::turn_to_angle(180);
+			// backPistons.set_value(true);
+			// auton::turn_to_angle(-46.6); 
+			// auton::drive_distance(31.5); 
+			// auton::turn_to_angle(-90);
+			// auton::turn_to_angle(-180);
+			// auton::turn_to_angle(133.4);
+			// backPistons.set_value(false);
+			// auton::drive_distance(39); 
+			// auton::turn_to_angle(270);
+			// auton::drive_distance(-50.3);
+
+
 			// auton::drive_distance(-55.3);
 			// auton::turn_to_angle(-90);
 			break;
@@ -219,23 +171,24 @@ void autonomous() {
 			// auton::turnAngle(chassis, 76.6);
 			// auton::moveDistance(chassis, 109.7);
 		case 2: //Close Side Elim
-			auton::turn_to_angle(-55 + 180);
+			auton::turn_to_angle(125); 
 			auton::drive_distance(-62.2);
-			auton::turn_to_angle(0+180);
-			auton::drive_distance(-50.0);
-			auton::drive_distance(14);
+			auton::turn_to_angle(180);
+			auton::drive_distance(-50.0 + 14);
 			auton::turn_to_angle(90.0);
 			auton::drive_distance(55.9);
 			auton::turn_to_angle(0.0);
 			auton::drive_distance(81.3);
-			auton::turn_to_angle(90.0+180);
-			leftPiston.set_value(true);
+			auton::turn_to_angle(270); 
+			backPistons.set_value(true);
 			auton::drive_distance(-71.1);
-			leftPiston.set_value(false);
+			backPistons.set_value(false);
 			break;
 		case 3:
+			auton::drive_with_voltage(-1000,-1000);
+			cataMotorGroup.move_voltage(10000);
 			break;
-		case -1: //  Farside
+		case -1: //  Farside-0.
 			auton::turn_to_angle(-180);
 			auton::drive_distance(-56.6,8000);
 			delay(250);
@@ -250,9 +203,9 @@ void autonomous() {
 			delay(500);
 			intakeMotor.move_voltage(0);
 			auton::turn_to_angle(270.0);
-			auton::setWingState(rightPiston,leftPiston,true);
+			backPistons.set_value(true);
 			auton::drive_distance(-76.2);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(-62.2);
 			auton::drive_distance(54.5,8000);
 			intakeMotor.move_voltage(-10000);
@@ -264,25 +217,25 @@ void autonomous() {
 			delay(500);
 			intakeMotor.move_voltage(0);
 			auton::turn_to_angle(270);
-			auton::setWingState(rightPiston,leftPiston,true);
+			backPistons.set_value(true);
 			auton::drive_distance(-80.8);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			break;
 		case -2:
 			auton::turn_to_angle(90.0);
 			auton::drive_distance(8.9);
 			auton::turn_to_angle(47.1);
-			leftPiston.set_value(true);
+			backPistons.set_value(true);
 			auton::drive_distance(48.5);
-			leftPiston.set_value(false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(0.0);
 			intakeMotor.move_voltage(10000);
 			delay(1000);
 			intakeMotor.move_voltage(0);
 			auton::turn_to_angle(180.0);
-			rightPiston.set_value(true);
+			backPistons.set_value(true);
 			auton::drive_distance(-55.9);
-			rightPiston.set_value(false);
+			backPistons.set_value(false);
 			auton::drive_distance(25.4);
 			auton::turn_to_angle(-90.0);
 			auton::drive_distance(64.0);
@@ -298,14 +251,19 @@ void autonomous() {
 			intakeMotor.move_voltage(9000);
 			delay(500);
 			auton::turn_to_angle(-90);
-			leftPiston.set_value(true);
+			backPistons.set_value(true);
 			auton::drive_distance(-88.9);
 			intakeMotor.move_voltage(0);
-			leftPiston.set_value(false);
+			backPistons.set_value(false);
 			break;
 		case -3:
-			cata.move_voltage(9000);
-			auton::drive_with_voltage(1000, 1000);
+			auton::drive_with_voltage(-10000,-10000);
+			pros::delay(5000);
+			auton::drive_with_voltage(10000,10000);
+			pros::delay(1000);
+			auton::drive_with_voltage(0,0);
+			// cataMotorGroup.move_voltage(9000);
+			// auton::drive_with_voltage(1000, 1000);
 			break;
 		case 0:
 			auton::turn_to_angle(-55 + 180);
@@ -315,10 +273,10 @@ void autonomous() {
 			auton::drive_distance(35);
 			auton::turn_to_angle(180+75);
 			auton::drive_distance(-28);
-			auton::setWingState(rightPiston, leftPiston, true);
-			cata.move_voltage(11000);
+			backPistons.set_value(true);
+			cataMotorGroup.move_voltage(11000);
 			delay(45000);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(90.0);
 			auton::drive_distance(65.4);
 			auton::turn_to_angle(180.0);
@@ -326,31 +284,31 @@ void autonomous() {
 			auton::turn_to_angle(90);
 			auton::drive_distance(185.4);
 			auton::turn_to_angle(0.0+180);
-			auton::setWingState(rightPiston, leftPiston, true);
+			backPistons.set_value(true);
 			auton::drive_distance(-63.5);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(-94.6);
 			auton::drive_distance(63.7);
 			auton::turn_to_angle(180+37.4);
-			auton::setWingState(rightPiston, leftPiston, true);
+			backPistons.set_value(true);
 			auton::drive_distance(-54.4);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(-82.4);
 			auton::drive_distance(38.4);
 			auton::turn_to_angle(-3.2);
 			auton::drive_distance(45.8);
 			auton::turn_to_angle(180+90.4);
-			auton::setWingState(rightPiston, leftPiston, true);
+			backPistons.set_value(true);
 			auton::drive_distance(-88.9);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			auton::turn_to_angle(-90.0);
 			auton::drive_distance(78.7);
 			auton::turn_to_angle(-8.1);
 			auton::drive_distance(71.8);
 			auton::turn_to_angle(180+115.9);
-			auton::setWingState(rightPiston, leftPiston, true);
+			backPistons.set_value(true);
 			auton::drive_distance(-98.8);
-			auton::setWingState(rightPiston, leftPiston, false);
+			backPistons.set_value(false);
 			break;
 		default:
 			break;
@@ -373,44 +331,22 @@ void autonomous() {
 
 void opcontrol() {
 	// odomLift.set_value(true);
-	cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
-	bool leftToggle = false;
-	bool rightToggle = false;
+	// bool leftToggle = false;
+	// bool rightToggle = false;
     while(true) {
 		// Intake control
-		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -10000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 10000 : 0));
+		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 
-		// Trigger right piston
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1) {
-			rightPiston.set_value(true);
-		} else {
-			rightPiston.set_value(false);
-		}
-		
-
-		// Trigger left piston
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2) == 1) {
-			leftPiston.set_value(true);
-		} else {
-			leftPiston.set_value(false);
-		}
-		
+		// Trigger pistons
+		frontPistons.set_value(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2));
+		backPistons.set_value(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2));
 
 		// Catapult control
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-			cata.move_voltage(11000);
-		} else {
-			cata.move_voltage(0);
-		}
-	
+		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
 
-		// Lower catapult
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) lowerCata(cata, cataSwitch, 10000);
-
-
-        //naturalize input to a range between -1 and 1
-        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127;
-        double rightInput = (double) 0.75 * master.get_analog(ANALOG_RIGHT_X) / 127;
+        // Naturalize input to a range between -1 and 1
+        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
+        double rightInput = (double) 0.75 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn
 		
 		rightMotorGroup.move_voltage(12000 * (rightInput - leftInput));
 		leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
