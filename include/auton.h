@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main.h"
+#include <vector>
 
 namespace auton {
     extern float wheel_diameter;
@@ -14,8 +15,8 @@ namespace auton {
     extern float sidewaysTrackerDiameter;
     extern float sidewaysTrackerInToDegRatio;
 
-    extern vector<float> driveConstants;
-    extern vector<float> turnConstants;
+    extern std::vector<float> driveConstants;
+    extern std::vector<float> turnConstants;
 
     void position_track();
     void progSkills(pros::Motor cata);
@@ -37,7 +38,7 @@ namespace auton {
     * @param distance Desired distance to drive in centimeters.
     * @param dConstants The drive constants {Max Voltage, KP, KI, KD, starti, settle time, settle error, timeout}
     */
-    void drive_distance(float distance, vector<float> dConstants = driveConstants);
+    void drive_distance(float distance, std::vector<float> dConstants = driveConstants);
     
     /**
     * @brief Turn the robot to a specified angle using turn PID controller.
@@ -48,7 +49,7 @@ namespace auton {
     * @param tConstants The turning constants {Max Voltage, KP, KI, KD, starti, settle time, settle error, timeout}
     */
    
-    void turn_to_angle(float angle, vector<float> tConstants = turnConstants);
+    void turn_to_angle(float angle, std::vector<float> tConstants = turnConstants);
 
     /**
      * @brief Drive to a point using odometry and Pid
@@ -58,5 +59,5 @@ namespace auton {
      * @param dConstants The driving constants {Max Voltage, KP, KI, KD, starti, settle time, settle error, timeout}
      * @param tConstants The turning constants {Max Voltage, KP, KI, KD, starti, settle time, settle error, timeout}
      */
-    void driveToPoint(float X, float Y, vector<float> dConstants = driveConstants, vector<float> tConstants = turnConstants);
+    void driveToPoint(float X, float Y, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
 } // namespace auton

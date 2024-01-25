@@ -28,7 +28,7 @@ pros::Motor_Group rightMotorGroup( {driveRightMotorBottom, driveRightMotorMiddle
 pros::Motor_Group fullMotorGroup({driveRightMotorBottom, driveRightMotorMiddle, driveRightMotorTop, driveLeftMotorBottom, driveLeftMotorMiddle, driveLeftMotorTop});
 
 //motors for intake and catapult
-pros::Motor intakeMotor(16, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor intakeMotor(19, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata(2, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
 pros::IMU inertial(1);
@@ -237,7 +237,7 @@ void autonomous() {
 			break;
 		case -1: //  Farside
 			auton::turn_to_angle(-180);
-			auton::drive_distance(-56.6,8000);
+			auton::drive_distance(-56.6);
 			delay(250);
 			auton::turn_to_angle(-70.6);
 			intakeMotor.move_voltage(-10000);
@@ -254,7 +254,7 @@ void autonomous() {
 			auton::drive_distance(-76.2);
 			auton::setWingState(rightPiston, leftPiston, false);
 			auton::turn_to_angle(-62.2);
-			auton::drive_distance(54.5,8000);
+			auton::drive_distance(54.5);
 			intakeMotor.move_voltage(-10000);
 			auton::turn_to_angle(-90.0);
 			auton::drive_distance(35.6);
@@ -378,7 +378,7 @@ void opcontrol() {
 	bool rightToggle = false;
     while(true) {
 		// Intake control
-		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -10000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 10000 : 0));
+		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 
 		// Trigger right piston
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) == 1) {

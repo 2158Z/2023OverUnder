@@ -41,6 +41,9 @@
 #include "util/PID.h"
 #include "util/util.h"
 
+extern pros::Motor_Group leftMotorGroup;
+extern pros::Motor_Group rightMotorGroup;
+
 /**
  * You should add more #includes here
  */
