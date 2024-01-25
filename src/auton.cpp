@@ -188,7 +188,7 @@ namespace auton{
         rightMotorGroup.move_voltage(0);
     }
 
-    void driveTurn(float distance, float angle, float turnWeight, vector<float> tConstants = turnConstants, vector<float> dConstants = driveConstants) {
+    void driveTurn(float distance, float angle, float turnWeight, vector<float> dConstants = driveConstants, vector<float> tConstants = turnConstants) {
 
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();

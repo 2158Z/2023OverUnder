@@ -119,7 +119,7 @@ void autonomous() {
 			auton::driveTurn(0, 45, 1);
 			auton::turn_to_angle(45);
 			frontPistons.set_value(true);
-			auton::driveTurn(30, 0, 0, 500);
+			auton::driveTurn(30, 0, 0);
 			frontPistons.set_value(false);
 			//auton::drive_with_voltage(0,0);
 
@@ -190,7 +190,7 @@ void autonomous() {
 			break;
 		case -1: //  Farside-0.
 			auton::turn_to_angle(-180);
-			auton::drive_distance(-56.6,8000);
+			auton::drive_distance(-56.6);
 			delay(250);
 			auton::turn_to_angle(-70.6);
 			intakeMotor.move_voltage(-10000);
@@ -207,7 +207,7 @@ void autonomous() {
 			auton::drive_distance(-76.2);
 			backPistons.set_value(false);
 			auton::turn_to_angle(-62.2);
-			auton::drive_distance(54.5,8000);
+			auton::drive_distance(54.5);
 			intakeMotor.move_voltage(-10000);
 			auton::turn_to_angle(-90.0);
 			auton::drive_distance(35.6);
