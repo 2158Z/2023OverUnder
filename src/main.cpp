@@ -112,31 +112,31 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			frontPistons.set_value(true);
-			pros::delay(1500);
-			frontPistons.set_value(false);
-			auton::driveTurn(47, -45, 0.2);
-			auton::driveTurn(0, 45, 1);
-			auton::turn_to_angle(45);
-			frontPistons.set_value(true);
-			auton::driveTurn(30, 0, 0);
-			frontPistons.set_value(false);
-			//auton::drive_with_voltage(0,0);
+			// frontPistons.set_value(true);
+			// pros::delay(1500);
+			// frontPistons.set_value(false);
+			// auton::driveTurn(47, -45, 0.2);
+			// auton::driveTurn(0, 45, 1);
+			// auton::turn_to_angle(45);
+			// frontPistons.set_value(true);
+			// auton::driveTurn(30, 0, 0);
+			// frontPistons.set_value(false);
+			// //auton::drive_with_voltage(0,0);
 
 			// Untested Win Point
-			// auton::turn_to_angle(125); 
-			// auton::drive_distance(-62.2);
-			// auton::turn_to_angle(180);
-			// backPistons.set_value(true);
-			// auton::turn_to_angle(-46.6); 
-			// auton::drive_distance(31.5); 
-			// auton::turn_to_angle(-90);
-			// auton::turn_to_angle(-180);
-			// auton::turn_to_angle(133.4);
-			// backPistons.set_value(false);
-			// auton::drive_distance(39); 
-			// auton::turn_to_angle(270);
-			// auton::drive_distance(-50.3);
+			auton::turn_to_angle(125); 
+			auton::drive_distance(-62.2);
+			auton::turn_to_angle(180);
+			backPistons.set_value(true);
+			auton::turn_to_angle(-46.6); 
+			auton::drive_distance(31.5); 
+			auton::turn_to_angle(-90);
+			auton::turn_to_angle(-180);
+			auton::turn_to_angle(133.4);
+			backPistons.set_value(false);
+			auton::drive_distance(39); 
+			auton::turn_to_angle(270);
+			auton::drive_distance(-50.3);
 
 
 			// auton::drive_distance(-55.3);
