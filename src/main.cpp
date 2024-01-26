@@ -346,7 +346,7 @@ void opcontrol() {
 
         // Naturalize input to a range between -1 and 1
         double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
-        double rightInput = (double) 0.75 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn
+        double rightInput = (double) 0.5 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn
 		
 		rightMotorGroup.move_voltage(12000 * (rightInput - leftInput));
 		leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
