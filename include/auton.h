@@ -28,6 +28,8 @@ namespace auton {
     float get_right_position_in();
     float get_X_position();
     float get_Y_position();
+    float get_right_deg();
+    float get_left_deg();
     void drive_with_voltage(float leftVoltage, float rightVoltage);
     
     /**

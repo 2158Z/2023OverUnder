@@ -90,6 +90,14 @@ namespace auton{
         return -1 * ( (driveRightMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio);
     }
 
+    float get_right_deg(){
+        return -1 * driveRightMotorMiddle.get_position();
+    }
+
+    float get_left_deg(){
+        return -1 * driveLeftMotorMiddle.get_position();
+    }
+
     float get_X_position(){
         return(odom.X_position);
     }
