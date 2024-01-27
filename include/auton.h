@@ -41,16 +41,6 @@ namespace auton
     extern float drive_heading_kd;
     extern float drive_heading_starti;
 
-    extern float drive_swing_max_voltage;
-    extern float drive_swing_kp;
-    extern float drive_swing_ki;
-    extern float drive_swing_kd;
-    extern float drive_swing_starti;
-
-    extern float drive_swing_settle_error;
-    extern float drive_swing_settle_time;
-    extern float drive_swing_timeout;
-
     extern float drive_desired_heading;
 
     void position_track();
