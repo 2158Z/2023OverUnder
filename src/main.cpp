@@ -40,13 +40,6 @@ pros::IMU inertial(inertialID);
  */
 void initialize() {
 	selector::init();
-	Logger::setDefaultLogger(
-		std::make_shared<Logger>(
-			TimeUtilFactory::createDefault().getTimer(), // It needs a Timer
-			"/ser/sout", // Output to the PROS terminal
-			Logger::LogLevel::error
-		)
-	);
 
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
