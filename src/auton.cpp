@@ -63,12 +63,6 @@ namespace auton{
     float drive_drive_settle_time = 100;
     float drive_drive_timeout = 1500; //2000
 
-    float drive_heading_max_voltage = 12000;
-    float drive_heading_kp = 0;
-    float drive_heading_ki = 0;
-    float drive_heading_kd = 0;
-    float drive_heading_starti = 0;
-
     float drive_desired_heading = 0;
 
     int counter = 0;
@@ -136,7 +130,7 @@ namespace auton{
         rightMotorGroup.move_voltage(-1 * rightVoltage);
     }
 
-    void drive_distance(float distance, float drive_max_voltage = drive_drive_max_voltage, float heading_max_voltage = drive_heading_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_timeout = drive_drive_timeout, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti, float heading_kp = drive_heading_kp, float heading_ki = drive_heading_ki, float heading_kd = drive_heading_kd, float heading_starti = drive_heading_starti){
+    void drive_distance(float distance, float drive_timeout = drive_drive_timeout, float drive_max_voltage = drive_drive_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti){
         // distance = distance /  2.54; //Conversion from Centimeter to Inch
         PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_timeout);
         driveLeftMotorMiddle.tare_position();
@@ -159,7 +153,7 @@ namespace auton{
         rightMotorGroup.move_voltage(0);
     }
 
-    void turn_to_angle(float angle, bool turn_bias = false, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
+    void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
         drive_desired_heading = angle;
         PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
         while(turnPID.is_settled() == false){
