@@ -5,9 +5,9 @@ const int driveLeftMotorBackID = 9;
 const int driveLeftMotorMiddleID = 8;
 const int driveLeftMotorFrontID = 7;
 
-const int driveRightMotorBackID = 4;
-const int driveRightMotorMiddleID = 5;
-const int driveRightMotorFrontID = 2;
+const int driveRightMotorBackID = 2;
+const int driveRightMotorMiddleID = 3;
+const int driveRightMotorFrontID = 4;
 
 // Other Motors
 const int intakeMotorID = 19;
