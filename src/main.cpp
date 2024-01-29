@@ -6,17 +6,21 @@
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::ADIDigitalOut frontPistons('G');
-pros::ADIDigitalOut backPistons('H');
+// Solenoids for wings
+pros::ADIDigitalOut wingFrontLeft(wingFrontLeftID);
+pros::ADIDigitalOut wingFrontRight(wingFrontRightID);
+pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
+pros::ADIDigitalOut wingBackRight(wingBackRightID);
 
-pros::Motor driveLeftMotorBack(driveLeftMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveLeftMotorMiddle(driveLeftMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+// Individual motors for drive left side
 pros::Motor driveLeftMotorFront(driveLeftMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorMiddle(driveLeftMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMotorBack(driveLeftMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
 // Individual motors for drive right side
-pros::Motor driveRightMotorBack(driveRightMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveRightMotorMiddle(driveRightMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveRightMotorFront(driveRightMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorMiddle(driveRightMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMotorBack(driveRightMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 	
 // Motor groups for drive left and rights sides
 pros::Motor_Group leftMotorGroup( {driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
@@ -50,8 +54,6 @@ void initialize() {
 	driveLeftMotorBack.set_zero_position(0);
 	driveLeftMotorMiddle.set_zero_position(0);
 	driveLeftMotorFront.set_zero_position(0);
-
-	// Individual motors for drive right side
 	driveRightMotorBack.set_zero_position(0);
 	driveRightMotorMiddle.set_zero_position(0);
 	driveRightMotorFront.set_zero_position(0);
@@ -91,157 +93,26 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			frontPistons.set_value(true);
-			pros::delay(1500);
-			frontPistons.set_value(false);
-			auton::driveTurn(47, -45, 0.2);
-			auton::driveTurn(0, 45, 1);
-			auton::turn_to_angle(45);
-			frontPistons.set_value(true);
-			auton::driveTurn(30, 0, 0, 500);
-			frontPistons.set_value(false);
-			//auton::drive_with_voltage(0,0);
+			
 
 			break;
 		case 2: //Close Side Elim
-			auton::turn_to_angle(125); 
-			auton::drive_distance(-62.2);
-			auton::turn_to_angle(180);
-			auton::drive_distance(-50.0 + 14);
-			auton::turn_to_angle(90.0);
-			auton::drive_distance(55.9);
-			auton::turn_to_angle(0.0);
-			auton::drive_distance(81.3);
-			auton::turn_to_angle(270); 
-			backPistons.set_value(true);
-			auton::drive_distance(-71.1);
-			backPistons.set_value(false);
+		
 			break;
 		case 3:
-			auton::drive_with_voltage(-1000,-1000);
-			cataMotorGroup.move_voltage(10000);
+			
 			break;
 		case -1: //  Farside-0.
-			auton::turn_to_angle(-180);
-			auton::drive_distance(-56.6,8000);
-			delay(250);
-			auton::turn_to_angle(-70.6);
-			intakeMotor.move_voltage(-10000);
-			auton::drive_distance(61.4);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(21.0);
-			auton::drive_distance(20);
-			auton::turn_to_angle(90.0);
-			intakeMotor.move_voltage(10000);
-			delay(500);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(270.0);
-			backPistons.set_value(true);
-			auton::drive_distance(-76.2);
-			backPistons.set_value(false);
-			auton::turn_to_angle(-62.2);
-			auton::drive_distance(54.5,8000);
-			intakeMotor.move_voltage(-10000);
-			auton::turn_to_angle(-90.0);
-			auton::drive_distance(35.6);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(90.0);
-			intakeMotor.move_voltage(12000);
-			delay(500);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(270);
-			backPistons.set_value(true);
-			auton::drive_distance(-80.8);
-			backPistons.set_value(false);
+			
 			break;
 		case -2:
-			auton::turn_to_angle(90.0);
-			auton::drive_distance(8.9);
-			auton::turn_to_angle(47.1);
-			backPistons.set_value(true);
-			auton::drive_distance(48.5);
-			backPistons.set_value(false);
-			auton::turn_to_angle(0.0);
-			intakeMotor.move_voltage(10000);
-			delay(1000);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(180.0);
-			backPistons.set_value(true);
-			auton::drive_distance(-55.9);
-			backPistons.set_value(false);
-			auton::drive_distance(25.4);
-			auton::turn_to_angle(-90.0);
-			auton::drive_distance(64.0);
-			auton::turn_to_angle(0.0);
-			auton::drive_distance(30.5);
-			auton::turn_to_angle(-90.0);
-			intakeMotor.move_voltage(-9000);
-			auton::drive_distance(30.5);
-			intakeMotor.move_voltage(0);
-			auton::turn_to_angle(-12.6);
-			auton::drive_distance(20.7);
-			auton::turn_to_angle(90.0);
-			intakeMotor.move_voltage(9000);
-			delay(500);
-			auton::turn_to_angle(-90);
-			backPistons.set_value(true);
-			auton::drive_distance(-88.9);
-			intakeMotor.move_voltage(0);
-			backPistons.set_value(false);
+			
 			break;
 		case -3:
-			auton::drive_with_voltage(-10000,-10000);
-			pros::delay(5000);
-			auton::drive_with_voltage(10000,10000);
-			pros::delay(1000);
-			auton::drive_with_voltage(0,0);
-			// cataMotorGroup.move_voltage(9000);
-			// auton::drive_with_voltage(1000, 1000);
+			
 			break;
 		case 0:
-			auton::turn_to_angle(-55 + 180);
-			auton::drive_distance(-62.2);
-			auton::turn_to_angle(0+180);
-			auton::drive_distance(-50.0);
-			auton::drive_distance(35);
-			auton::turn_to_angle(180+75);
-			auton::drive_distance(-28);
-			backPistons.set_value(true);
-			cataMotorGroup.move_voltage(11000);
-			delay(45000);
-			backPistons.set_value(false);
-			auton::turn_to_angle(90.0);
-			auton::drive_distance(65.4);
-			auton::turn_to_angle(180.0);
-			auton::drive_distance(45.0);
-			auton::turn_to_angle(90);
-			auton::drive_distance(185.4);
-			auton::turn_to_angle(0.0+180);
-			backPistons.set_value(true);
-			auton::drive_distance(-63.5);
-			backPistons.set_value(false);
-			auton::turn_to_angle(-94.6);
-			auton::drive_distance(63.7);
-			auton::turn_to_angle(180+37.4);
-			backPistons.set_value(true);
-			auton::drive_distance(-54.4);
-			backPistons.set_value(false);
-			auton::turn_to_angle(-82.4);
-			auton::drive_distance(38.4);
-			auton::turn_to_angle(-3.2);
-			auton::drive_distance(45.8);
-			auton::turn_to_angle(180+90.4);
-			backPistons.set_value(true);
-			auton::drive_distance(-88.9);
-			backPistons.set_value(false);
-			auton::turn_to_angle(-90.0);
-			auton::drive_distance(78.7);
-			auton::turn_to_angle(-8.1);
-			auton::drive_distance(71.8);
-			auton::turn_to_angle(180+115.9);
-			backPistons.set_value(true);
-			auton::drive_distance(-98.8);
-			backPistons.set_value(false);
+			
 			break;
 		default:
 			break;
@@ -265,11 +136,21 @@ void autonomous() {
 void opcontrol() {
     while(true) {
 		// Intake control
-		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
+		int shiftKey = pros::E_CONTROLLER_DIGITAL_L1;
+		//intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 
 		// Trigger pistons
-		frontPistons.set_value(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2));
-		backPistons.set_value(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2));
+		if(pros::E_CONTROLLER_DIGITAL_R1) {
+			if(shiftKey) {
+				intakeMotor.move_voltage(12000);
+			} else {
+				intakeMotor.move_voltage(-12000);
+			}
+		} else {
+				intakeMotor.move_voltage(0);
+		}
+
+		printf("%f", pros::E_CONTROLLER_DIGITAL_R2);
 
 		// Catapult control
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
