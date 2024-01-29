@@ -73,6 +73,7 @@ void initialize(void);
 void disabled(void);
 void competition_initialize(void);
 void opcontrol(void);
+std::vector<int> arcadeControl();
 #ifdef __cplusplus
 }
 #endif

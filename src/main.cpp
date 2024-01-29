@@ -133,24 +133,59 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
+// std::vector<int> arcadeControl() {
+// 		// output voltages of left and right in vector
+// 		std::vector<int> voltages = {0, 0};
+
+// 		//normalize inputs to [-1,1]
+// 		int leftInput = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 127;
+// 		int rightInput = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127;
+
+
+
+// 		return voltages;
+// }
+
 void opcontrol() {
     while(true) {
 		// Intake control
-		int shiftKey = pros::E_CONTROLLER_DIGITAL_L1;
+		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 
 		// Trigger pistons
-		if(pros::E_CONTROLLER_DIGITAL_R1) {
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
 			if(shiftKey) {
-				intakeMotor.move_voltage(12000);
-			} else {
 				intakeMotor.move_voltage(-12000);
+			} else {
+				intakeMotor.move_voltage(12000);
 			}
 		} else {
 				intakeMotor.move_voltage(0);
 		}
 
-		printf("%f", pros::E_CONTROLLER_DIGITAL_R2);
+		//left wings with shift key
+		if(master.get_digital(E_CONTROLLER_DIGITAL_L2)) {
+			if(shiftKey) {
+				wingBackLeft.set_value(true);
+			} else {
+				wingFrontLeft.set_value(true);
+			}
+		} else {
+			wingBackLeft.set_value(false);
+			wingFrontLeft.set_value(false);
+		}
+
+		//right wings with shift key
+		if(master.get_digital(E_CONTROLLER_DIGITAL_R2)) {
+			if(shiftKey) {
+				wingBackRight.set_value(true);
+			} else {
+				wingFrontRight.set_value(true);
+			}
+		} else {
+			wingBackRight.set_value(false);
+			wingFrontRight.set_value(false);
+		}
 
 		// Catapult control
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
