@@ -28,7 +28,7 @@ pros::Motor_Group rightMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, 
 pros::Motor_Group fullMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront, driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
 
 // Motors for intake and catapult
-pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata1(cata1MotorID, pros::E_MOTOR_GEAR_GREEN, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata2(cata2MotorID, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
@@ -93,8 +93,8 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-			
-
+		//auton::driveTurn(36, 22.5, 0.3);
+		//auton::drive_distance(10);
 			break;
 		case 2: //Close Side Elim
 		
@@ -133,18 +133,34 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 
-// std::vector<int> arcadeControl() {
-// 		// output voltages of left and right in vector
-// 		std::vector<int> voltages = {0, 0};
+std::vector<float> arcadeControl() {
+		// output voltages of left and right in vector
+		std::vector<float> voltages = {0, 0};
 
-// 		//normalize inputs to [-1,1]
-// 		int leftInput = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 127;
-// 		int rightInput = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127;
+		//normalize inputs to [-1,1]
+		float leftInput = (float)master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 127;
+		float rightInput = ((float)master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127) * ((float)3/4);
 
+		float max = std::max(fabs(leftInput), fabs(rightInput));
+		float difference = rightInput - leftInput;
+		float total = leftInput + rightInput;
 
+		if(rightInput >= 0) {
+			if(leftInput >= 0) {
+				voltages = std::vector<float> {max, difference};
+			} else {
+				voltages = std::vector<float> {total, max};
+			}
+		} else {
+			if(leftInput >= 0) {
+				voltages = std::vector<float> {total, -max};
+			} else {
+				voltages = std::vector<float> {-max, difference};
+			}
+		}
 
-// 		return voltages;
-// }
+		return voltages;
+}
 
 void opcontrol() {
     while(true) {
@@ -190,12 +206,15 @@ void opcontrol() {
 		// Catapult control
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
 
+		leftMotorGroup.move_voltage(arcadeControl()[0] * 12000);
+		rightMotorGroup.move_voltage(arcadeControl()[1] * 12000);
+
         // Naturalize input to a range between -1 and 1
-        double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
-        double rightInput = (double) 0.5 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn
+        //double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
+        //double rightInput = (double) 0.5 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn
 		
-		rightMotorGroup.move_voltage(12000 * (rightInput - leftInput));
-		leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
+		//rightMotorGroup.move_voltage(12000 * (rightInput - leftInput));
+		//leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
 
         pros::delay(20);
     }

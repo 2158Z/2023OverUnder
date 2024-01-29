@@ -18,6 +18,7 @@ const int cata2MotorID = 15;
 // Inertial
 const int inertialID = 6;
 
+// Pneumatics
 const char wingFrontLeftID = 'H';
 const char wingFrontRightID = 'G';
 const char wingBackLeftID = 'B';
