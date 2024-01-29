@@ -40,32 +40,12 @@ pros::IMU inertial(inertialID);
  */
 void initialize() {
 	selector::init();
-	Logger::setDefaultLogger(
-		std::make_shared<Logger>(
-			TimeUtilFactory::createDefault().getTimer(), // It needs a Timer
-			"/ser/sout", // Output to the PROS terminal
-			Logger::LogLevel::error
-		)
-	);
 
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	cataMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 
-	// std::unique_ptr<okapi::IterativePosPIDController> distance = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-	// std::unique_ptr<okapi::IterativePosPIDController> turn = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-	// std::unique_ptr<okapi::IterativePosPIDController> angle = IterativePosPIDController({0,0,0},TimeUtilFactory::createDefault().getTimer());
-
-	// chassisPID = ChassisControllerPID(
-	// 	TimeUtilFactory::createDefault().getTimer(),
-	// 	chassis->getModel(),
-	// 	distance,
-	// 	turn,
-	// 	angle,
-	// 	AbstractMotor::gearset::blue,
-	// 	scale
-	// );
 	
 	driveLeftMotorBack.set_zero_position(0);
 	driveLeftMotorMiddle.set_zero_position(0);
@@ -77,7 +57,6 @@ void initialize() {
 	driveRightMotorFront.set_zero_position(0);
 
 	inertial.reset();
-	// auton::position_track();
 }
 
 /**
@@ -123,53 +102,7 @@ void autonomous() {
 			frontPistons.set_value(false);
 			//auton::drive_with_voltage(0,0);
 
-			// Untested Win Point
-			// auton::turn_to_angle(125); 
-			// auton::drive_distance(-62.2);
-			// auton::turn_to_angle(180);
-			// backPistons.set_value(true);
-			// auton::turn_to_angle(-46.6); 
-			// auton::drive_distance(31.5); 
-			// auton::turn_to_angle(-90);
-			// auton::turn_to_angle(-180);
-			// auton::turn_to_angle(133.4);
-			// backPistons.set_value(false);
-			// auton::drive_distance(39); 
-			// auton::turn_to_angle(270);
-			// auton::drive_distance(-50.3);
-
-
-			// auton::drive_distance(-55.3);
-			// auton::turn_to_angle(-90);
 			break;
-			// fullMotorGroup.moveVoltage(-9000);
-			// pros::delay(2000);
-			// fullMotorGroup.moveVoltage(0);
-			// fullMotorGroup.moveVoltage(9000);
-			// pros::delay(250);
-			// fullMotorGroup.moveVoltage(0);
-			// break;
-			// // Far side
-			// auton::turnAngle(chassis, 46.8);
-			// auton::moveDistance(chassis, 55.7);
-			// auton::turnAngle(chassis, 0.0);
-			// auton::moveDistance(chassis, 58.4);
-			// auton::turnAngle(chassis, 180.0);
-			// auton::moveDistance(chassis, 20.3);
-			// auton::turnAngle(chassis, -92.9);
-			// auton::moveDistance(chassis, 99.2);
-			// auton::turnAngle(chassis, -62.2);
-			// auton::moveDistance(chassis, 54.5);
-			// auton::turnAngle(chassis, 68.2);
-			// auton::moveDistance(chassis, 109.4);
-			// auton::turnAngle(chassis, -65.6);
-			// auton::moveDistance(chassis, 61.4);
-			// auton::turnAngle(chassis, 92.6);
-			// auton::moveDistance(chassis, 55.9);
-			// auton::turnAngle(chassis, -88.6);
-			// auton::moveDistance(chassis, 106.7);
-			// auton::turnAngle(chassis, 76.6);
-			// auton::moveDistance(chassis, 109.7);
 		case 2: //Close Side Elim
 			auton::turn_to_angle(125); 
 			auton::drive_distance(-62.2);
@@ -330,9 +263,6 @@ void autonomous() {
  */
 
 void opcontrol() {
-	// odomLift.set_value(true);
-	// bool leftToggle = false;
-	// bool rightToggle = false;
     while(true) {
 		// Intake control
 		intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));

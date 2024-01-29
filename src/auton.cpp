@@ -69,16 +69,6 @@ namespace auton{
     float drive_heading_kd = 0;
     float drive_heading_starti = 0;
 
-    float drive_swing_max_voltage = 12000;
-    float drive_swing_kp = 0;
-    float drive_swing_ki = 0;
-    float drive_swing_kd = 0;
-    float drive_swing_starti = 0;
-
-    float drive_swing_settle_error = 1;
-    float drive_swing_settle_time = 300;
-    float drive_swing_timeout = 3000;
-
     float drive_desired_heading = 0;
 
     int counter = 0;
