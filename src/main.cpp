@@ -3,7 +3,9 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
-using namespace okapi;
+
+
+
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 // Solenoids for wings
@@ -13,19 +15,19 @@ pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
 pros::ADIDigitalOut wingBackRight(wingBackRightID);
 
 // Individual motors for drive left side
-pros::Motor driveLeftMotorFront(driveLeftMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveLeftMotorMiddle(driveLeftMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveLeftMotorBack(driveLeftMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftMiddle(driveLeftMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftBack(driveLeftBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
 // Individual motors for drive right side
-pros::Motor driveRightMotorFront(driveRightMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveRightMotorMiddle(driveRightMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor driveRightMotorBack(driveRightMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightFront(driveRightFrontID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightMiddle(driveRightMiddleID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightBack(driveRightBackID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
 	
 // Motor groups for drive left and rights sides
-pros::Motor_Group leftMotorGroup( {driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
-pros::Motor_Group rightMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront} );
-pros::Motor_Group fullMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront, driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
+pros::Motor_Group driveLeft( {driveLeftFront, driveLeftMiddle, driveLeftBack} );
+pros::Motor_Group driveRight( {driveRightFront, driveRightMiddle, driveRightBack} );
+pros::Motor_Group fullMotorGroup( {driveRightBack, driveRightMiddle, driveRightFront, driveLeftBack, driveLeftMiddle, driveLeftFront} );
 
 // Motors for intake and catapult
 pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
@@ -36,6 +38,8 @@ pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
 pros::IMU inertial(inertialID);
 
+
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -45,18 +49,18 @@ pros::IMU inertial(inertialID);
 void initialize() {
 	selector::init();
 
-    leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
-    rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
+    driveLeft.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
+    driveRight.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	cataMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 
 	
-	driveLeftMotorBack.set_zero_position(0);
-	driveLeftMotorMiddle.set_zero_position(0);
-	driveLeftMotorFront.set_zero_position(0);
-	driveRightMotorBack.set_zero_position(0);
-	driveRightMotorMiddle.set_zero_position(0);
-	driveRightMotorFront.set_zero_position(0);
+	driveLeftBack.set_zero_position(0);
+	driveLeftMiddle.set_zero_position(0);
+	driveLeftFront.set_zero_position(0);
+	driveRightBack.set_zero_position(0);
+	driveRightMiddle.set_zero_position(0);
+	driveRightFront.set_zero_position(0);
 
 	inertial.reset();
 }
@@ -94,7 +98,7 @@ void autonomous() {
 	switch(selector::auton) {
 		case 1:	
 		//auton::driveTurn(36, 22.5, 0.3);
-		//auton::drive_distance(10);
+		auton::drive_distance(24);
 			break;
 		case 2: //Close Side Elim
 		
@@ -142,17 +146,17 @@ std::vector<float> arcadeControl() {
 		float rightInput = ((float)master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127) * ((float)3/4);
 
 		float max = std::max(fabs(leftInput), fabs(rightInput));
-		float difference = rightInput - leftInput;
+		float difference = leftInput - rightInput;
 		float total = leftInput + rightInput;
 
-		if(rightInput >= 0) {
-			if(leftInput >= 0) {
+		if(leftInput >= 0) {
+			if(rightInput >= 0) {
 				voltages = std::vector<float> {max, difference};
 			} else {
 				voltages = std::vector<float> {total, max};
 			}
 		} else {
-			if(leftInput >= 0) {
+			if(rightInput >= 0) {
 				voltages = std::vector<float> {total, -max};
 			} else {
 				voltages = std::vector<float> {-max, difference};
@@ -206,8 +210,8 @@ void opcontrol() {
 		// Catapult control
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
 
-		leftMotorGroup.move_voltage(arcadeControl()[0] * 12000);
-		rightMotorGroup.move_voltage(arcadeControl()[1] * 12000);
+		driveLeft.move_voltage(arcadeControl()[0] * 12000);
+		driveLeft.move_voltage(arcadeControl()[1] * 12000);
 
         // Naturalize input to a range between -1 and 1
         //double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
@@ -225,4 +229,5 @@ void opcontrol() {
  L2 - Left wing
  A - Cata
 */
+
 }
