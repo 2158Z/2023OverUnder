@@ -2,23 +2,36 @@
 #include <vector>
 using namespace okapi;
 namespace auton{
-    pros::Motor driveLeftMotorFront(driveLeftMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-    pros::Motor driveLeftMotorMiddle(driveLeftMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
-    pros::Motor driveLeftMotorBack(driveLeftMotorBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    // Solenoids for wings
+    pros::ADIDigitalOut wingFrontLeft(wingFrontLeftID);
+    pros::ADIDigitalOut wingFrontRight(wingFrontRightID);
+    pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
+    pros::ADIDigitalOut wingBackRight(wingBackRightID);
+
+    // Individual motors for drive left side
+    pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveLeftMiddle(driveLeftMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveLeftBack(driveLeftBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
     // Individual motors for drive right side
-    pros::Motor driveRightMotorFront(driveRightMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
-    pros::Motor driveRightMotorMiddle(driveRightMotorMiddleID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
-    pros::Motor driveRightMotorBack(driveRightMotorBackID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveRightFront(driveRightFrontID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveRightMiddle(driveRightMiddleID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor driveRightBack(driveRightBackID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
         
     // Motor groups for drive left and rights sides
-    pros::Motor_Group leftMotorGroup( {driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
-    pros::Motor_Group rightMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront} );
-    pros::Motor_Group fullMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront, driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
+    pros::Motor_Group driveLeft( {driveLeftFront, driveLeftMiddle, driveLeftBack} );
+    pros::Motor_Group driveRight( {driveRightFront, driveRightMiddle, driveRightBack} );
+    pros::Motor_Group fullMotorGroup( {driveRightBack, driveRightMiddle, driveRightFront, driveLeftBack, driveLeftMiddle, driveLeftFront} );
 
+    // Motors for intake and catapult
+    pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor cata1(cata1MotorID, pros::E_MOTOR_GEAR_GREEN, 1, pros::E_MOTOR_ENCODER_DEGREES);
+    pros::Motor cata2(cata2MotorID, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
+    pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
     pros::IMU inertial(inertialID);
+
     Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
@@ -35,33 +48,11 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {11000, 1.5, 0, 0.85, 0, 100, 1.5, 1500};
+    std::vector<float> driveConstants = {12000, 2.5, 0, 10, 0, 10000, 1.5, 1500};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
     float gyro_scale = 360;
-
-    float drive_turn_max_voltage = 12000;
-    float drive_turn_kp = 0.35;
-    float drive_turn_ki = 0.25;    
-    float drive_turn_kd = 2;
-    float drive_turn_starti = 0;
-
-    float drive_turn_settle_error = 1;
-    float drive_turn_settle_time = 1000;
-    float drive_turn_timeout = 500; //1000
-
-    float drive_drive_max_voltage = 12000;
-    float drive_drive_kp = 0.5;
-    float drive_drive_ki = 0;
-    float drive_drive_kd = 0;
-    float drive_drive_starti = 0;
-
-    float drive_drive_with_angle_turn_max_voltage = 0;
-
-    float drive_drive_settle_error = 1;
-    float drive_drive_settle_time = 5000;
-    float drive_drive_timeout = 10000; //500
 
     float drive_desired_heading = 0;
 
@@ -98,16 +89,16 @@ namespace auton{
 
     float get_left_position_in(){
         if (counter % 100 == 0){
-            //printf("%f Left\n", ( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;
+            //printf("%f Left\n", ( (driveLeftMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;
         }
-        return( (driveLeftMotorMiddle.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
+        return( (driveLeftFront.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
         }
 
     float get_right_position_in(){
         if (counter % 100 == 0){
-            //printf("%f Right\n", -1 * ( (driveRightMotorMiddle.get_position()/360) * M_PI * wheel_diameter * wheel_ratio)/2);
+            //printf("%f Right\n", -1 * ( (driveRightMiddle.get_position()/360) * M_PI * wheel_diameter * wheel_ratio)/2);
         }
-        return( (driveRightMotorMiddle.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
+        return( (driveRightFront.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
     }
 
     float get_X_position(){
@@ -126,29 +117,29 @@ namespace auton{
     }
 
     void drive_with_voltage(float leftVoltage, float rightVoltage){
-        leftMotorGroup.move_voltage(leftVoltage);
-        rightMotorGroup.move_voltage(-1 * rightVoltage);
+        driveLeft.move_voltage(leftVoltage);
+        driveRight.move_voltage(rightVoltage);
     }
 
     void drive_distance(float distance, std::vector<float> dConstants = driveConstants) {
-        distance = distance / 2.54;
         PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6],
                     dConstants[7]);
-        driveLeftMotorMiddle.tare_position();
-        driveRightMotorMiddle.tare_position();
+        driveRightFront.tare_position();
+        driveLeftFront.tare_position();
         float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
         float average_position = start_average_position;
         while (drivePID.is_settled() == false) {
             average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
             float drive_error = distance + start_average_position - average_position;
-            float drive_output = drivePID.compute(drive_error) * 1000;
+            float drive_output = drivePID.compute(drive_error) * 10000;
             drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
             drive_with_voltage(drive_output, drive_output);
-            printf("%f \n", drive_error);
-            delay(10);
+            // printf("Position: %f \n", average_position);
+            printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
+            delay(20);
         }
-        leftMotorGroup.move_voltage(0);
-        rightMotorGroup.move_voltage(0);
+        driveLeft.move_voltage(0);
+        driveRight.move_voltage(0);
 }
 
     void turn_to_angle(float angle, std::vector<float> tConstants = turnConstants) {
@@ -157,20 +148,20 @@ namespace auton{
                     tConstants[5], tConstants[6], tConstants[7]);
         while (turnPID.is_settled() == false) {
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-            float output = turnPID.compute(error) * 10000;
+            float output = turnPID.compute(error) * 1000;
             printf("%f \n", error);
             output = clamp(output, -tConstants[0], tConstants[0]);
             drive_with_voltage(output, -output);
             delay(10);
         }
-        leftMotorGroup.move_voltage(0);
-        rightMotorGroup.move_voltage(0);
+        driveLeft.move_voltage(0);
+        driveRight.move_voltage(0);
     }
 
     void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
 
-        driveLeftMotorMiddle.tare_position();
-        driveRightMotorMiddle.tare_position();
+        driveLeftMiddle.tare_position();
+        driveRightMiddle.tare_position();
 
         float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
         float average_position = start_average_position;

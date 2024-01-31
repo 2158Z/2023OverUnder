@@ -98,7 +98,7 @@ void autonomous() {
 	switch(selector::auton) {
 		case 1:	
 
-			
+			auton::drive_distance(24);
 
 			// frontPistons.set_value(true);
 			// pros::delay(1500);

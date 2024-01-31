@@ -70,7 +70,7 @@ namespace selector {
                         break;
                 }
             }
-            printf("Auton: %d\n", auton);
+            // printf("Auton: %d\n", auton);
             pros::delay(20);
         }
     }
