@@ -21,8 +21,6 @@ public:
 
   PID(float error, float kp, float ki, float kd, float starti, float settle_time, float settle_error, float timeout);
 
-  PID(float error, float kp, float ki, float kd, float starti);
-
   float compute(float error);
 
   bool is_settled();

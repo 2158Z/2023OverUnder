@@ -1,13 +1,5 @@
 #include "main.h"
 
-PID::PID(float error, float kp, float ki, float kd, float starti) :
-  error(error),
-  kp(kp),
-  ki(ki),
-  kd(kd),
-  starti(starti)
-{};
-
 PID::PID(float error, float kp, float ki, float kd, float starti, float settle_time, float settle_error, float timeout) :
   error(error),
   kp(kp),
@@ -26,7 +18,7 @@ float PID::compute(float error) {
     accumulated_error = 0;
   }
 
-  output = kp * error + ki * accumulated_error + kd * (error - previous_error);
+  output = (kp * error) + (ki * accumulated_error) + (kd * (error - previous_error));
   previous_error = error;
 
   time_spent_settled = (fabs(error) < settle_error) ? time_spent_settled + 10 : 0;

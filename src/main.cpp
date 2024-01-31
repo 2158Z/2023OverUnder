@@ -15,12 +15,12 @@ pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
 pros::ADIDigitalOut wingBackRight(wingBackRightID);
 
 // Individual motors for drive left side
-pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_600, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveLeftMiddle(driveLeftMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveLeftBack(driveLeftBackID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
 
 // Individual motors for drive right side
-pros::Motor driveRightFront(driveRightFrontID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor driveRightFront(driveRightFrontID, pros::E_MOTOR_GEAR_600, 0, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveRightMiddle(driveRightMiddleID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveRightBack(driveRightBackID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
 	

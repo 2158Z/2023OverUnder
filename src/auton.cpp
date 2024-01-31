@@ -47,7 +47,7 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {12000, 2.5, 0, 10, 0, 10000, 1.5, 1500};
+    std::vector<float> driveConstants = {12000, 0.5, 0, 0, 0, 10000, 0.5, 10000};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
@@ -86,16 +86,10 @@ namespace auton{
     }
 
     float get_left_position_in(){
-        if (counter % 100 == 0){
-            //printf("%f Left\n", ( (driveLeftMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;
-        }
         return( (driveLeftFront.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
-        }
+    }
 
     float get_right_position_in(){
-        if (counter % 100 == 0){
-            //printf("%f Right\n", -1 * ( (driveRightMiddle.get_position()/360) * M_PI * wheel_diameter * wheel_ratio)/2);
-        }
         return( (driveRightFront.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
     }
 
@@ -110,18 +104,18 @@ namespace auton{
         driveLeftFront.tare_position();
         float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
         float average_position = start_average_position;
-        while (drivePID.is_settled() == false) {
+        while (!drivePID.is_settled()) {
             average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
             float drive_error = distance + start_average_position - average_position;
-            float drive_output = drivePID.compute(drive_error) * 10000;
+            float drive_output = drivePID.compute(drive_error) * 1000;
             drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
             driveVoltage(drive_output, drive_output);
-            // printf("Position: %f \n", average_position);
-            printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
-            delay(20);
+            printf("Position: %f \n", average_position);
+            //printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
+            delay(100);
         }
-        driveLeft.move_voltage(0);
-        driveRight.move_voltage(0);
+        //driveLeft.move_voltage(0);
+        //driveRight.move_voltage(0);
 }
 
     void turnAngle(float angle, std::vector<float> tConstants = turnConstants) {
@@ -153,7 +147,7 @@ namespace auton{
                     tConstants[5], tConstants[6], tConstants[7]);
         while((turnPID.is_settled() == false && turnWeight != 0) || drivePID.is_settled() == false){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-            float output = turnPID.compute(error) * 10000;
+            float output = turnPID.compute(error) * 1000;
             //printf("%f \n", error);
             output = clamp(output, -tConstants[0], tConstants[0]);
             
