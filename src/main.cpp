@@ -223,7 +223,7 @@ void opcontrol() {
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
 
 		driveLeft.move_voltage(arcadeControl()[0] * 12000);
-		driveLeft.move_voltage(arcadeControl()[1] * 12000);
+		driveRight.move_voltage(arcadeControl()[1] * 12000);
 
         // Naturalize input to a range between -1 and 1
         //double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
