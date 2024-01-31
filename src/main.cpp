@@ -97,8 +97,17 @@ void competition_initialize() {}
 void autonomous() {
 	switch(selector::auton) {
 		case 1:	
-		//auton::driveTurn(36, 22.5, 0.3);
-		auton::drive_distance(24);
+			frontPistons.set_value(true);
+			pros::delay(1500);
+			frontPistons.set_value(false);
+			auton::driveTurn(47, -45, 0.2);
+			auton::driveTurn(0, 45, 1);
+			auton::turn_to_angle(45);
+			frontPistons.set_value(true);
+			auton::driveTurn(30, 0, 0, {11000, 1.5, 0, 0.85, 0, 100, 1.5, 500});
+			frontPistons.set_value(false);
+			//auton::drive_with_voltage(0,0);
+
 			break;
 		case 2: //Close Side Elim
 		

@@ -1,4 +1,5 @@
 #include "main.h"
+#include <vector>
 using namespace okapi;
 namespace auton{
     pros::Motor driveLeftMotorFront(driveLeftMotorFrontID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
@@ -29,20 +30,16 @@ namespace auton{
     QLength yard = 3 * foot;
     QLength mile = 5280 * foot;
     QLength tile = 24 * inch;
-
     QAngle radian(1.0);
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
+
+    // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
+    std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
+    std::vector<float> driveConstants = {11000, 1.5, 0, 0.85, 0, 100, 1.5, 1500};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
     float gyro_scale = 360;
-    // float drive_in_to_deg_ratio = wheel_ratio/360.0*M_PI*wheel_diameter;
-    // float forwardTrackerCenterDistance = 0;
-    // float forwardTrackerDiameter = 0;
-    // float forwardTrackerInToDegRatio = M_PI*forwardTrackerDiameter/360.0;
-    // float SidewaysTracker_center_distance = 0;
-    // float sidewaysTrackerDiameter = 0;
-    // float sidewaysTrackerInToDegRatio = M_PI*sidewaysTrackerDiameter/360.0;
 
     float drive_turn_max_voltage = 12000;
     float drive_turn_kp = 0.35;
@@ -133,40 +130,36 @@ namespace auton{
         rightMotorGroup.move_voltage(-1 * rightVoltage);
     }
 
-    // ______________________ PID ____________________
-
-    void drive_distance(float distance, float drive_timeout = drive_drive_timeout, float drive_max_voltage = drive_drive_max_voltage, float drive_settle_error = drive_drive_settle_error, float drive_settle_time = drive_drive_settle_time, float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, float drive_starti = drive_drive_starti){
-        // distance = distance /  2.54; //Conversion from Centimeter to Inch
-        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_timeout);
+    void drive_distance(float distance, std::vector<float> dConstants = driveConstants) {
+        distance = distance / 2.54;
+        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6],
+                    dConstants[7]);
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
-        float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
+        float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
         float average_position = start_average_position;
-        while(drivePID.is_settled() == false){
-            average_position = (get_left_position_in()+get_right_position_in())/2.0;
-            float drive_error = distance+start_average_position-average_position;
-            float drive_output = drivePID.compute(drive_error) * 10000;
-            drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
-            leftMotorGroup.move_voltage(drive_output);
-            rightMotorGroup.move_voltage(drive_output);
-            counter += 1;
-            if (counter % 10 == 0){
-                printf("%f \n", drive_error);
-            }
+        while (drivePID.is_settled() == false) {
+            average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
+            float drive_error = distance + start_average_position - average_position;
+            float drive_output = drivePID.compute(drive_error) * 1000;
+            drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
+            drive_with_voltage(drive_output, drive_output);
+            printf("%f \n", drive_error);
             delay(10);
         }
         leftMotorGroup.move_voltage(0);
         rightMotorGroup.move_voltage(0);
-    }
+}
 
-    void turn_to_angle(float angle, float turn_max_voltage = drive_turn_max_voltage, float turn_settle_error = drive_turn_settle_error, float turn_settle_time = drive_turn_settle_time, float turn_timeout = drive_turn_timeout, float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, float turn_starti = drive_turn_starti){
+    void turn_to_angle(float angle, std::vector<float> tConstants = turnConstants) {
         drive_desired_heading = angle;
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
-        while(turnPID.is_settled() == false){
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
+                    tConstants[5], tConstants[6], tConstants[7]);
+        while (turnPID.is_settled() == false) {
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
             float output = turnPID.compute(error) * 10000;
             printf("%f \n", error);
-            output = clamp(output, -turn_max_voltage, turn_max_voltage);
+            output = clamp(output, -tConstants[0], tConstants[0]);
             drive_with_voltage(output, -output);
             delay(10);
         }
@@ -174,36 +167,29 @@ namespace auton{
         rightMotorGroup.move_voltage(0);
     }
 
-    void driveTurn(float distance, float angle, float turnWeight, float drive_timeout = drive_drive_timeout, float turn_timeout = drive_turn_timeout, 
-    float drive_kp = drive_drive_kp, float drive_ki = drive_drive_ki, float drive_kd = drive_drive_kd, 
-    float drive_starti = drive_drive_starti, float drive_settle_time = drive_drive_settle_time, float drive_settle_error = drive_drive_settle_error,
-    float drive_max_voltage = drive_drive_max_voltage,
-    float turn_kp = drive_turn_kp, float turn_ki = drive_turn_ki, float turn_kd = drive_turn_kd, 
-    float turn_starti = drive_turn_starti,  float turn_settle_error = drive_turn_settle_error,
-    float turn_settle_time = drive_turn_settle_time, float turn_max_voltage = drive_turn_max_voltage) {
+    void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
 
         driveLeftMotorMiddle.tare_position();
         driveRightMotorMiddle.tare_position();
 
         float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
         float average_position = start_average_position;
-
-        bool turnSettled;
-        PID drivePID(distance, drive_kp, drive_ki, drive_kd, drive_starti, drive_settle_time, drive_settle_error, drive_timeout);
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), turn_kp, turn_ki, turn_kd, turn_starti, turn_settle_time, turn_settle_error, turn_timeout);
-        while(turnPID.is_settled() == false || drivePID.is_settled() == false){
+        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6],
+                    dConstants[7]);
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
+                    tConstants[5], tConstants[6], tConstants[7]);
+        while((turnPID.is_settled() == false && turnWeight != 0) || drivePID.is_settled() == false){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
             float output = turnPID.compute(error) * 10000;
             //printf("%f \n", error);
-            output = clamp(output, -turn_max_voltage, turn_max_voltage);
+            output = clamp(output, -tConstants[0], tConstants[0]);
             
             average_position = (get_left_position_in()+get_right_position_in())/2.0;
             float drive_error = distance+start_average_position-average_position;
-            float drive_output = drivePID.compute(drive_error) * 10000;
-            drive_output = clamp(drive_output, -drive_max_voltage, drive_max_voltage);
-            leftMotorGroup.move_voltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
-            rightMotorGroup.move_voltage(((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
-            //drive_with_voltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0, ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
+            float drive_output = drivePID.compute(drive_error) * 1000;
+            drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
+            drive_with_voltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
+            ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
             // counter += 1;
             // if (counter % 10 == 0){
             //printf("%f \n", drive_error);
