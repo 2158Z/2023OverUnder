@@ -5,7 +5,7 @@ using namespace pros;
 class PID
 {
 public:
-  float error = 0;
+  float setpoint = 0;
   float kp = 0;
   float ki = 0;
   float kd = 0;

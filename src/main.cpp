@@ -225,6 +225,8 @@ void opcontrol() {
 		driveLeft.move_voltage(arcadeControl()[0] * 12000);
 		driveRight.move_voltage(arcadeControl()[1] * 12000);
 
+		//printf("%f", driveLeftBack.get_position() / 360 * M_PI * 2.75 * 0.75);
+
         // Naturalize input to a range between -1 and 1
         //double leftInput = (double) master.get_analog(ANALOG_LEFT_Y) / 127; // Drive
         //double rightInput = (double) 0.5 * master.get_analog(ANALOG_RIGHT_X) / 127; // Turn

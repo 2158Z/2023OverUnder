@@ -47,7 +47,7 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {12000, 0.5, 0, 0, 0, 10000, 0.5, 10000};
+    std::vector<float> driveConstants = {12000, 0.1, 0, 0, 0, 10000, 0.5, 10000};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
@@ -99,24 +99,44 @@ namespace auton{
     }
 
     void driveDistance(float distance, std::vector<float> dConstants = driveConstants) {
-        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+        PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+        PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+        //PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         driveRightFront.tare_position();
         driveLeftFront.tare_position();
-        float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
-        float average_position = start_average_position;
-        while (!drivePID.is_settled()) {
-            average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
-            float drive_error = distance + start_average_position - average_position;
-            float drive_output = drivePID.compute(drive_error) * 1000;
-            drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
-            driveVoltage(drive_output, drive_output);
-            printf("Position: %f \n", average_position);
-            //printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
-            delay(100);
+
+        while(!leftPID.is_settled() && !rightPID.is_settled()) {
+            float leftTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
+            float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
+            
+            float leftError = distance - leftTraveled;
+            float rightError = distance - rightTraveled;
+
+            float leftOutput = leftPID.compute(leftError) * dConstants[0];
+            float rightOutput = rightPID.compute(rightError) * dConstants[0];
+
+            driveVoltage(leftOutput, rightOutput);
+
+            delay(10);
         }
+
+        //float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
+        //float average_position = start_average_position;
+        // while (!drivePID.is_settled()) {
+        //     average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
+        //     float drive_error = distance - average_position;
+        //     float drive_output = drivePID.compute(drive_error) * 1000;
+        //     drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
+        //     driveVoltage(drive_output, drive_output);
+        //     printf("Position: %f \n", average_position);
+        //     //printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
+        //     delay(100);
+        // }
         //driveLeft.move_voltage(0);
         //driveRight.move_voltage(0);
-}
+    }
+
+
 
     void turnAngle(float angle, std::vector<float> tConstants = turnConstants) {
         drive_desired_heading = angle;

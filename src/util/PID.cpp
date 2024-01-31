@@ -1,18 +1,20 @@
 #include "main.h"
 
-PID::PID(float error, float kp, float ki, float kd, float starti, float settle_time, float settle_error, float timeout) :
-  error(error),
-  kp(kp),
-  ki(ki),
-  kd(kd),
-  starti(starti),
-  settle_error(settle_error),
-  settle_time(settle_time),
-  timeout(timeout)
+PID::PID(float isetpoint, float ikp, float iki, float ikd, float istarti, float isettle_time, float isettle_error, float itimeout) :
+  setpoint(isetpoint),
+  kp(ikp),
+  ki(iki),
+  kd(ikd),
+  starti(istarti),
+  settle_error(isettle_error),
+  settle_time(isettle_time),
+  timeout(itimeout)
 {};
 
 float PID::compute(float error) {
-  accumulated_error += (fabs(error) < starti) ? error : 0;
+  if(fabs(error) < starti) {
+    accumulated_error += error;
+  }
 
   if ((error > 0 && previous_error < 0) || (error < 0 && previous_error > 0)) {
     accumulated_error = 0;
