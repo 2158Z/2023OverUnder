@@ -24,14 +24,6 @@ float reduce_negative_90_to_90(float angle) {
   return(angle);
 }
 
-float to_rad(float angle_deg){
-  return(angle_deg/(180.0/M_PI));
-}
-
-float to_deg(float angle_rad){
-  return(angle_rad*(180.0/M_PI));
-}
-
 float clamp(float input, float min, float max){
   if( input > max ){ return(max); }
   if(input < min){ return(min); }
@@ -41,10 +33,6 @@ float clamp(float input, float min, float max){
 bool is_reversed(double input){
   if(input<0) return(true);
   return(false);
-}
-
-float to_volt(float percent){
-  return(percent*12.0/100.0);
 }
 
 int to_port(int port){

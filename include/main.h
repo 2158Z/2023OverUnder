@@ -37,7 +37,6 @@
 #include "api.h"
 #include "selector.h"
 #include "okapi/api.hpp"
-#include "util/odom.h"
 #include "util/PID.h"
 #include "util/util.h"
 #include "constants.h"

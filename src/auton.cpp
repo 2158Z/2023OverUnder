@@ -32,7 +32,6 @@ namespace auton{
 
     pros::IMU inertial(inertialID);
 
-    Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
     QLength centimeter = meter / 100;
@@ -52,7 +51,6 @@ namespace auton{
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
-    float gyro_scale = 360;
 
     float drive_desired_heading = 0;
 
@@ -101,29 +99,13 @@ namespace auton{
         return( (driveRightFront.get_position()/360) * M_PI * wheel_diameter * wheel_ratio);
     }
 
-    float get_X_position(){
-        return(odom.X_position);
-    }
-
-    float get_Y_position(){
-    return(odom.Y_position);
-    }
-
-    void position_track(){
-        while(1){
-            odom.update_position(-1 * get_right_position_in(), 0, get_absolute_heading());
-            pros::delay(5);
-        }
-    }
-
-    void drive_with_voltage(float leftVoltage, float rightVoltage){
+    void driveVoltage(float leftVoltage, float rightVoltage){
         driveLeft.move_voltage(leftVoltage);
         driveRight.move_voltage(rightVoltage);
     }
 
-    void drive_distance(float distance, std::vector<float> dConstants = driveConstants) {
-        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6],
-                    dConstants[7]);
+    void driveDistance(float distance, std::vector<float> dConstants = driveConstants) {
+        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         driveRightFront.tare_position();
         driveLeftFront.tare_position();
         float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
@@ -133,7 +115,7 @@ namespace auton{
             float drive_error = distance + start_average_position - average_position;
             float drive_output = drivePID.compute(drive_error) * 10000;
             drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
-            drive_with_voltage(drive_output, drive_output);
+            driveVoltage(drive_output, drive_output);
             // printf("Position: %f \n", average_position);
             printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
             delay(20);
@@ -142,7 +124,7 @@ namespace auton{
         driveRight.move_voltage(0);
 }
 
-    void turn_to_angle(float angle, std::vector<float> tConstants = turnConstants) {
+    void turnAngle(float angle, std::vector<float> tConstants = turnConstants) {
         drive_desired_heading = angle;
         PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
                     tConstants[5], tConstants[6], tConstants[7]);
@@ -151,7 +133,7 @@ namespace auton{
             float output = turnPID.compute(error) * 1000;
             printf("%f \n", error);
             output = clamp(output, -tConstants[0], tConstants[0]);
-            drive_with_voltage(output, -output);
+            driveVoltage(output, -output);
             delay(10);
         }
         driveLeft.move_voltage(0);
@@ -179,7 +161,7 @@ namespace auton{
             float drive_error = distance+start_average_position-average_position;
             float drive_output = drivePID.compute(drive_error) * 1000;
             drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
-            drive_with_voltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
+            driveVoltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
             ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
             // counter += 1;
             // if (counter % 10 == 0){
