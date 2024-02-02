@@ -47,7 +47,7 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {12000, 0.1, 0, 0, 0, 10000, 0.5, 10000};
+    std::vector<float> driveConstants = {12000, 0.1, 0, 0, 0, 100, 0.5, 1500};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;

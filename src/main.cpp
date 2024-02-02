@@ -96,9 +96,42 @@ void competition_initialize() {}
  */
 void autonomous() {
 	switch(selector::auton) {
-		case 1:	
+		case 1:	//test skills
 
-			auton::driveDistance(24);
+			// pushes the triball into the goal
+			auton::driveDistance(-22);
+			auton::turnAngle(30);
+			auton::driveDistance(-9.5);
+
+			// positions the robot and starts kicker
+			auton::driveDistance(8);
+			auton::turnAngle(-70);
+			auton::driveDistance(-1.5);
+			// cataMotorGroup.move_voltage(11000);
+			// delay(5000);
+			// cataMotorGroup.move_voltage(0);
+
+			// stops kicker and moves to the other side
+			auton::driveDistance(1);
+			auton::turnAngle(180);
+			auton::driveDistance(-20);
+			auton::turnAngle(135);
+			auton::driveDistance(-80);
+			wingBackRight.set_value(true);
+
+			// scores the corner balls
+			auton::turnAngle(-90);
+			auton::driveDistance(-20);
+			auton::turnAngle(-135);
+			auton::driveDistance(-9.5);
+
+
+			// [possible close side auton starter
+			// auton::turnAngle(135);
+			// auton::driveDistance(-22);
+			// auton::turnAngle(170);
+			// auton::driveDistance(-5);
+
 
 			// frontPistons.set_value(true);
 			// pros::delay(1500);
