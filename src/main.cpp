@@ -232,40 +232,59 @@ void opcontrol() {
 		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 
-		// Trigger pistons
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
-			if(shiftKey) {
-				intakeMotor.move_voltage(-12000);
-			} else {
-				intakeMotor.move_voltage(12000);
-			}
-		} else {
-				intakeMotor.move_voltage(0);
+		if(master.get_digital(E_CONTROLLER_DIGITAL_L1)) {
+			intakeMotor.move_voltage(-12000);
 		}
+		if(master.get_digital(E_CONTROLLER_DIGITAL_R1)) {
+			intakeMotor.move_voltage(12000);
+		}
+		if(!master.get_digital(E_CONTROLLER_DIGITAL_R1) && !master.get_digital(E_CONTROLLER_DIGITAL_L1)) {
+			intakeMotor.move_voltage(0);
+		}
+
+
+		wingFrontLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_L2));
+		wingFrontRight.set_value(master.get_digital(E_CONTROLLER_DIGITAL_R2));
+
+		wingBackLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT));
+		wingBackRight.set_value(master.get_digital(E_CONTROLLER_DIGITAL_Y));
+
+
+
+		// Trigger pistons
+		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+		// 	if(shiftKey) {
+		// 		intakeMotor.move_voltage(-12000);
+		// 	} else {
+		// 		intakeMotor.move_voltage(12000);
+		// 	}
+		// } else {
+		// 		intakeMotor.move_voltage(0);
+		// }
 
 		//left wings with shift key
-		if(master.get_digital(E_CONTROLLER_DIGITAL_L2)) {
-			if(shiftKey) {
-				wingBackLeft.set_value(true);
-			} else {
-				wingFrontLeft.set_value(true);
-			}
-		} else {
-			wingBackLeft.set_value(false);
-			wingFrontLeft.set_value(false);
-		}
+		// if(master.get_digital(E_CONTROLLER_DIGITAL_L2)) {
+		// 	if(shiftKey) {
+		// 		wingBackLeft.set_value(true);
+		// 	} else {
+		// 		wingFrontLeft.set_value(true);
+		// 	}
+		// } else {
+		// 	wingBackLeft.set_value(false);
+		// 	wingFrontLeft.set_value(false);
+		// }
 
 		//right wings with shift key
-		if(master.get_digital(E_CONTROLLER_DIGITAL_R2)) {
-			if(shiftKey) {
-				wingBackRight.set_value(true);
-			} else {
-				wingFrontRight.set_value(true);
-			}
-		} else {
-			wingBackRight.set_value(false);
-			wingFrontRight.set_value(false);
-		}
+		// if(master.get_digital(E_CONTROLLER_DIGITAL_R2)) {
+		// 	if(shiftKey) {
+		// 		wingBackRight.set_value(true);
+		// 	} else {
+		// 		wingFrontRight.set_value(true);
+		// 	}
+		// } else {
+		// 	wingBackRight.set_value(false);
+		// 	wingFrontRight.set_value(false);
+		// }
 
 		// Catapult control
 		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
