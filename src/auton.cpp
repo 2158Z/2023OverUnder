@@ -165,7 +165,7 @@ namespace auton{
                     dConstants[7]);
         PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
                     tConstants[5], tConstants[6], tConstants[7]);
-        while((turnPID.is_settled() == false && turnWeight != 0) || drivePID.is_settled() == false){
+        while((turnPID.is_settled() == false) || drivePID.is_settled() == false){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
             float output = turnPID.compute(error) * 1000;
             //printf("%f \n", error);
@@ -173,7 +173,7 @@ namespace auton{
             
             average_position = (get_left_position_in()+get_right_position_in())/2.0;
             float drive_error = distance+start_average_position-average_position;
-            float drive_output = drivePID.compute(drive_error) * 1000;
+            float drive_output = drivePID.compute(drive_error) * dConstants[0];
             drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
             driveVoltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
             ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);

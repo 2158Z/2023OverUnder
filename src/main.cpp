@@ -95,8 +95,42 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	while(inertial.is_calibrating()){
+		pros::delay(10);
+	}
 	switch(selector::auton) {
-		case 1:	//test skills
+		case 1:
+			auton::driveDistance(-22);
+			auton::turnAngle(35);
+			auton::driveDistance(-15.5, {11000, 0.1, 0, 0, 0, 0, 0.5, 1500});
+			auton::driveTurn(14, 10, 0.5, {11000, 0.1, 0, 0, 0, 250, 0.5, 500});
+			auton::turnAngle(225);
+			wingBackLeft.set_value(true);
+			auton::driveTurn(-13.5, 180, 0.45, {11000, 0.1, 0, 0, 0, 250, 0.5, 1000});
+			auton::turnAngle(200);
+			wingBackLeft.set_value(false);
+			pros::delay(250);
+			auton::turnAngle(-40);
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(36.5, {8000, 0.1, 0, 0, 0, 0, 0.5, 1500});
+			intakeMotor.move_voltage(0);
+			break;
+		case 2: //Close Side Elim
+			break;
+		case 3:
+			
+			break;
+		case -1: //  Farside-0.
+			
+			break;
+		case -2:
+			
+			break;
+		case -3:
+			
+			break;
+		case 0:
+			//Skills
 
 			// pushes the triball into the goal
 			auton::driveDistance(-22);
@@ -143,25 +177,6 @@ void autonomous() {
 			// auton::driveTurn(30, 0, 0, {11000, 1.5, 0, 0.85, 0, 100, 1.5, 500});
 			// frontPistons.set_value(false);
 			//auton::drive_with_voltage(0,0);
-
-			break;
-		case 2: //Close Side Elim
-		
-			break;
-		case 3:
-			
-			break;
-		case -1: //  Farside-0.
-			
-			break;
-		case -2:
-			
-			break;
-		case -3:
-			
-			break;
-		case 0:
-			
 			break;
 		default:
 			break;
