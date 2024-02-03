@@ -4,8 +4,8 @@
 #include "main.h"
 
 #define DEFAULT 1
-#define REDAUTONS "1", "2", "3"
-#define BLUEAUTONS "-1", "-2", "-3"
+#define REDAUTONS "Close Side Elim", "2", "3"
+#define BLUEAUTONS "Far Side 5Ball", "-2", "-3"
 
 namespace selector{
     extern lv_obj_t *tabView;

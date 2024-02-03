@@ -196,4 +196,9 @@ namespace auton{
     //     chassis -> turnAngle(-offset*degree);
     // }
 
+    void setDefaultDriveConstants(std::vector<float> constants){
+        driveConstants = constants;
+
+    }
+
 }
