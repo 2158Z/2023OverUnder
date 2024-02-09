@@ -21,6 +21,7 @@ float PID::compute(float error) {
   }
 
   output = (kp * error) + (ki * accumulated_error) + (kd * (error - previous_error));
+  printf("P: %f, I: %f, D: %f \n", kp*error, ki*accumulated_error, kd*(error-previous_error));
   previous_error = error;
 
   time_spent_settled = (fabs(error) < settle_error) ? time_spent_settled + 10 : 0;
