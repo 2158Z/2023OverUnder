@@ -3,6 +3,7 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
+
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -47,7 +48,8 @@ void initialize() {
 			Logger::LogLevel::error
 		)
 	);
-
+	auton::init(0, 0, auton::get_absolute_heading());
+	auton::position_track();
     leftMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
     rightMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);

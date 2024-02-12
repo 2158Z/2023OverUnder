@@ -18,6 +18,7 @@ namespace auton {
     extern std::vector<float> driveConstants;
     extern std::vector<float> turnConstants;
 
+    void init(int x, int y, float deg);
     void position_track();
     void progSkills(pros::Motor cata);
     void wings(pros::ADIDigitalOut wings, int time);

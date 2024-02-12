@@ -17,7 +17,6 @@ namespace auton{
     pros::Motor_Group fullMotorGroup( {driveRightMotorBack, driveRightMotorMiddle, driveRightMotorFront, driveLeftMotorBack, driveLeftMotorMiddle, driveLeftMotorFront} );
 
     pros::IMU inertial(14);
-    Odom odom;
     QLength meter(1.0); // SI base unit
     QLength decimeter = meter / 10;
     QLength centimeter = meter / 100;
@@ -47,8 +46,14 @@ namespace auton{
     vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
     vector<float> driveConstants = {11000, 1.5, 0, 0.85, 0, 100, 1.5, 1500};
 
+    xOdom odom;
+
     float drive_desired_heading = 0;
     int counter = 0;
+
+    void init(int x, int y, float deg){
+        odom.set_position(x,y,deg,0,0);
+    }
 
     void progSkills(pros::Motor cata){
         cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
@@ -108,7 +113,7 @@ namespace auton{
 
     void position_track(){
         while(1){
-            odom.update_position(-1 * get_right_position_in(), 0, get_absolute_heading());
+            odom.update_position(-1 * get_right_position_in(), get_absolute_heading());
             pros::delay(5);
         }
     }

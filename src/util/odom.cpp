@@ -1,5 +1,5 @@
 #include "main.h"
-#include "odom.h"
+#include "util/odom.h"
 #include <math.h>
 
 float SidewaysTracker_diameter = 3.25;
@@ -7,12 +7,12 @@ float SidewaysTracker_in_to_deg_ratio = M_PI*SidewaysTracker_diameter/360.0;
 float ForwardTracker_diameter = 3.25;
 float ForwardTracker_in_to_deg_ratio = M_PI*ForwardTracker_diameter/360.0;
 
-void Odom::set_physical_distances(float ForwardTracker_center_distance, float SidewaysTracker_center_distance){
+void xOdom::set_physical_distances(float ForwardTracker_center_distance, float SidewaysTracker_center_distance){
   this->ForwardTracker_center_distance = ForwardTracker_center_distance;
   this->SidewaysTracker_center_distance = SidewaysTracker_center_distance;
 }
 
-void Odom::set_position(float X_position, float Y_position, float orientation_deg, float ForwardTracker_position, float SidewaysTracker_position){
+void xOdom::set_position(float X_position, float Y_position, float orientation_deg, float ForwardTracker_position, float SidewaysTracker_position){
   this->ForwardTracker_position = ForwardTracker_position;
   this->SideWaysTracker_position = SidewaysTracker_position;
   this->X_position = X_position;
@@ -20,59 +20,62 @@ void Odom::set_position(float X_position, float Y_position, float orientation_de
   this->orientation_deg = orientation_deg;
 }
 
-void Odom::update_position(float ForwardTracker_position, float SidewaysTracker_position, float orientation_deg){
-  float Forward_delta = ForwardTracker_position-this->ForwardTracker_position;
-  float Sideways_delta = SidewaysTracker_position-this->SideWaysTracker_position;
-  this->ForwardTracker_position=ForwardTracker_position;
-  this->SideWaysTracker_position=SidewaysTracker_position;
-  float orientation_rad = to_rad(orientation_deg);
-  float prev_orientation_rad = to_rad(this->orientation_deg);
-  float orientation_delta_rad = orientation_rad-prev_orientation_rad;
-  this->orientation_deg=orientation_deg;
+void xOdom::update_position(float ForwardTracker_position, float orientation_deg){
+  float SidewaysTracker_position = 0;
+  while(1){
+    float Forward_delta = ForwardTracker_position-this->ForwardTracker_position;
+    float Sideways_delta = SidewaysTracker_position-this->SideWaysTracker_position;
+    this->ForwardTracker_position=ForwardTracker_position;
+    this->SideWaysTracker_position=SidewaysTracker_position;
+    float orientation_rad = to_rad(orientation_deg);
+    float prev_orientation_rad = to_rad(this->orientation_deg);
+    float orientation_delta_rad = orientation_rad-prev_orientation_rad;
+    this->orientation_deg=orientation_deg;
 
-  float local_X_position;
-  float local_Y_position;
+    float local_X_position;
+    float local_Y_position;
 
-  if (orientation_delta_rad == 0) {
-    local_X_position = Sideways_delta;
-    local_Y_position = Forward_delta;
-  } else {
-    local_X_position = (2*sin(orientation_delta_rad/2))*((Sideways_delta/orientation_delta_rad)); 
-    local_Y_position = (2*sin(orientation_delta_rad/2))*((Forward_delta/orientation_delta_rad));
+    if (orientation_delta_rad == 0) {
+      local_X_position = Sideways_delta;
+      local_Y_position = Forward_delta;
+    } else {
+      local_X_position = (2*sin(orientation_delta_rad/2))*((Sideways_delta/orientation_delta_rad)); 
+      local_Y_position = (2*sin(orientation_delta_rad/2))*((Forward_delta/orientation_delta_rad));
+    }
+
+    float local_polar_angle;
+    float local_polar_length;
+
+    if (local_X_position == 0 && local_Y_position == 0){
+      local_polar_angle = 0;
+      local_polar_length = 0;
+    } else {
+      local_polar_angle = atan2(local_Y_position, local_X_position); 
+      local_polar_length = sqrt(pow(local_X_position, 2) + pow(local_Y_position, 2)); 
+    }
+
+    float global_polar_angle = local_polar_angle - prev_orientation_rad - (orientation_delta_rad/2);
+
+    float X_position_delta = local_polar_length*cos(global_polar_angle); 
+    float Y_position_delta = local_polar_length*sin(global_polar_angle);
+
+    X_position+=X_position_delta;
+    Y_position+=Y_position_delta;
   }
-
-  float local_polar_angle;
-  float local_polar_length;
-
-  if (local_X_position == 0 && local_Y_position == 0){
-    local_polar_angle = 0;
-    local_polar_length = 0;
-  } else {
-    local_polar_angle = atan2(local_Y_position, local_X_position); 
-    local_polar_length = sqrt(pow(local_X_position, 2) + pow(local_Y_position, 2)); 
-  }
-
-  float global_polar_angle = local_polar_angle - prev_orientation_rad - (orientation_delta_rad/2);
-
-  float X_position_delta = local_polar_length*cos(global_polar_angle); 
-  float Y_position_delta = local_polar_length*sin(global_polar_angle);
-
-  X_position+=X_position_delta;
-  Y_position+=Y_position_delta;
 }
 
-float Odom::get_ForwardTracker_position(float deg){
+float xOdom::get_ForwardTracker_position(float deg){
     return(deg*ForwardTracker_in_to_deg_ratio);
 }
 
-float Odom::get_SidewaysTracker_position(float deg){
+float xOdom::get_SidewaysTracker_position(float deg){
     return(deg*SidewaysTracker_in_to_deg_ratio);
 }
 
-float Odom::get_Xposition(){
+float xOdom::get_Xposition(){
   return this->X_position;
 }
 
-float Odom::get_Yposition(){
+float xOdom::get_Yposition(){
   return this->Y_position;
 }
