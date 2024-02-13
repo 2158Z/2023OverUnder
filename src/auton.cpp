@@ -81,6 +81,10 @@ namespace auton{
         return inertial.get_heading(); 
     }
 
+    std::vector<double> getPose(){
+        return {odom.get_Xposition(), odom.get_Yposition(), inertial.get_heading()};
+    }
+
     float get_left_position_in(){
         if (counter % 100 == 0){
             //printf("%f Left\n", ( (driveLeftMotorMiddle.get_position()/180) * M_PI * wheel_diameter * wheel_ratio))/2;

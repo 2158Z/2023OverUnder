@@ -31,6 +31,7 @@ namespace auton {
     float get_Y_position();
     float get_right_deg();
     float get_left_deg();
+    std::vector<double> getPose();
     void drive_with_voltage(float leftVoltage, float rightVoltage);
     
     /**

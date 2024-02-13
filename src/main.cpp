@@ -3,6 +3,7 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
+#include "util/purepursuit.h"
 
 using namespace okapi;
 pros::Controller master(pros::E_CONTROLLER_MASTER);
@@ -259,13 +260,7 @@ void autonomous() {
 			backPistons.set_value(false);
 			break;
 		case -3:
-			auton::drive_with_voltage(-10000,-10000);
-			pros::delay(5000);
-			auton::drive_with_voltage(10000,10000);
-			pros::delay(1000);
-			auton::drive_with_voltage(0,0);
-			// cataMotorGroup.move_voltage(9000);
-			// auton::drive_with_voltage(1000, 1000);
+			purepur::follow("/usd/path.txt", 50, 2000);
 			break;
 		case 0:
 			auton::turn_to_angle(-55 + 180);
