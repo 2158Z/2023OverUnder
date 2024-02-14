@@ -5,7 +5,7 @@
 
 #define DEFAULT 1
 #define REDAUTONS "Close Side Elim", "2", "3"
-#define BLUEAUTONS "Far Side 5Ball", "-2", "-3"
+#define BLUEAUTONS "Far Side 5Ball", "Farside Safe", "-3"
 
 namespace selector{
     extern lv_obj_t *tabView;

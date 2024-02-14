@@ -159,7 +159,37 @@ void autonomous() {
 			auton::driveDistance(-2);
 			break;
 		case -2:
-			
+			auton::setDefaultDriveConstants({11000, 0.1, 0, 0, 0, 0, 0.1, 500});
+			intakeMotor.move_voltage(9000);
+			wingBackLeft.set_value(true);
+			auton::driveTurn(-18, 315, 0.35);
+			wingBackLeft.set_value(false);
+			auton::driveTurn(-18, 270, 0.35);
+			intakeMotor.move_voltage(0);
+			wingBackLeft.set_value(false);
+			auton::driveDistance(16);
+			auton::turnAngle(45);
+			intakeMotor.move_voltage(12000);
+			auton::driveDistance(60, {10000, 1.5125, 0, 0, 0, 100, 0.5, 1500});
+			auton::turnAngle(180);
+			wingFrontLeft.set_value(true);
+			auton::driveDistance(36, {12000, 0.1, 0, 0, 0, 0, 0.5, 1500});
+			intakeMotor.move_voltage(-12000);
+			pros::delay(150);
+			intakeMotor.move_voltage(0);
+			wingFrontLeft.set_value(false);
+			auton::driveDistance(-5);
+			auton::turnAngle(315);
+			intakeMotor.move_voltage(12000);
+			auton::driveDistance(25);
+			pros::delay(150);
+			auton::turnAngle(135);
+			auton::driveDistance(25);
+			auton::turnAngle(180);
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(20);
+			intakeMotor.move_voltage(0);
+			auton::driveDistance(-5);
 			break;
 		case -3:
 			
@@ -177,23 +207,23 @@ void autonomous() {
 			auton::turnAngle(-70);
 			auton::driveDistance(-1.5);
 			cataMotorGroup.move_voltage(11000);
-			delay(45000);
+			fullMotorGroup.move_voltage(250);
+			// delay(45000);
 			cataMotorGroup.move_voltage(0);
 
 			// stops kicker and moves to the other side
 			auton::driveDistance(1);
 			auton::turnAngle(180);
-			auton::driveDistance(-20);
+			auton::driveDistance(-25);
 			auton::turnAngle(135);
 			auton::driveDistance(-80);
-			wingBackRight.set_value(true);
-
-			// scores the corner balls
-			auton::turnAngle(-90);
-			auton::driveDistance(-20);
-			auton::turnAngle(-135);
-			auton::driveDistance(-9.5);
-
+			auton::turnAngle(60);
+			auton::driveTurn(-36, 325, 0.35);
+			auton::turnAngle(60);
+			auton::driveTurn(-36, 145, 0.225);
+			auton::driveDistance(-5);
+			auton::driveTurn(40, 185, 0.35);
+			auton::driveTurn(40, 225, 0.35);
 
 			// [possible close side auton starter
 			// auton::turnAngle(135);

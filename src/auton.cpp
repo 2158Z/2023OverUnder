@@ -166,7 +166,7 @@ namespace auton{
                     dConstants[7]);
         PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
                     tConstants[5], tConstants[6], tConstants[7]);
-        while((turnPID.is_settled() == false) || drivePID.is_settled() == false){
+        while(!turnPID.is_settled() || !drivePID.is_settled()){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
             float output = turnPID.compute(error) * 1000;
             //printf("%f \n", error);
@@ -184,7 +184,7 @@ namespace auton{
             // }
             delay(10);
         }
-
+        driveVoltage(0,0);
     }
 
     // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
