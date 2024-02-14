@@ -106,7 +106,7 @@ namespace auton{
         driveLeftFront.tare_position();
 
         while(!leftPID.is_settled() && !rightPID.is_settled()) {
-            float leftTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
+            float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
             float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             
             float leftError = distance - leftTraveled;
