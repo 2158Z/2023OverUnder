@@ -47,9 +47,9 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {12000, 1.5125, 0, 0, 0, 100, 0.5, 1500};
+    std::vector<float> driveConstants = {12000, 0.15, 0.01, 0.9, 0.78, 200, 0.25, 2000};
 
-    float wheel_diameter = 3;
+    float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
 
     float drive_desired_heading = 0;
@@ -104,19 +104,27 @@ namespace auton{
         //PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         driveRightFront.tare_position();
         driveLeftFront.tare_position();
+        int counter = 0;
 
         while(!leftPID.is_settled() && !rightPID.is_settled()) {
+            //float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
+            //float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
             float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             
             float leftError = distance - leftTraveled;
             float rightError = distance - rightTraveled;
 
-            float leftOutput = leftPID.compute(leftError) * dConstants[0];
-            float rightOutput = rightPID.compute(rightError) * dConstants[0];
+            float leftOutput = leftPID.compute(leftError) * 10000;
+            float rightOutput = rightPID.compute(rightError) * 10000;
+
+            leftOutput = clamp(leftOutput, -driveConstants[0], driveConstants[0]);
+            rightOutput = clamp(rightOutput, -driveConstants[0], driveConstants[0]);
 
             driveVoltage(leftOutput, rightOutput);
 
+            printf("%d %f \n", counter, rightError);
+            counter++;
             delay(10);
         }
 
