@@ -46,8 +46,8 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> turnConstants = {12000, 0.35, 0.25, 2, 0, 100, 1, 1500};
-    std::vector<float> driveConstants = {12000, 0.15, 0.01, 0.9, 0.78, 200, 0.25, 2000};
+    std::vector<float> turnConstants = {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 2000};
+    std::vector<float> driveConstants = {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
@@ -101,14 +101,12 @@ namespace auton{
     void driveDistance(float distance, std::vector<float> dConstants = driveConstants) {
         PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
-        //PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+
         driveRightFront.tare_position();
         driveLeftFront.tare_position();
         int counter = 0;
 
         while(!leftPID.is_settled() && !rightPID.is_settled()) {
-            //float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
-            //float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
             float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             
@@ -123,25 +121,10 @@ namespace auton{
 
             driveVoltage(leftOutput, rightOutput);
 
-            printf("%d %f \n", counter, rightError);
+            //printf("%d %f \n", counter, rightError);
             counter++;
             delay(10);
         }
-
-        //float start_average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
-        //float average_position = start_average_position;
-        // while (!drivePID.is_settled()) {
-        //     average_position = (get_left_position_in() + get_right_position_in()) / 2.0;
-        //     float drive_error = distance - average_position;
-        //     float drive_output = drivePID.compute(drive_error) * 1000;
-        //     drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
-        //     driveVoltage(drive_output, drive_output);
-        //     printf("Position: %f \n", average_position);
-        //     //printf("Left: %f, Right: %f \n", get_left_position_in(), get_right_position_in());
-        //     delay(100);
-        // }
-        //driveLeft.move_voltage(0);
-        //driveRight.move_voltage(0);
         driveVoltage(0,0);
     }
 
@@ -149,12 +132,26 @@ namespace auton{
 
     void turnAngle(float angle, std::vector<float> tConstants = turnConstants) {
         drive_desired_heading = angle;
-        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4],
-                    tConstants[5], tConstants[6], tConstants[7]);
+        PID turnPID(angle, tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
+        float relativeHeading = 0;
+        float absHeading = inertial.get_heading();
+        float previousAbsHeading = absHeading;
         while (turnPID.is_settled() == false) {
-            float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-            float output = turnPID.compute(error) * 1000;
-            printf("%f \n", error);
+            float deltaAngle = 0;
+            absHeading = inertial.get_heading();
+
+            deltaAngle = absHeading - previousAbsHeading;
+            if(deltaAngle < -180 || deltaAngle > 180) { //if it crosses from 0 to 360 or vice versa
+                deltaAngle = -360 + absHeading + previousAbsHeading;
+            }
+
+            relativeHeading += deltaAngle;
+            float error = angle - relativeHeading;
+            previousAbsHeading = absHeading;
+
+            float output = turnPID.compute(error) * 10000;
+            printf("%f %f \n", relativeHeading, absHeading);
+
             output = clamp(output, -tConstants[0], tConstants[0]);
             driveVoltage(output, -output);
             delay(10);

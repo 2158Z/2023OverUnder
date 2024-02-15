@@ -100,7 +100,7 @@ void autonomous() {
 	}
 	switch(selector::auton) {
 		case 1:
-			auton::driveDistance(24);
+			auton::driveDistance(12);
 			// auton::driveDistance(-22);
 			// auton::turnAngle(35);
 			// auton::driveDistance(-15.5, {11000, 0.1, 0, 0, 0, 0, 0.5, 1500});
