@@ -100,22 +100,21 @@ void autonomous() {
 	}
 	switch(selector::auton) {
 		case 1:
-			auton::driveDistance(12);
-			// auton::driveDistance(-22);
-			// auton::turnAngle(35);
-			// auton::driveDistance(-15.5, {11000, 0.1, 0, 0, 0, 0, 0.5, 1500});
-			// auton::driveTurn(14, 10, 0.5, {11000, 0.1, 0, 0, 0, 250, 0.5, 500});
-			// auton::turnAngle(225);
-			// wingBackLeft.set_value(true);
-			// auton::driveTurn(-13.5, 180, 0.45, {12000, 0.1, 0, 0, 0, 250, 0.5, 1000}); // 13.5 -> 14
-			// // auton::turnAngle(200);
-			// wingBackLeft.set_value(false);
-			// pros::delay(250);
-			// auton::turnAngle(-35); // 40
-			// intakeMotor.move_voltage(-12000);
-			// auton::driveDistance(33.5, {8000, 0.1, 0, 0, 0, 0, 0.5, 1500});
-			// pros::delay(200);
-			// auton::driveVoltage(0,0);
+			auton::driveDistance(-22);
+			auton::turnAngle(35);
+			auton::driveDistance(-15.5);
+			auton::driveTurn(14, 10, 0.5);
+			auton::turnAngle(211);
+			wingBackLeft.set_value(true);
+			auton::driveTurn(-13.5, 180, 0.45); // 13.5 -> 14
+			// auton::turnAngle(200);
+			wingBackLeft.set_value(false);
+			pros::delay(250);
+			auton::turnAngle(-21.5); // 40
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(33.5);
+			pros::delay(200);
+			auton::driveVoltage(0,0);
 			break;
 		case 2: //Close Side Elim
 			auton::driveDistance(-36);
@@ -123,7 +122,7 @@ void autonomous() {
 		case 3:
 			break;
 		case -1: //  Farside-0.
-			auton::setDefaultDriveConstants({11000, 0.1, 0, 0, 0, 0, 0.1, 500});
+			auton::setDefaultDriveConstants({12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 			wingFrontRight.set_value(true);
 			pros::delay(250);
 			wingFrontRight.set_value(false);
@@ -132,7 +131,7 @@ void autonomous() {
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(27,{11000, 0.1, 0, 0, 0, 250, 0.5, 500});
 			pros::delay(250);
-			auton::turnAngle(135);
+			auton::turnAngle(122.5);
 			wingFrontLeft.set_value(true);
 			auton::driveDistance(36, {12000, 0.1, 0, 0, 0, 0, 0.5, 1500});
 			intakeMotor.move_voltage(-12000);
@@ -140,20 +139,20 @@ void autonomous() {
 			intakeMotor.move_voltage(0);
 			wingFrontLeft.set_value(false);
 			auton::driveDistance(-5);
-			auton::turnAngle(270);
+			auton::turnAngle(135);
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(30);
 			pros::delay(150);
-			auton::turnAngle(155);
+			auton::turnAngle(-115);
 			auton::driveDistance(20, {10000, 0.1, 0, 0, 0, 0, 0.5, 500});
 			intakeMotor.move_voltage(-12000);
 			pros::delay(500);
 			intakeMotor.move_voltage(0);
-			auton::turnAngle(345, {10000, 0.35, 0.25, 2, 0, 100, 1, 1500});
+			auton::turnAngle(190, {10000, 0.35, 0.25, 2, 0, 100, 1, 1500});
 			auton::driveDistance(-13.5);
 			wingBackLeft.set_value(true);
 			pros::delay(500);
-			auton::turnAngle(245, {8000, 0.35, 0.25, 2, 0, 100, 1, 1500});
+			auton::turnAngle(-100, {8000, 0.35, 0.25, 2, 0, 100, 1, 1500});
 			wingBackLeft.set_value(false);
 			pros::delay(250);
 			auton::driveTurn(-40, 270, 0.2);
@@ -169,10 +168,10 @@ void autonomous() {
 			intakeMotor.move_voltage(0);
 			wingBackLeft.set_value(false);
 			auton::driveDistance(16);
-			auton::turnAngle(45);
+			auton::turnAngle(81);
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(60, {10000, 1.5125, 0, 0, 0, 100, 0.5, 1500});
-			auton::turnAngle(180);
+			auton::turnAngle(99);
 			wingFrontLeft.set_value(true);
 			auton::driveDistance(36, {12000, 0.1, 0, 0, 0, 0, 0.5, 1500});
 			intakeMotor.move_voltage(-12000);
@@ -180,13 +179,13 @@ void autonomous() {
 			intakeMotor.move_voltage(0);
 			wingFrontLeft.set_value(false);
 			auton::driveDistance(-5);
-			auton::turnAngle(315);
+			auton::turnAngle(135);
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(25);
 			pros::delay(150);
-			auton::turnAngle(135);
+			auton::turnAngle(-180);
 			auton::driveDistance(25);
-			auton::turnAngle(180);
+			auton::turnAngle(45);
 			intakeMotor.move_voltage(-12000);
 			auton::driveDistance(20);
 			intakeMotor.move_voltage(0);
@@ -205,7 +204,7 @@ void autonomous() {
 
 			// positions the robot and starts kicker
 			auton::driveDistance(8);
-			auton::turnAngle(-70);
+			auton::turnAngle(-100);
 			auton::driveDistance(-1.5);
 			cataMotorGroup.move_voltage(11000);
 			fullMotorGroup.move_voltage(250);
@@ -214,13 +213,13 @@ void autonomous() {
 
 			// stops kicker and moves to the other side
 			auton::driveDistance(1);
-			auton::turnAngle(180);
+			auton::turnAngle(250);
 			auton::driveDistance(-25);
-			auton::turnAngle(135);
+			auton::turnAngle(-45);
 			auton::driveDistance(-80);
 			auton::turnAngle(60);
 			auton::driveTurn(-36, 325, 0.35);
-			auton::turnAngle(60);
+			auton::turnAngle(96);
 			auton::driveTurn(-36, 145, 0.225);
 			auton::driveDistance(-5);
 			auton::driveTurn(40, 185, 0.35);
