@@ -10,15 +10,6 @@ namespace auton {
     extern std::vector<float> driveConstants;
     extern std::vector<float> turnConstants;
 
-    void progSkills(pros::Motor cata);
-    void wings(pros::ADIDigitalOut wings, int time);
-    void setWingState(pros::ADIDigitalOut Rwings, pros::ADIDigitalOut Lwings, bool state);
-    void intake(pros::Motor intake, int time);
-    float get_absolute_heading();
-    float get_left_position_in();
-    float get_right_position_in();
-    float get_right_deg();
-    float get_left_deg();
     void driveVoltage(float leftVoltage, float rightVoltage);
     
     /**
