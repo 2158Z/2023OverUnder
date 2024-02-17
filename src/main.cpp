@@ -101,19 +101,19 @@ void autonomous() {
 	switch(selector::auton) {
 		case 1:
 			intakeMotor.move_voltage(12000);
-			auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 2000});
+			auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
 			intakeMotor.move_voltage(0);
 			auton::driveDistance(5);
 			auton::turnAngle(180);
-			auton::driveTurn(-8, -45, 0.25);
+			auton::driveTurn(-8, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
 			wingBackLeft.set_value(true);
-			auton::driveTurn(-12, -45, 0.25);
+			auton::driveTurn(-12, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
 			wingBackLeft.set_value(false);
 			pros::delay(250);
 			auton::driveTurn(-10, -15, 0.5);
-			auton::turnAngle(-185);
+			auton::turnAngle(-190);
 			intakeMotor.move_voltage(-12000);
-			auton::driveDistance(36);
+			auton::driveDistance(36, {8000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 
 			// auton::driveDistance(-22);
 			// auton::turnAngle(35);
@@ -161,6 +161,36 @@ void autonomous() {
 		case 3:
 			break;
 		case -1: //  Farside-0.
+			wingBackLeft.set_value(true);
+			intakeMotor.move_voltage(12000);
+			auton::driveTurn(-15, -45, 0.45, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.5, 1000});
+			intakeMotor.move_voltage(0);
+			//auton::turnAngle(-50);
+			wingBackLeft.set_value(false);
+			//auton::driveDistance(-24);
+			auton::driveTurn(-10, -45, 0.5, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.5, 1000});
+			auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1000});
+			intakeMotor.move_voltage(12000);
+			//auton::driveTurn(64.5, 105, 0.45, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 3000});
+			auton::driveTurn(30, 105, 0.7, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 1000});
+			auton::driveDistance(30);
+			//intakeMotor.move_voltage(0);
+			auton::turnAngle(115);
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(10);
+			intakeMotor.move_voltage(0);
+			auton::turnAngle(-75);
+			intakeMotor.move_voltage(12000);
+			auton::driveDistance(15);
+			auton::turnAngle(112.5);
+			intakeMotor.move_voltage(-12000);
+			wingFrontLeft.set_value(true);
+			wingFrontRight.set_value(true);
+			auton::driveDistance(54, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1500});
+			break;
+		case -2:
+
+			//saved kenny far safe
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-18, -35, 0.35);
 			intakeMotor.move_voltage(0);
@@ -183,8 +213,8 @@ void autonomous() {
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			auton::driveDistance(54);
-			break;
-		case -2:
+
+
 			// auton::setDefaultDriveConstants({11000, 0.1, 0, 0, 0, 0, 0.1, 500});
 			// intakeMotor.move_voltage(9000);
 			// wingBackLeft.set_value(true);
@@ -222,6 +252,7 @@ void autonomous() {
 			break;
 		case 0:
 			//Skills
+
 
 			// pushes the triball into the goal
 			intakeMotor.move_voltage(12000);
