@@ -145,13 +145,13 @@ void autonomous() {
 			intakeMotor.move_voltage(0);
 			auton::turnAngle(-44);
 			auton::driveDistance(-65);
-			auton::turnAngle(-240);
+			auton::turnAngle(-245);
 			auton::driveDistance(-50);
 			auton::driveDistance(6);
 			auton::turnAngle(180);
 			auton::driveTurn(-8, -45, 0.25);
 			wingBackLeft.set_value(true);
-			auton::driveTurn(-12, -45, 0.25);
+			auton::driveTurn(-14, -45, 0.25);
 			wingBackLeft.set_value(false);
 			pros::delay(250);
 			auton::driveTurn(-10, -15, 0.5);
