@@ -159,8 +159,8 @@ namespace auton{
 
     void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
 
-        driveLeftMiddle.tare_position();
-        driveRightMiddle.tare_position();
+        driveLeftFront.tare_position();
+        driveRightFront.tare_position();
 
         float relativeHeading = 0;
         float absHeading = inertial.get_heading();
@@ -195,11 +195,14 @@ namespace auton{
             float turnOutput = turnPID.compute(error) * 10000;
 
             //combine
-
+            clamp(turnOutput, -12000, 12000);
+            clamp(driveOutput, -12000, 12000);
+            printf("%f %f \n", error, turnOutput);
             driveVoltage(((2 * turnWeight * turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0, ((2 * turnWeight * -turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0);
 
             delay(10);
         }
+        driveVoltage(0,0);
     }
 
     // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
