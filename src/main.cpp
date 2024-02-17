@@ -161,43 +161,6 @@ void autonomous() {
 		case 3:
 			break;
 		case -1: //  Farside-0.
-			auton::setDefaultDriveConstants({12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
-			wingFrontRight.set_value(true);
-			pros::delay(250);
-			wingFrontRight.set_value(false);
-			auton::driveDistance(33, {11000, 0.1, 0, 0, 0, 0, 0.5, 500});
-			auton::turnAngle(12.5);
-			intakeMotor.move_voltage(12000);
-			auton::driveDistance(27,{11000, 0.1, 0, 0, 0, 250, 0.5, 500});
-			pros::delay(250);
-			auton::turnAngle(122.5);
-			wingFrontLeft.set_value(true);
-			auton::driveDistance(36, {12000, 0.1, 0, 0, 0, 0, 0.5, 1500});
-			intakeMotor.move_voltage(-12000);
-			pros::delay(150);
-			intakeMotor.move_voltage(0);
-			wingFrontLeft.set_value(false);
-			auton::driveDistance(-5);
-			auton::turnAngle(135);
-			intakeMotor.move_voltage(12000);
-			auton::driveDistance(30);
-			pros::delay(150);
-			auton::turnAngle(-115);
-			auton::driveDistance(20, {10000, 0.1, 0, 0, 0, 0, 0.5, 500});
-			intakeMotor.move_voltage(-12000);
-			pros::delay(500);
-			intakeMotor.move_voltage(0);
-			auton::turnAngle(190, {10000, 0.35, 0.25, 2, 0, 100, 1, 1500});
-			auton::driveDistance(-13.5);
-			wingBackLeft.set_value(true);
-			pros::delay(500);
-			auton::turnAngle(-100, {8000, 0.35, 0.25, 2, 0, 100, 1, 1500});
-			wingBackLeft.set_value(false);
-			pros::delay(250);
-			auton::driveTurn(-40, 270, 0.2);
-			auton::driveDistance(-2);
-			break;
-		case -2:
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-18, -35, 0.35);
 			intakeMotor.move_voltage(0);
@@ -220,6 +183,8 @@ void autonomous() {
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			auton::driveDistance(54);
+			break;
+		case -2:
 			// auton::setDefaultDriveConstants({11000, 0.1, 0, 0, 0, 0, 0.1, 500});
 			// intakeMotor.move_voltage(9000);
 			// wingBackLeft.set_value(true);
@@ -259,50 +224,20 @@ void autonomous() {
 			//Skills
 
 			// pushes the triball into the goal
-			auton::driveDistance(-22);
-			auton::turnAngle(30);
-			auton::driveDistance(-9.5);
+			intakeMotor.move_voltage(12000);
+			auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 2000});
+			intakeMotor.move_voltage(0);
 
 			// positions the robot and starts kicker
 			auton::driveDistance(8);
 			auton::turnAngle(-100);
 			auton::driveDistance(-1.5);
-			cataMotorGroup.move_voltage(11000);
-			fullMotorGroup.move_voltage(250);
+			wingBackRight.set_value(true);
+			// cataMotorGroup.move_voltage(11000);
+			// fullMotorGroup.move_voltage(250);
 			// delay(45000);
-			cataMotorGroup.move_voltage(0);
-
-			// stops kicker and moves to the other side
-			auton::driveDistance(1);
-			auton::turnAngle(250);
-			auton::driveDistance(-25);
-			auton::turnAngle(-45);
-			auton::driveDistance(-80);
-			auton::turnAngle(60);
-			auton::driveTurn(-36, 325, 0.35);
-			auton::turnAngle(96);
-			auton::driveTurn(-36, 145, 0.225);
-			auton::driveDistance(-5);
-			auton::driveTurn(40, 185, 0.35);
-			auton::driveTurn(40, 225, 0.35);
-
-			// [possible close side auton starter
-			// auton::turnAngle(135);
-			// auton::driveDistance(-22);
-			// auton::turnAngle(170);
-			// auton::driveDistance(-5);
-
-
-			// frontPistons.set_value(true);
-			// pros::delay(1500);
-			// frontPistons.set_value(false);
-			// auton::driveTurn(47, -45, 0.2);
-			// auton::driveTurn(0, 45, 1);
-			// auton::turn_to_angle(45);
-			// frontPistons.set_value(true);
-			// auton::driveTurn(30, 0, 0, {11000, 1.5, 0, 0.85, 0, 100, 1.5, 500});
-			// frontPistons.set_value(false);
-			//auton::drive_with_voltage(0,0);
+			// cataMotorGroup.move_voltage(0);
+			// wingBackRight.set_value(false);
 			break;
 		default:
 			break;
