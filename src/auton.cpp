@@ -195,11 +195,11 @@ namespace auton{
             float turnOutput = turnPID.compute(error) * 10000;
 
             //combine
-            clamp(turnOutput, -12000, 12000);
-            clamp(driveOutput, -12000, 12000);
-            printf("%f %f \n", error, turnOutput);
+            turnOutput = clamp(turnOutput, -12000, 12000);
+            driveOutput = clamp(driveOutput, -12000, 12000);
+            // printf("%f %f \n", error, turnOutput);
             driveVoltage(((2 * turnWeight * turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0, ((2 * turnWeight * -turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0);
-
+            printf("%f %f \n", (2 * turnWeight * turnOutput), (2 * (1 - turnWeight) * driveOutput));
             delay(10);
         }
         driveVoltage(0,0);

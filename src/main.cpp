@@ -100,16 +100,18 @@ void autonomous() {
 	}
 	switch(selector::auton) {
 		case 1:
-			auton::driveTurn(-100, 45, 0.5);
-			// auton::driveDistance(5);
-			// auton::turnAngle(180);
-			// auton::driveTurn(-24, -45, 0.5);
-			// wingBackLeft.set_value(true);
-			// auton::driveTurn(-22, -45, 0.5);
-			// wingBackLeft.set_value(false);
-			// auton::turnAngle(360);
-			// auton::turnAngle(-45);
-			// auton::driveTurn(50,-10, 0.35);
+			auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 2000});
+			auton::driveDistance(5);
+			auton::turnAngle(180);
+			auton::driveTurn(-8, -45, 0.25);
+			wingBackLeft.set_value(true);
+			auton::driveTurn(-12, -45, 0.25);
+			wingBackLeft.set_value(false);
+			pros::delay(250);
+			auton::driveTurn(-10, -15, 0.5);
+			auton::turnAngle(-185);
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(36);
 
 			// auton::driveDistance(-22);
 			// auton::turnAngle(35);
