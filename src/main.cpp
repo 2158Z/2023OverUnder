@@ -101,7 +101,11 @@ void autonomous() {
 	switch(selector::auton) {
 		case 1:
 			intakeMotor.move_voltage(12000);
-			auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
+			// auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
+			auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
+		    auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
+			auton::driveDistance(5);
+			auton::driveDistance(-15);
 			intakeMotor.move_voltage(0);
 			auton::driveDistance(5);
 			auton::turnAngle(180);
@@ -111,7 +115,7 @@ void autonomous() {
 			wingBackLeft.set_value(false);
 			pros::delay(250);
 			auton::driveTurn(-10, -15, 0.5);
-			auton::turnAngle(-190);
+			auton::turnAngle(-192.5);
 			intakeMotor.move_voltage(-12000);
 			auton::driveDistance(36, {8000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 
@@ -169,8 +173,12 @@ void autonomous() {
 			//auton::turnAngle(-50);
 			wingBackLeft.set_value(false);
 			//auton::driveDistance(-24);
-			auton::driveTurn(-10, -45, 0.5, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.5, 1000});
-			auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1000});
+			// auton::driveTurn(-10, -45, 0.5, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.5, 1000}); // changing driveturn
+			auton::driveDistance(-3);
+			auton::driveTurn(-5, -45, 0.4, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.5, 1000});
+			auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
+			auton::driveDistance(5);
+			auton::driveDistance(-20);
 			intakeMotor.move_voltage(12000);
 			//auton::driveTurn(64.5, 105, 0.45, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 3000});
 			auton::driveTurn(30, 105, 0.7, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 1000});
