@@ -32,6 +32,7 @@ namespace auton {
     */
    
     void turnAngle(float angle, std::vector<float> tConstants = turnConstants);
+    void absTurn(float angle, std::vector<float> tConstants = turnConstants);
 
     /**
      * @brief Drive to a point using odometry and Pid

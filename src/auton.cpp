@@ -157,18 +157,18 @@ namespace auton{
         }
     }
 
-    // void absTurn(float angle, std::vector<float> tConstants = turnConstants) {       // absolute turning
-    //     PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
-    //     int desiredHeading = angle;
-    //     while(turnPID.is_settled() == false)    {
-    //         float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-    //         float output = turnPID.compute(error);
-    //         output = clamp(output, -tConstants[0], tConstants[0]);
-    //         driveVoltage(output, -output);
-    //         delay(10);
-    //     }
-    //     driveVoltage(0, 0);
-    // }
+    void absTurn(float angle, std::vector<float> tConstants = turnConstants) {       // absolute turning
+        PID turnPID(reduce_negative_180_to_180(angle - get_absolute_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
+        drive_desired_heading = angle;
+        while(turnPID.is_settled() == false)    {
+            float error = reduce_negative_180_to_180(angle - get_absolute_heading());
+            float output = turnPID.compute(error);
+            output = clamp(output, -tConstants[0], tConstants[0]);
+            driveVoltage(output, -output);
+            delay(10);
+        }
+        driveVoltage(0, 0);
+    }
 
     void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
 

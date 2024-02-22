@@ -191,7 +191,8 @@ void autonomous() {
 			auton::turnAngle(-75);
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(15);
-			auton::turnAngle(112.5);
+			// auton::turnAngle(112.5); 
+			auton::absTurn(180); //test
 			intakeMotor.move_voltage(-12000);
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
@@ -217,7 +218,8 @@ void autonomous() {
 			auton::turnAngle(-75);
 			intakeMotor.move_voltage(12000);
 			auton::driveDistance(20);
-			auton::turnAngle(112.5);
+			// auton::turnAngle(112.5);
+			auton::absTurn(180);
 			intakeMotor.move_voltage(-12000);
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
