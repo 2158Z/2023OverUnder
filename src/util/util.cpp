@@ -1,4 +1,14 @@
 #include "main.h"
+#include <iostream>
+#include <cmath>
+
+float to_rad(float angle_deg){
+  return(angle_deg/(180.0/M_PI));
+}
+
+float to_deg(float angle_rad){
+  return(angle_rad*(180.0/M_PI));
+}
 
 float reduce_0_to_360(float angle) {
   while(!(angle >= 0 && angle < 360)) {
