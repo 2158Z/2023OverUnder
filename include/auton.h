@@ -47,5 +47,21 @@ namespace auton {
     void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
     void setDefaultDriveConstants(std::vector<float> constants);
 
+// odom functions
+    float get_ForwardTracker_position();
+    float get_SidewaysTracker_position();
+    void position_track();
+
+    void set_heading(float orientation_deg);
+    void set_coordinates(float X_position, float Y_position, float orientation_deg);
+    void get_X_position();
+    void get_Y_position();
+
+    void drive_to_point(float X_position, float Y_position, float drive_max_voltage, float heading_max_voltage);
+    void drive_to_point(float X_position, float Y_position, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout);
+    void drive_to_point(float X_position, float Y_position, float drive_max_voltage, float heading_max_voltage, float drive_settle_error, float drive_settle_time, float drive_timeout, float drive_kp, float drive_ki, float drive_kd, float drive_starti, float heading_kp, float heading_ki, float heading_kd, float heading_starti);
     
+    void turn_to_point(float X_position, float Y_position, float extra_angle_deg);
+    void turn_to_point(float X_position, float Y_position, float extra_angle_deg, float turn_max_voltage, float turn_settle_error, float turn_settle_time, float turn_timeout);
+    void turn_to_point(float X_position, float Y_position, float extra_angle_deg, float turn_max_voltage, float turn_settle_error, float turn_settle_time, float turn_timeout, float turn_kp, float turn_ki, float turn_kd, float turn_starti);
 }

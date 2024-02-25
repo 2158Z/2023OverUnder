@@ -1,6 +1,5 @@
 #include "main.h"
 #include <vector>
-#include <util.cpp>
 using namespace okapi;
 namespace auton{
     // Solenoids for wings
@@ -221,16 +220,15 @@ namespace auton{
 
     void setDefaultDriveConstants(std::vector<float> constants){
         driveConstants = constants;
-
     }
 
-    // odom functions
+// odom functions
     float get_ForwardTracker_position() {
         if (drive_setup == ZERO_TRACKER_ODOM){
             // For zero tracker odom, the right side of the drive becomes the tracker.
             return(get_right_position_in());
         }
-        if (drive_setup==TANK_ONE_ENCODER || drive_setup == TANK_TWO_ENCODER ||   drive_setup == HOLONOMIC_TWO_ENCODER){
+        if (drive_setup == TANK_ONE_ENCODER || drive_setup == TANK_TWO_ENCODER ||   drive_setup == HOLONOMIC_TWO_ENCODER){
             return(E_ForwardTracker.position(deg)*ForwardTracker_in_to_deg_ratio);
         } else{
             // This if-else just discriminates based on whether the sensor is an    encoder or rotation sensor.
@@ -239,7 +237,7 @@ namespace auton{
     }
 
     float get_SidewaysTracker_position() {
-        if (drive_setup==TANK_ONE_ENCODER || drive_setup == TANK_ONE_ROTATION ||  drive_setup == ZERO_TRACKER_ODOM){
+        if (drive_setup == TANK_ONE_ENCODER || drive_setup == TANK_ONE_ROTATION ||  drive_setup == ZERO_TRACKER_ODOM){
             return(0);
             // These setups all pretend that there is a sideways tracker in the center that just never moves.
         } else if (drive_setup == TANK_TWO_ENCODER || drive_setup == HOLONOMIC_TWO_ENCODER){
@@ -257,7 +255,7 @@ namespace auton{
     }
 
     void set_heading(float orientation_deg) {
-        inertial.set_rotation(orientation_deg/360.0);   // check documentation this is probably messed up
+        inertial.set_rotation(orientation_deg);
     }
 
     void set_coordinates(float X_position, float Y_position, float orientation_deg) {
