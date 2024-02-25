@@ -51,10 +51,6 @@ namespace auton{
     float drive_desired_heading = 0;
     int counter = 0;
 
-    void init(int x, int y, float deg){
-        odom.set_position(x,y,deg,0,0);
-    }
-
     void progSkills(pros::Motor cata){
         cata.set_brake_mode(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
         cata.move_voltage(11000);
@@ -115,9 +111,10 @@ namespace auton{
     return(odom.Y_position);
     }
 
-    void position_track(){
+    int position_track(){
         while(1){
             odom.update_position(-1 * get_right_position_in(), get_absolute_heading());
+            printf("X: %f, Y: %F \n", odom.get_Xposition(), odom.get_Yposition());
             pros::delay(5);
         }
     }
@@ -271,4 +268,8 @@ namespace auton{
     //     double offset = (abs(curr) - target)*2;
     //     chassis -> turnAngle(-offset*degree);
     // }
+    void init(int x, int y, float deg){
+        odom.set_position(x,y,deg,0,0);
+        pros::Task odom_task(position_track, "Odom Task");
+    }
 }

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "auton.h"
 #include "display/lv_objx/lv_img.h"
 #include "selector.h"
 LV_IMG_DECLARE(zerotwo);
@@ -10,18 +11,12 @@ namespace selector {
     const char *btnMapBlue[] = {"","","","","","","","","","",""};
 
     lv_obj_t *tabView;
-    lv_obj_t *miscTab;
     lv_obj_t *redBtn;
     lv_obj_t *blueBtn;
     lv_obj_t *canman;
     
     lv_obj_t *redBtnLabel;
     lv_obj_t *blueBtnLabel;
-
-    lv_obj_t *cordLabel;
-    lv_obj_t *tempLabel;
-    lv_obj_t *autonLabel;
-    lv_obj_t *phaseLabel;
 
     lv_style_t relButtonStyle; //released style
     lv_style_t prButtonStyle; //pressed style
@@ -79,7 +74,7 @@ namespace selector {
                         break;
                 }
             }
-            printf("Auton: %d\n", auton);
+            auton::position_track();
             pros::delay(20);
         }
     }
@@ -106,7 +101,6 @@ namespace selector {
         lv_obj_t *redTab = lv_tabview_add_tab(tabView, "Close");
         lv_obj_t *blueTab = lv_tabview_add_tab(tabView, "Far");
         lv_obj_t *skillsTab = lv_tabview_add_tab(tabView, "Skills");
-        miscTab = lv_tabview_add_tab(tabView, "Misc");
 
         if(auton < 0){
             lv_tabview_set_tab_act(tabView, 1, LV_ANIM_NONE);
@@ -144,18 +138,6 @@ namespace selector {
         lv_obj_set_x(canman, 167);
         lv_obj_set_y(canman, 65);
         lv_obj_align(canman, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, 0, 0);
-
-        cordLabel = lv_label_create(miscTab, NULL);
-        lv_obj_align(cordLabel, NULL, LV_ALIGN_IN_TOP_MID, 0, 0);
-
-        tempLabel = lv_label_create(miscTab, NULL);
-        lv_obj_align(tempLabel, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
-
-        autonLabel = lv_obj_create(miscTab, NULL);
-        lv_obj_align(autonLabel, NULL, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
-
-        phaseLabel = lv_obj_create(miscTab, NULL);
-        lv_obj_align(phaseLabel, NULL, LV_ALIGN_CENTER, 0, 0);
 
         pros::Task tabWatcher_task(tabWatcher);
     }
