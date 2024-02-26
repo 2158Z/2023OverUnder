@@ -13,13 +13,12 @@ private:
     float SideWaysTracker_position;
 
 public:
-    Odom odom;
     drive_setup drive_setup = ZERO_TRACKER_NO_ODOM;
 
-    rotation R_ForwardTracker;
-    rotation R_SidewaysTracker;
-    encoder E_ForwardTracker;
-    encoder E_SidewaysTracker;
+    // rotation R_ForwardTracker;
+    // rotation R_SidewaysTracker;
+    // encoder E_ForwardTracker;
+    // encoder E_SidewaysTracker;
 
     float X_position;
     float Y_position;

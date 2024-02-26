@@ -48,6 +48,8 @@ namespace auton {
     void setDefaultDriveConstants(std::vector<float> constants);
 
 // odom functions
+    Odom odom;
+
     float get_ForwardTracker_position();
     float get_SidewaysTracker_position();
     void position_track();
