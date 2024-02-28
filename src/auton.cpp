@@ -218,15 +218,31 @@ namespace auton{
         driveVoltage(0,0);
     }
 
-    // void turnAngle(std::shared_ptr<okapi::ChassisController> chassis, double deg){
-    //     inertial.reset();
-    //     double target = inertial.get() + deg;
-    //     deg = static_cast<double>(deg*2);
-    //     chassis -> turnAngle(deg*degree);
-    //     double curr = inertial.get();
-    //     double offset = (abs(curr) - target)*2;
-    //     chassis -> turnAngle(-offset*degree);
-    // }
+
+    void absDriveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
+        
+        driveLeftFront.tare_position();
+        driveRightFront.tare_position();
+
+        float start_average_position = (get_left_position_in()+get_right_position_in())/2.0;
+        float average_position = start_average_position;
+        PID drivePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+        PID turnPID(reduce_negative_180_to_180(angle - inertial.get_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
+        while(!turnPID.is_settled() || !drivePID.is_settled()){
+            float error = reduce_negative_180_to_180(angle - get_absolute_heading());
+            float output = turnPID.compute(error) * 1000;
+
+            output = clamp(output, -tConstants[0], tConstants[0]);
+
+            average_position = (get_left_position_in()+get_right_position_in())/2.0;
+            float drive_error = distance+start_average_position-average_position;
+            float drive_output = drivePID.compute(drive_error) * dConstants[0];
+            drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
+            driveVoltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
+            ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
+    }
+    delay(10);
+    }
 
     void setDefaultDriveConstants(std::vector<float> constants){
         driveConstants = constants;
