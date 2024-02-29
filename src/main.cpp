@@ -14,6 +14,10 @@ pros::ADIDigitalOut wingFrontRight(wingFrontRightID);
 pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
 pros::ADIDigitalOut wingBackRight(wingBackRightID);
 
+// Hang
+pros::ADIDigitalOut highHangLeft(highHangLeftID);
+pros::ADIDigitalOut highHangRight(highHangRightID);
+
 // Individual motors for drive left side
 pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_600, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveLeftMiddle(driveLeftMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);

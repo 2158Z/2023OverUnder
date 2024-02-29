@@ -23,3 +23,7 @@ const char wingFrontLeftID = 'H';
 const char wingFrontRightID = 'G';
 const char wingBackLeftID = 'B';
 const char wingBackRightID = 'A';
+
+// Hang
+const char highHangLeftID = 'E';
+const char highHangRightID = 'F';
