@@ -456,7 +456,16 @@ void opcontrol() {
 		// Intake control
 		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
+		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_A)) {
+			highHangLeft.set_value(true);
+			highHangRight.set_value(true);
+		}
 
+	    	if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_X)) {
+			highHangLeft.set_value(false);
+			highHangRight.set_value(false);
+		}
+	    
 		if(master.get_digital(E_CONTROLLER_DIGITAL_L1)) {
 			intakeMotor.move_voltage(-12000);
 		}
