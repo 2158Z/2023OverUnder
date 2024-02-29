@@ -308,19 +308,20 @@ void autonomous() {
 			// scores the first groupings
 			auton::driveDistance(24);
 			auton::driveTurn(36, -180, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 1000});
-			// auton::turnAngle(-15, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 500});
+			auton::absTurn(-45, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 1000});
 			wingFrontRight.set_value(true);
 			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
-			auton::absTurn(-45);
+			auton::absTurn(-45, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 500});
 			auton::driveDistance(-10, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 			wingFrontRight.set_value(false);
 
 			// scores the second groupings
 			auton::turnAngle(-180, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 2000});
 			wingFrontLeft.set_value(true);
-			auton::driveTurn(32, -180, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 500});
+			auton::driveTurn(40, -180, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 500});
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
+			auton::absTurn(-45, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.25, 500});
 			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 
 
