@@ -47,7 +47,7 @@ namespace auton{
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> driveConstants = {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000};
-    std::vector<float> turnConstants = {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 2000};
+    std::vector<float> turnConstants = {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000};
 
     float wheel_diameter = 2.75;
     float wheel_ratio = 0.75;
@@ -149,7 +149,7 @@ namespace auton{
             previousAbsHeading = absHeading;
 
             float output = turnPID.compute(error) * 10000;
-            printf("%f %f \n", relativeHeading, absHeading);
+            printf("%f\n", error);
 
             output = clamp(output, -tConstants[0], tConstants[0]);
             driveVoltage(output, -output);
