@@ -350,11 +350,11 @@ void autonomous() {
 			auton::turnAngle(-115);
 			auton::driveDistance(-3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1000});
 			
-			// wingBackRight.set_value(true);
-			// cataMotorGroup.move_voltage(11000);
-			// fullMotorGroup.move_voltage(250);
-			// delay(30000);
-			// cataMotorGroup.move_voltage(0);
+			wingBackRight.set_value(true);
+			cataMotorGroup.move_voltage(11000);
+			fullMotorGroup.move_voltage(250);
+			delay(30000);
+			cataMotorGroup.move_voltage(0);
 			
 			wingBackRight.set_value(false);
 			delay(1000);
@@ -389,7 +389,7 @@ void autonomous() {
 			// second "curve"
 			auton::driveDistance(8);
 			auton::driveTurn(20, 90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
-			auton::absTurn(140, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500}); //-40
+			auton::absTurn(-40, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500}); //-40
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
