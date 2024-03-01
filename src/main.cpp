@@ -110,24 +110,24 @@ void autonomous() {
 			// auton::driveDistance(5);
 			// auton::turnAngle(-90);
 			
-			// intakeMotor.move_voltage(12000);
-			// 	// auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
-			// auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
-		    // auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
-			// auton::driveDistance(5);
-			// auton::driveDistance(-15);
-			// intakeMotor.move_voltage(0);
-			// auton::driveDistance(5);
-			// auton::turnAngle(180);
-			// auton::driveTurn(-8, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
-			// wingBackLeft.set_value(true);
-			// auton::driveTurn(-12, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
-			// wingBackLeft.set_value(false);
-			// pros::delay(250);
-			// auton::driveTurn(-10, -15, 0.5);
-			// auton::turnAngle(-192.5);
-			// intakeMotor.move_voltage(-12000);
-			// auton::driveDistance(36, {8000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
+			intakeMotor.move_voltage(12000);
+				// auton::driveTurn(-80, 45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
+			auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 150, 0.3, 1000});
+		    auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
+			auton::driveDistance(5);
+			auton::driveDistance(-15);
+			intakeMotor.move_voltage(0);
+			auton::driveDistance(5);
+			auton::turnAngle(180);
+			auton::driveTurn(-8, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
+			wingBackLeft.set_value(true);
+			auton::driveTurn(-12, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0.0021, 0.095, 2, 100, 0.3, 1000});
+			wingBackLeft.set_value(false);
+			pros::delay(250);
+			auton::driveTurn(-10, -15, 0.5);
+			auton::turnAngle(-192.5);
+			intakeMotor.move_voltage(-12000);
+			auton::driveDistance(36, {8000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
 
 			// auton::driveDistance(-22);
 			// auton::turnAngle(35);
@@ -173,6 +173,7 @@ void autonomous() {
 			auton::turnAngle(-185, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
 			intakeMotor.move_voltage(-12000);
 			auton::driveDistance(36);
+			break;
 		case 3:
 			break;
 		case -1: //  Farside-0.
@@ -265,7 +266,7 @@ void autonomous() {
 			// auton::driveDistance(20);
 			// intakeMotor.move_voltage(0);
 			// auton::driveDistance(-5);
-			// break;
+			break;
 		case -3:
 			
 			break;
@@ -359,32 +360,34 @@ void autonomous() {
 
 			// cross under right middle bar
 			auton::absTurn(0);
-			auton::driveTurn(60, -45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
+			auton::driveTurn(60, -45, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			auton::driveDistance(36);
 
 			// arc into the goal
-			auton::driveTurn(42, -90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
-			auton::driveDistance(20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 700});
-			auton::driveDistance(-5);
+			auton::driveTurn(44, -90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
+			auton::driveDistance(30, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 700});
+			auton::driveDistance(-12);
 			auton::absTurn(135);
+			auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 200});
 
 			// first "curve"
 			auton::driveDistance(24);
 			auton::driveTurn(36, 180, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
-			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
+			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			wingFrontLeft.set_value(true);
 			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
-			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			wingFrontLeft.set_value(false);
-			delay(1000);
+			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
+			// delay(1000);
 
 			// reset position
 			auton::driveTurn(-36, -90, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
+			auton::absTurn(-135, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
 
 			// second "curve"
-			auton::driveDistance(16);
-			auton::driveTurn(20, 90, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
-			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
+			auton::driveDistance(12);
+			auton::driveTurn(20, 90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
+			auton::absTurn(-45, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000});
@@ -394,13 +397,15 @@ void autonomous() {
 			delay(1000);
 
 			// reset position
-			auton::driveTurn(-36, -45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
-			auton::absTurn(-90);
+			auton::driveTurn(-32, -45, 0.3, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
+			auton::absTurn(-100);
 
 			// third "curve"
-			auton::driveDistance(60);
+			auton::driveDistance(32);
+			auton::driveTurn(36, 45, 0.5, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
 			auton::absTurn(45);
-			auton::driveDistance(20);
+			auton::driveDistance(40, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1000});
+			auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1000});
 
 			break;
 		default:
