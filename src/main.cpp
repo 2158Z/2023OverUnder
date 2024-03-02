@@ -135,7 +135,7 @@ void autonomous() {
 			auton::driveDistance(36);
 
 			// arc into the goal
-			auton::driveTurn(44, -90, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
+			auton::driveTurn(44, -90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			auton::driveDistance(30, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 700});
 			auton::driveDistance(-12);
 			auton::absTurn(135);
@@ -156,7 +156,7 @@ void autonomous() {
 			auton::absTurn(-135, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
 
 			// second "curve"
-			auton::driveDistance(9);
+			auton::driveDistance(8.5);
 			auton::driveTurn(20, 90, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 2000});
 			auton::absTurn(-40, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500}); //-40
 			wingFrontLeft.set_value(true);
@@ -425,7 +425,7 @@ void autonomous() {
 			auton::driveDistance(36);
 
 			// arc into the goal
-			auton::driveTurn(44, -90, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
+			auton::driveTurn(44, -90, 0.25, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 500});
 			auton::driveDistance(30, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 700});
 			auton::driveDistance(-12);
 			auton::absTurn(135);
