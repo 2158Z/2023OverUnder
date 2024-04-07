@@ -36,7 +36,7 @@ pros::Motor_Group fullMotorGroup( {driveRightBack, driveRightMiddle, driveRightF
 // Motors for intake and catapult
 pros::Motor intakeMotor(intakeMotorID, pros::E_MOTOR_GEAR_BLUE, 0, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor cata1(cata1MotorID, pros::E_MOTOR_GEAR_GREEN, 1, pros::E_MOTOR_ENCODER_DEGREES);
-pros::Motor cata2(cata2MotorID, pros::E_MOTOR_GEAR_RED, 1, pros::E_MOTOR_ENCODER_DEGREES);
+pros::Motor cata2(cata2MotorID, pros::E_MOTOR_GEAR_RED, 0, pros::E_MOTOR_ENCODER_DEGREES);
 
 pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
