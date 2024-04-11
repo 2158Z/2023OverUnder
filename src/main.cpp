@@ -4,8 +4,6 @@
 #include "okapi/api.hpp"
 #include "auton.h"
 
-
-
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 // Solenoids for wings
@@ -457,8 +455,6 @@ std::vector<float> arcadeControl() {
 
 void opcontrol() {
     while(true) {
-
-		printf("%s\n", "test");
 		// Intake control
 		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotor.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
