@@ -97,9 +97,6 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-	while(inertial.is_calibrating()){
-		pros::delay(10);
-	}
 	switch(selector::auton) {
 		case 1:
 			printf("Ran #1");

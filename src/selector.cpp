@@ -5,7 +5,7 @@ LV_IMG_DECLARE(zerotwo);
 LV_IMG_DECLARE(canman_left);
 namespace selector {
     pros::Controller master(pros::E_CONTROLLER_MASTER);
-    int auton = 0;
+    int auton = 1;
     int side = 0;
     int index;
     void init(int defaultAuton, const char **closeAutons, const char **farAutons){
@@ -16,20 +16,17 @@ namespace selector {
         while(1){
             if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && side != 1){
                 side += 1;
-                pros::delay(1000/8);
+                printf("up");
             }
             if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN) && side > -1){
                 side -= 1;
-                pros::delay(1000/8);
             }
 
             if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) && index < sizeof(currentAuton) - 1){
                 index += 1;
-                pros::delay(1000/8);
             }
             if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && index > 0){
                 index -= 1;
-                pros::delay(1000/8);
             }
             switch(selector::side){
                 case -1:
@@ -52,10 +49,10 @@ namespace selector {
                     pros::delay(60);
                     master.set_text(1, 0, "closeSide     ");
             }
-            pros::delay(60);
-            auton = side * index;
-            printf("Running");
+            auton = selector::side * (selector::index + 1);
             if (selector::side == 0){ auton = 0;}
+            printf("Running auton %i * %i\n", side, (index + 1));
+            pros::delay(60);
         }
     }
 }
