@@ -102,7 +102,7 @@ void autonomous() {
 	}
 	switch(selector::auton) {
 		case 1:
-			
+			printf("Ran #1");
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 1000});
 		    auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
@@ -123,6 +123,7 @@ void autonomous() {
 
 			break;
 		case 2: //Close Side Elim
+			printf("Ran #2");
 			intakeMotor.move_voltage(12000);
 			wingFrontLeft.set_value(true);
 			pros::delay(250);
@@ -154,6 +155,7 @@ void autonomous() {
 		case 3:
 			break;
 		case -1: //  Farside-0.
+			printf("Ran -1");
 			auton::driveDistance(-1);
 			wingBackLeft.set_value(true);
 			intakeMotor.move_voltage(12000);
@@ -183,7 +185,7 @@ void autonomous() {
 			auton::driveDistance(54, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1500});
 			break;
 		case -2:
-
+			printf("Ran -2");
 			//saved kenny far safe
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-18, -35, 0.35);
