@@ -3,8 +3,7 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
-
-
+#include "gif-pros/gifclass.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -456,6 +455,12 @@ std::vector<float> arcadeControl() {
 }
 
 void opcontrol() {
+	lv_obj_t* obj = lv_obj_create(lv_scr_act(), NULL);
+	lv_obj_set_size(obj, 480, 240);
+	lv_obj_set_style(obj, &lv_style_transp); // make the container invisible
+	lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
+
+	Gif twerk("/usd/twerk.gif", obj);
     while(true) {
 
 		printf("%s\n", "test");
