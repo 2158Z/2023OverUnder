@@ -80,7 +80,9 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() {
+	lv_obj_set_hidden(obj, true);
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
