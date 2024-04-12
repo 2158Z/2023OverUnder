@@ -1,16 +1,17 @@
 #pragma once
 
 // Drive Motors
-const int driveLeftFrontID = 10;
-const int driveLeftMiddleID = 8;
-const int driveLeftBackID = 9;
+const int driveLeftFrontID = 13;
+const int driveLeftMiddleID = 12;
+const int driveLeftBackID = 11;
 
-const int driveRightFrontID = 4;
-const int driveRightMiddleID = 3;
-const int driveRightBackID = 2;
+const int driveRightFrontID = 18;
+const int driveRightMiddleID = 19;
+const int driveRightBackID = 20;
 
 // Other Motors
-const int intakeMotorID = 19;
+const int intakeMotorLeftID = 2;
+const int intakeMotorRightID = 9;
 
 const int cata1MotorID = 21;
 const int cata2MotorID = 15;
