@@ -41,7 +41,8 @@ pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
 pros::IMU inertial(inertialID);
 
-
+lv_obj_t* obj;
+Gif twerk;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -50,6 +51,12 @@ pros::IMU inertial(inertialID);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+	obj = lv_obj_create(lv_scr_act(), NULL);
+	lv_obj_set_size(obj, 480, 240);
+	lv_obj_set_style(obj, &lv_style_transp); // make the container invisible
+	lv_obj_set_hidden(obj, true);
+	lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
+	twerk = Gif("/usd/twerk.gif", obj);
 	selector::init();
 
     driveLeft.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
@@ -455,12 +462,7 @@ std::vector<float> arcadeControl() {
 }
 
 void opcontrol() {
-	lv_obj_t* obj = lv_obj_create(lv_scr_act(), NULL);
-	lv_obj_set_size(obj, 480, 240);
-	lv_obj_set_style(obj, &lv_style_transp); // make the container invisible
-	lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
-
-	Gif twerk("/usd/twerk.gif", obj);
+	lv_obj_set_hidden(obj, false);
     while(true) {
 
 		printf("%s\n", "test");
