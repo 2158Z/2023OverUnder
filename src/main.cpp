@@ -90,6 +90,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
+	selector::setHidden();
 	lv_obj_set_hidden(obj2, false);
 	lv_obj_set_hidden(obj, true);
 }
@@ -476,6 +477,7 @@ std::vector<float> arcadeControl() {
 void opcontrol() {
 	lv_obj_set_hidden(obj, false);
 	lv_obj_set_hidden(obj2, true);
+	selector::setHidden();
     while(true) {
 
 		printf("%s\n", "test");
