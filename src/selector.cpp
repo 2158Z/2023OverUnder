@@ -129,7 +129,7 @@ namespace selector {
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
         pros::Task tabWatcher_task(tabWatcher);
     }
-    void setHidden(bool mode = true){
+    void setHidden(bool mode){
         lv_obj_set_hidden(tabView, mode);
     }
 }
