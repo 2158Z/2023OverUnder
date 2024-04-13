@@ -42,7 +42,9 @@ pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 pros::IMU inertial(inertialID);
 
 lv_obj_t* obj;
+lv_obj_t* obj2;
 Gif twerk;
+Gif blob;
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -57,6 +59,13 @@ void initialize() {
 	lv_obj_set_hidden(obj, true);
 	lv_obj_align(obj, NULL, LV_ALIGN_CENTER, 0, 0);
 	twerk = Gif("/usd/twerk.gif", obj);
+
+	obj2 = lv_obj_create(lv_scr_act(), NULL);
+	lv_obj_set_size(obj2, 480, 240);
+	lv_obj_set_style(obj2, &lv_style_transp); // make the container invisible
+	lv_obj_set_hidden(obj2, true);
+	lv_obj_align(obj2, NULL, LV_ALIGN_CENTER, 0, 0);
+	blob = Gif("/usd/blob.gif", obj2);
 	selector::init();
 
     driveLeft.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
@@ -81,6 +90,7 @@ void initialize() {
  * the robot is enabled, this task will exit.
  */
 void disabled() {
+	lv_obj_set_hidden(obj2, false);
 	lv_obj_set_hidden(obj, true);
 }
 
@@ -110,9 +120,9 @@ void autonomous() {
 	while(inertial.is_calibrating()){
 		pros::delay(10);
 	}
+	inertial.set_heading(0);
 	switch(selector::auton) {
 		case 1:
-			
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 1000});
 		    auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
@@ -465,6 +475,7 @@ std::vector<float> arcadeControl() {
 
 void opcontrol() {
 	lv_obj_set_hidden(obj, false);
+	lv_obj_set_hidden(obj2, true);
     while(true) {
 
 		printf("%s\n", "test");
