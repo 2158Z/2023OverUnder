@@ -18,5 +18,5 @@ namespace selector{
     static const char *r[] = {REDAUTONS, ""};
     static const char *b[] = {BLUEAUTONS, ""};
     void init(int defaultAuton = DEFAULT, const char **redAutons = r, const char **blueAutons = b);
-    void setHidden();
+    void setHidden(bool mode = true);
 }

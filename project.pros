@@ -1,7 +1,7 @@
 {
     "py/object": "pros.conductor.project.Project",
     "py/state": {
-        "project_name": "comp",
+        "project_name": "gif",
         "target": "v5",
         "templates": {
             "gif-pros": {
