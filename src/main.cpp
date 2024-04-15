@@ -41,10 +41,7 @@ pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 
 pros::IMU inertial(inertialID);
 
-lv_obj_t* twerkObj;
-lv_obj_t* blobObj;
-Gif twerk = Gif("/usd/twerk.gif", twerkObj);
-Gif blob = Gif("/usd/blob.gif", blobObj);
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -53,12 +50,6 @@ Gif blob = Gif("/usd/blob.gif", blobObj);
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	twerkObj = lv_obj_create(lv_scr_act(), NULL);
-	lv_obj_align(twerkObj, NULL, LV_ALIGN_CENTER, 0, 0);
-
-	blobObj = lv_obj_create(lv_scr_act(), NULL);
-	lv_obj_align(blobObj, NULL, LV_ALIGN_CENTER, 0, 0);
-
 	selector::init();
 
     driveLeft.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
@@ -82,11 +73,7 @@ void initialize() {
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {
-	selector::setHidden(false);
-	lv_obj_set_hidden(blobObj, true);
-	lv_obj_set_hidden(twerkObj, true);
-}
+void disabled() {}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -114,12 +101,9 @@ void autonomous() {
 	while(inertial.is_calibrating()){
 		pros::delay(10);
 	}
-	inertial.set_heading(0);
-	selector::setHidden(true);
-	lv_obj_set_hidden(blobObj, true);
-	lv_obj_set_hidden(twerkObj, false);
 	switch(selector::auton) {
 		case 1:
+			
 			intakeMotor.move_voltage(12000);
 			auton::driveTurn(-20, 45, 0.2, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 1000});
 		    auton::driveDistance(-15, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
@@ -471,9 +455,12 @@ std::vector<float> arcadeControl() {
 }
 
 void opcontrol() {
-	selector::setHidden(true);
-	lv_obj_set_hidden(blobObj, false);
-	lv_obj_set_hidden(twerkObj, true);
+	lv_obj_t* obj = lv_obj_create(lv_scr_act(), NULL);
+	lv_obj_set_size(obj, 480, 240);
+	lv_obj_set_style(obj, &lv_style_transp); // make the container invisible
+	Gif zero2("/usd/zero2.gif", obj);
+	lv_obj_align(obj, NULL, LV_ALIGN_IN_BOTTOM_RIGHT, 0, 0);
+
 	selector::setHidden();
     while(true) {
 

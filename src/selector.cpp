@@ -1,6 +1,7 @@
 #include "main.h"
 #include "display/lv_objx/lv_img.h"
 #include "selector.h"
+#include "gif-pros/gifclass.hpp"
 LV_IMG_DECLARE(zerotwo);
 LV_IMG_DECLARE(canman_left);
 namespace selector {
@@ -127,6 +128,7 @@ namespace selector {
         lv_obj_set_size(skillsBtn, 450, 50);
         lv_obj_set_pos(skillsBtn, 0, 100);
         lv_obj_align(skillsBtn, NULL, LV_ALIGN_CENTER, 0, 0);
+
         pros::Task tabWatcher_task(tabWatcher);
     }
     void setHidden(bool mode){
