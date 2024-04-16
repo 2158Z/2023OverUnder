@@ -492,7 +492,7 @@ void opcontrol() {
 		wingFrontLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_L2));
 		wingFrontRight.set_value(master.get_digital(E_CONTROLLER_DIGITAL_R2));
 
-		wingBackLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT));
+		//wingBackLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_RIGHT));
 		wingBackRight.set_value(master.get_digital(E_CONTROLLER_DIGITAL_Y));
 
 

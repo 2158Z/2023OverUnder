@@ -23,7 +23,7 @@ const int inertialID = 12;
 const char wingFrontLeftID = 'H';
 const char wingFrontRightID = 'G';
 const char wingBackLeftID = 'B';
-const char wingBackRightID = 'A';
+const char wingBackRightID = 'F';
 
 // Hang
 const char highHangLeftID = 'E';
