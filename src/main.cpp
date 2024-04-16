@@ -69,6 +69,18 @@ void initialize() {
 	driveRightMiddle.set_zero_position(0);
 	driveRightFront.set_zero_position(0);
 
+	okapi::ChassisControllerBuilder()
+    .withMotors(-13, 20) // left motor is 13 (reversed), right motor is 20
+    .withGains(
+        {0.001, 0, 0.0001}, // Distance controller gains
+        {0.001, 0, 0.0001}, // Turn controller gains
+        {0.001, 0, 0.0001}  // Angle controller gains -- If the bot struggles to drive straight
+    )
+    // Default stuff for odometry
+    .withDimensions(okapi::AbstractMotor::gearset::green, {{4, 11.5}, okapi::imev5GreenTPR})
+    .withOdometry() // use the same scales as the chassis (above)
+    .buildOdometry(); 
+
 	inertial.reset();
 }
 
