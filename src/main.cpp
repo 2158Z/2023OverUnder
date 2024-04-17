@@ -474,8 +474,7 @@ std::vector<float> arcadeControl() {
 
 void opcontrol() {
     while(true) {
-
-		printf("%s\n", "test");
+		printf("%d %d %d", odom::getPose(false).x, odom::getPose(false).y, odom::getPose(false).theta);
 		// Intake control
 		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
