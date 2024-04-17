@@ -46,10 +46,10 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> driveConstants = {12000, 0.15, 0.01, 0.9, 1, 100, 0.25, 2000};
-    std::vector<float> turnConstants = {12000, 0.015, 0, 0.109, 2, 100, 0.75, 2000};
+    std::vector<float> driveConstants = {12000, 0.15, 0.0001, 1.7, 100, 100, 0.25, 2000};
+    std::vector<float> turnConstants = {12000, 0.01, 0.00002, 0.08, 100, 100, 0.75, 2000};
 
-    float wheel_diameter = 2.75;
+    float wheel_diameter = 3.25;
     float wheel_ratio = 0.75;
 
     float drive_desired_heading = 0;
@@ -121,7 +121,7 @@ namespace auton{
 
             driveVoltage(leftOutput, rightOutput);
 
-            //printf("%d %f \n", counter, rightError);
+            printf("%d %f \n", counter, rightError);
             counter++;
             delay(10);
         }
@@ -160,12 +160,17 @@ namespace auton{
     void absTurn(float angle, std::vector<float> tConstants = turnConstants) {       // absolute turning
         PID turnPID(reduce_negative_180_to_180(angle - inertial.get_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
         drive_desired_heading = angle;
+        int counter = 0;
         while(turnPID.is_settled() == false)    {
             float error = reduce_negative_180_to_180(angle - inertial.get_heading());
             float output = turnPID.compute(error) * 10000;
             output = clamp(output, -tConstants[0], tConstants[0]);
+
+
+            printf("%d %f \n", counter, error);
             driveVoltage(output, -output);
             delay(10);
+            counter++;
         }
         driveVoltage(0, 0);
     }
