@@ -46,7 +46,7 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> driveConstants = {12000, 0.15, 0.0001, 1.7, 100, 100, 0.25, 2000};
+    std::vector<float> driveConstants = {12000, 0.15, 0, 0, 5, 500, 0.25, 2000};
     std::vector<float> turnConstants = {12000, 0.01, 0.00002, 0.08, 100, 100, 0.75, 2000};
 
     float wheel_diameter = 3.25;

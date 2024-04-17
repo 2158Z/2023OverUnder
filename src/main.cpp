@@ -117,15 +117,27 @@ void autonomous() {
 	inertial.set_heading(0);
 	switch(selector::auton) {
 		case 1:
-			
-			intakeMotorGroup.move_voltage(12000);
-			auton::driveTurn(-20, 45, 0.3);
-		    auton::driveDistance(-15);
-			intakeMotorGroup.move_voltage(0);
-			auton::driveDistance(5);
-			auton::absTurn(45);
-			auton::driveTurn(24, -45, 0.5);
-			wingBackRight.set_value(true);
+			auton::driveDistance(24);
+			// wingBackRight.set_value(true);
+			// auton::turnAngle(-45);
+			// auton::driveDistance(48);
+			// auton::driveDistance(-44);
+			// auton::turnAngle(0);
+			// auton::driveTurn(-20, 90, 0.3);
+			// auton::driveTurn(80, -90, 0.65);
+
+			// intakeMotorGroup.move_voltage(12000);
+			// auton::driveTurn(-20, 45, 0.3);
+		    // auton::driveDistance(-15);
+			// intakeMotorGroup.move_voltage(0);
+			// auton::driveDistance(5);
+			// auton::absTurn(45);
+			// auton::driveTurn(24, -45, 0.5);
+			// wingBackRight.set_value(true);
+			// auton::absTurn(-45);
+			// intakeMotorGroup.move_voltage(12000);
+			// auton::driveDistance(48);
+
 			// auton::driveTurn(12, -45, 0.25);
 			// wingBackRight.set_value(false);
 			// pros::delay(250);
