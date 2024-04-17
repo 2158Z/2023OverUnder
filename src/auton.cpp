@@ -98,6 +98,11 @@ namespace auton{
         driveRight.move_voltage(rightVoltage);
     }
 
+    void driveVeloctiy(float leftVel, float rightVel){
+        driveLeft.move_velocity(leftVel);
+        driveRight.move_velocity(rightVel);
+    }
+
     void driveDistance(float distance, std::vector<float> dConstants = driveConstants) {
         PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);

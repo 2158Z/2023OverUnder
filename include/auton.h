@@ -11,6 +11,7 @@ namespace auton {
     extern std::vector<float> turnConstants;
 
     void driveVoltage(float leftVoltage, float rightVoltage);
+    void driveVelocity(float leftVel, float rightVel);
     
     /**
     * @brief Drive the robot a specified distance with a heading using PID controllers.

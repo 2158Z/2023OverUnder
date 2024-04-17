@@ -13,9 +13,11 @@
 #include "asset.hpp"
 #include "logger/infoSink.hpp"
 #include "logger/logger.hpp"
+#include "util/odom.hpp"
 
 float distTraveled = 0;
-
+double trackWidth = 0;
+double maxAcceleration_slew = 0;
 /**
  * @brief function that returns elements in a file line, separated by a delimeter
  *
@@ -233,7 +235,7 @@ void follow(const asset& path, float lookahead, int timeout, bool forwards, bool
         auton::driveVoltage(0,0);
         return;
     }
-    Pose pose = okapi::OdomChassisController::getModel()->getState();
+    Pose pose = odom::getPose(true);
     Pose lastPose = pose;
     Pose lookaheadPose(0, 0, 0);
     Pose lastLookahead = pathPoints.at(0);
@@ -250,9 +252,9 @@ void follow(const asset& path, float lookahead, int timeout, bool forwards, bool
     distTraveled = 0;
 
     // loop until the robot is within the end tolerance
-    for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState && this->motionRunning; i++) {
+    for (int i = 0; i < timeout / 10 && pros::competition::get_status() == compState; i++) {
         // get the current position of the robot
-        pose = this->getPose(true);
+        pose = odom::getPose(true);
         if (!forwards) pose.theta -= M_PI;
 
         // update completion vars
@@ -274,12 +276,12 @@ void follow(const asset& path, float lookahead, int timeout, bool forwards, bool
 
         // get the target velocity of the robot
         targetVel = pathPoints.at(closestPoint).theta;
-        targetVel = slew(targetVel, prevVel, lateralSettings.slew);
+        targetVel = slew(targetVel, prevVel, maxAcceleration_slew);
         prevVel = targetVel;
 
         // calculate target left and right velocities
-        float targetLeftVel = targetVel * (2 + curvature * drivetrain.trackWidth) / 2;
-        float targetRightVel = targetVel * (2 - curvature * drivetrain.trackWidth) / 2;
+        float targetLeftVel = targetVel * (2 + curvature * trackWidth) / 2;
+        float targetRightVel = targetVel * (2 - curvature * trackWidth) / 2;
 
         // ratio the speeds to respect the max speed
         float ratio = std::max(std::fabs(targetLeftVel), std::fabs(targetRightVel)) / 127;
@@ -294,19 +296,16 @@ void follow(const asset& path, float lookahead, int timeout, bool forwards, bool
 
         // move the drivetrain
         if (forwards) {
-            drivetrain.leftMotors->move(targetLeftVel);
-            drivetrain.rightMotors->move(targetRightVel);
+            auton::driveVelocity(targetLeftVel, targetRightVel);
         } else {
-            drivetrain.leftMotors->move(-targetRightVel);
-            drivetrain.rightMotors->move(-targetLeftVel);
+            auton::driveVelocity(-targetLeftVel, -targetRightVel);
         }
 
         pros::delay(10);
     }
 
     // stop the robot
-    drivetrain.leftMotors->move(0);
-    drivetrain.rightMotors->move(0);
+    auton::driveVelocity(0,0);
     // set distTraveled to -1 to indicate that the function has finished
     distTraveled = -1;
     // give the mutex back
