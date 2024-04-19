@@ -24,8 +24,6 @@ const char wingFrontLeftID = 'H';
 const char wingFrontRightID = 'G';
 const char wingBackLeftID = 'B';
 const char wingBackRightID = 'F';
-const char hang = 'E';
 
 // Hang
-const char highHangLeftID = 'E';
-const char highHangRightID = 'F';
+const char hangID = 'E';

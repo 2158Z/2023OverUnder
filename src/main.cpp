@@ -15,10 +15,7 @@ pros::ADIDigitalOut wingBackLeft(wingBackLeftID);
 pros::ADIDigitalOut wingBackRight(wingBackRightID);
 
 // Hang
-pros::ADIDigitalOut highHangLeft(highHangLeftID);
-pros::ADIDigitalOut highHangRight(highHangRightID);
-pros::ADIDigitalOut hangMech(hang);
-
+pros::ADIDigitalOut hang(hangID);
 // Individual motors for drive left side
 pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_600, 1, pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor driveLeftMiddle(driveLeftMiddleID, pros::E_MOTOR_GEAR_BLUE, 1, pros::E_MOTOR_ENCODER_DEGREES);
@@ -484,13 +481,11 @@ void opcontrol() {
 		int shiftKey = master.get_digital(pros::E_CONTROLLER_DIGITAL_L1);
 		//intakeMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_A)) {
-			highHangLeft.set_value(true);
-			highHangRight.set_value(true);
+			hang.set_value(true);
 		}
 
 	    	if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_X)) {
-			highHangLeft.set_value(false);
-			highHangRight.set_value(false);
+			hang.set_value(false);
 		} 
 	    
 		if(master.get_digital(E_CONTROLLER_DIGITAL_L1)) {
@@ -506,10 +501,6 @@ void opcontrol() {
 		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
 		// 	skillsLineup();
 		// }
-
-		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)){
-			hangMech.set_value(true);
-		}
 
 		if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
 			while(inertial.is_calibrating()){
