@@ -17,6 +17,7 @@ pros::ADIDigitalOut wingBackRight(wingBackRightID);
 // Hang
 pros::ADIDigitalOut highHangLeft(highHangLeftID);
 pros::ADIDigitalOut highHangRight(highHangRightID);
+pros::ADIDigitalOut hangMech(hang);
 
 // Individual motors for drive left side
 pros::Motor driveLeftFront(driveLeftFrontID, pros::E_MOTOR_GEAR_600, 1, pros::E_MOTOR_ENCODER_DEGREES);
@@ -502,8 +503,12 @@ void opcontrol() {
 			intakeMotorGroup.move_voltage(0);
 		}
 
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-			skillsLineup();
+		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+		// 	skillsLineup();
+		// }
+
+		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_UP)){
+			hangMech.set_value(true);
 		}
 
 		if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
@@ -511,8 +516,10 @@ void opcontrol() {
 				pros::delay(10);
 			}
 			inertial.set_heading(0);
-			auton::absTurn(90);
+			auton::turnAngle(90);
 		}
+
+
 
 		wingFrontLeft.set_value(master.get_digital(E_CONTROLLER_DIGITAL_L2));
 		wingFrontRight.set_value(master.get_digital(E_CONTROLLER_DIGITAL_R2));

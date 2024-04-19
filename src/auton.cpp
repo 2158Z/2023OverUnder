@@ -46,8 +46,8 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> driveConstants = {12000, 0.15, 0, 0, 5, 500, 0.25, 2000};
-    std::vector<float> turnConstants = {12000, 0.01, 0.00002, 0.08, 100, 100, 0.75, 2000};
+    std::vector<float> driveConstants = {12000, 0.15, 0, 1, 5, 2, 0.25, 2000}; //1.75
+    std::vector<float> turnConstants = {12000, 0.01, 0.0005, 0.075, 5, 100, 0.75, 2000};    //.01
 
     float wheel_diameter = 3.25;
     float wheel_ratio = 0.75;
@@ -102,13 +102,13 @@ namespace auton{
         PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
 
-        driveRightFront.tare_position();
-        driveLeftFront.tare_position();
+        driveRightMiddle.tare_position();
+        driveLeftMiddle.tare_position();
         int counter = 0;
 
         while(!leftPID.is_settled() || !rightPID.is_settled()) {
-            float leftTraveled = driveLeftFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
-            float rightTraveled = driveRightFront.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
+            float leftTraveled = driveLeftMiddle.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
+            float rightTraveled = driveRightMiddle.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             
             float leftError = distance - leftTraveled;
             float rightError = distance - rightTraveled;
@@ -121,7 +121,7 @@ namespace auton{
 
             driveVoltage(leftOutput, rightOutput);
 
-            printf("%d %f \n", counter, rightError);
+            printf("%f %f \n", leftError, rightError);
             counter++;
             delay(10);
         }
