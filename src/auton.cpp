@@ -45,9 +45,9 @@ namespace auton{
     QAngle radian(1.0);
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
-    // 0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> driveConstants = {12000, 0.15, 0, 1, 5, 2, 0.25, 2000}; //1.75
-    std::vector<float> turnConstants = {12000, 0.01, 0.0005, 0.075, 5, 100, 0.75, 2000};    //.01
+    //                                  0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
+    std::vector<float> driveConstants = {12000, 0.17, 0.0005, 1, 2, 75, 0.25, 2000}; //1.25
+    std::vector<float> turnConstants = {12000, 0.015, 0.0075, 0.104, 2, 75, 0.5, 2000};    //.01
 
     float wheel_diameter = 3.25;
     float wheel_ratio = 0.75;
@@ -102,16 +102,21 @@ namespace auton{
         PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
         PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
 
-        driveRightMiddle.tare_position();
-        driveLeftMiddle.tare_position();
+        driveLeftBack.tare_position();
+        driveRightBack.tare_position();
         int counter = 0;
+        // float lastRightOutput = 0;
+        // float lastLeftOutput = 0;
+        // float lastRightAddition = 0;
+        // float lastLeftAddition = 0;
 
         while(!leftPID.is_settled() || !rightPID.is_settled()) {
-            float leftTraveled = driveLeftMiddle.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
-            float rightTraveled = driveRightMiddle.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
+            float leftTraveled = driveLeftBack.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio; 
+            float rightTraveled = driveRightBack.get_position() / 360 * M_PI * wheel_diameter * wheel_ratio;
             
-            float leftError = distance - leftTraveled;
             float rightError = distance - rightTraveled;
+            float leftError = distance - leftTraveled;
+            
 
             float leftOutput = leftPID.compute(leftError) * 10000;
             float rightOutput = rightPID.compute(rightError) * 10000;
@@ -119,13 +124,26 @@ namespace auton{
             leftOutput = clamp(leftOutput, -driveConstants[0], driveConstants[0]);
             rightOutput = clamp(rightOutput, -driveConstants[0], driveConstants[0]);
 
-            driveVoltage(leftOutput, rightOutput);
+            // if(rightOutput > (lastRightOutput + lastRightAddition)) {
+            //     rightOutput = lastRightOutput + lastRightAddition;
+            //     lastRightAddition += 100;
+            // }
+            // if(leftOutput > lastLeftOutput + lastLeftAddition) {
+            //     leftOutput = lastLeftOutput + lastLeftAddition;
+            //     lastLeftAddition += 100;
+            // }
 
-            printf("%f %f \n", leftError, rightError);
+            driveVoltage(leftOutput, rightOutput); 
+
+            // lastRightOutput = rightOutput;
+            // lastLeftOutput = leftOutput;
+
+            printf("%f %f %f %f \n", leftError, rightError, leftOutput, rightOutput);
             counter++;
             delay(10);
         }
         driveVoltage(0,0);
+        printf("%s", "settled");
     }
 
 
@@ -149,10 +167,11 @@ namespace auton{
             previousAbsHeading = absHeading;
 
             float output = turnPID.compute(error) * 10000;
-            printf("%f\n", error);
+
 
             output = clamp(output, -tConstants[0], tConstants[0]);
             driveVoltage(output, -output);
+            printf("%f %f\n", error, output);
             delay(10);
         }
     }

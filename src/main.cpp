@@ -115,7 +115,7 @@ void autonomous() {
 	inertial.set_heading(0);
 	switch(selector::auton) {
 		case 1:
-			auton::driveDistance(24);
+			auton::turnAngle(60);
 			// wingBackRight.set_value(true);
 			// auton::turnAngle(-45);
 			// auton::driveDistance(48);
@@ -500,15 +500,15 @@ void opcontrol() {
 
 		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
 		// 	skillsLineup();
-		// }
+		// }	
 
-		if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
-			while(inertial.is_calibrating()){
-				pros::delay(10);
-			}
-			inertial.set_heading(0);
-			auton::turnAngle(90);
-		}
+		// if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
+		// 	while(inertial.is_calibrating()){
+		// 		pros::delay(10);
+		// 	}
+		// 	inertial.set_heading(0);
+		// 	auton::turnAngle(90);
+		// }
 
 
 
