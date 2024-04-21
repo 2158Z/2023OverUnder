@@ -46,8 +46,8 @@ namespace auton{
     QAngle degree = static_cast<double>(2_pi / 360.0) * radian;
 
     //                                  0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
-    std::vector<float> driveConstants = {12000, 0.17, 0.0005, 1, 2, 75, 0.25, 2000}; //1.25
-    std::vector<float> turnConstants = {12000, 0.015, 0.0075, 0.104, 2, 75, 0.5, 2000};    //.01
+    std::vector<float> driveConstants = {12000, 0.17, 0.0005, 1, 2, 75, 0.25, 1000}; //1.25
+    std::vector<float> turnConstants = {12000, 0.015, 0.0075, 0.104, 2, 75, 0.5, 1000};    //.01
 
     float wheel_diameter = 3.25;
     float wheel_ratio = 0.75;
@@ -194,7 +194,7 @@ namespace auton{
         driveVoltage(0, 0);
     }
 
-    void driveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
+    void driveTurn(float distance, float angle, float turnWeight, float settleTime, float timeout, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
 
         driveLeftFront.tare_position();
         driveRightFront.tare_position();
@@ -203,8 +203,8 @@ namespace auton{
         float absHeading = inertial.get_heading();
         float previousAbsHeading = absHeading;
 
-        PID distancePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
-        PID turnPID(angle, tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
+        PID distancePID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], settleTime, dConstants[6], timeout);
+        PID turnPID(angle, tConstants[1], tConstants[2], tConstants[3], tConstants[4], settleTime, tConstants[6], timeout);
 
         while(!distancePID.is_settled() || !turnPID.is_settled()){
             //drive pid

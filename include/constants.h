@@ -27,3 +27,6 @@ const char wingBackRightID = 'F';
 
 // Hang
 const char hangID = 'E';
+
+// limit switch
+const char hangLimitID = 'D';
