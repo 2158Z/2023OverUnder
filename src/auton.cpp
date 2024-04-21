@@ -184,8 +184,6 @@ namespace auton{
             float error = reduce_negative_180_to_180(angle - inertial.get_heading());
             float output = turnPID.compute(error) * 10000;
             output = clamp(output, -tConstants[0], tConstants[0]);
-
-
             printf("%d %f \n", counter, error);
             driveVoltage(output, -output);
             delay(10);
@@ -195,7 +193,6 @@ namespace auton{
     }
 
     void driveTurn(float distance, float angle, float turnWeight, float settleTime, float timeout, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
-
         driveLeftFront.tare_position();
         driveRightFront.tare_position();
 
@@ -208,14 +205,11 @@ namespace auton{
 
         while(!distancePID.is_settled() || !turnPID.is_settled()){
             //drive pid
-
-
             float distanceTraveled = ((driveLeftFront.get_position() + driveRightFront.get_position()) / 2) / 360 * M_PI * wheel_diameter * wheel_ratio; 
             float driveError = distance - distanceTraveled;
-            float driveOutput = distancePID.compute(driveError) * 10000;
+            float driveOutput = distancePID.compute(driveError) * 12000;
 
             //turn pid
-
             float deltaAngle = 0;
             absHeading = inertial.get_heading();
 
@@ -232,16 +226,15 @@ namespace auton{
             float turnOutput = turnPID.compute(error) * 10000;
 
             //combine
-            turnOutput = clamp(turnOutput, -12000, 12000);
-            driveOutput = clamp(driveOutput, -12000, 12000);
+            turnOutput = clamp(turnOutput, -(12000 * turnWeight), (12000 * turnWeight));
+            driveOutput = clamp(driveOutput, -(12000 - (12000 * turnWeight)), (12000 - (12000 * turnWeight)));
             // printf("%f %f \n", error, turnOutput);
-            driveVoltage(((2 * turnWeight * turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0, ((2 * turnWeight * -turnOutput) + (2 * (1 - turnWeight) * driveOutput)) / 2.0);
+            driveVoltage((driveOutput + turnOutput), (driveOutput - turnOutput));
             printf("%f %f \n", (2 * turnWeight * turnOutput), (2 * (1 - turnWeight) * driveOutput));
             delay(10);
         }
         driveVoltage(0,0);
     }
-
 
     void absDriveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
         
@@ -254,18 +247,18 @@ namespace auton{
         PID turnPID(reduce_negative_180_to_180(angle - inertial.get_heading()), tConstants[1], tConstants[2], tConstants[3], tConstants[4], tConstants[5], tConstants[6], tConstants[7]);
         while(!turnPID.is_settled() || !drivePID.is_settled()){
             float error = reduce_negative_180_to_180(angle - get_absolute_heading());
-            float output = turnPID.compute(error) * 1000;
+            float turnOutput = turnPID.compute(error) * 1000;
 
-            output = clamp(output, -tConstants[0], tConstants[0]);
+            turnOutput = clamp(turnOutput, -(12000 * turnWeight), (12000 * turnWeight));
 
             average_position = (get_left_position_in()+get_right_position_in())/2.0;
             float drive_error = distance+start_average_position-average_position;
-            float drive_output = drivePID.compute(drive_error) * dConstants[0];
-            drive_output = clamp(drive_output, -dConstants[0], dConstants[0]);
-            driveVoltage(((2 * turnWeight * output) + (2 * (1 - turnWeight) * drive_output)) / 2.0,
-            ((2 * turnWeight * -output) + (2 * (1 - turnWeight) * drive_output)) / 2.0);
-    }
-    delay(10);
+            float driveOutput = drivePID.compute(drive_error) * dConstants[0];
+            driveOutput = clamp(driveOutput, -(12000 - (12000 * turnWeight)), (12000 - (12000 * turnWeight)));
+            driveVoltage((driveOutput + turnOutput), (driveOutput - turnOutput));
+            printf("%f %f \n", (2 * turnWeight * turnOutput), (2 * (1 - turnWeight) * driveOutput));
+            delay(10);
+        }
     }
 
     void setDefaultDriveConstants(std::vector<float> constants){
