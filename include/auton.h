@@ -20,7 +20,7 @@ namespace auton {
     * @param distance Desired distance to drive in centimeters.
     * @param dConstants The drive constants {Max Voltage, KP, KI, KD, starti, settle time, settle error, timeout}
     */
-    void driveDistance(float distance, std::vector<float> dConstants = driveConstants);
+    void driveDistance(float distance, float timeout = driveConstants[7], std::vector<float> dConstants = driveConstants);
     
     /**
     * @brief Turn the robot to a specified angle using turn PID controller.
@@ -44,8 +44,8 @@ namespace auton {
      */
     void driveToPoint(float X, float Y, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
 
-    void driveTurn(float distance, float angle, float turnWeight, float settleError = driveConstants[5], float timeout = driveConstants[7], std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
-    void absDriveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
+    void driveTurn(float distance, float angle, float turnWeight, float settleTime = driveConstants[5], float timeout = driveConstants[7], std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
+    void absDriveTurn(float distance, float angle, float turnWeight, float settleTime = driveConstants[5], float timeout = driveConstants[7], std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants);
 
     void setDefaultDriveConstants(std::vector<float> constants);
 }

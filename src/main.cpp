@@ -78,10 +78,10 @@ void initialize() {
  */
 void disabled() {
 
-	while(true) {
-		inertial.set_heading(0);
-		pros::delay(1000);
-	}
+	// while(true) {
+	// 	inertial.set_heading(0);
+	// 	pros::delay(1000);
+	// }
 
 }
 
@@ -113,15 +113,17 @@ void autonomous() {
 	while(inertial.is_calibrating()){
 		pros::delay(10);
 	}
-	inertial.set_heading(0);
+	//inertial.set_heading(0);
 	switch(selector::auton) {				// close safe wp
 		case 1:
 
-			// pushes the colored ball into goal
+			// auton::turnAngle(90);
+
+			//pushes the colored ball into goal
 			intakeMotorGroup.move_voltage(-12000);
 			auton::driveDistance(-20);
-			auton::driveTurn(-10, 45, 0.5, 75, 2000);
-		    auton::driveDistance(-15);
+			auton::driveTurn(-7, 45, 0.4, 75, 2000);
+		    auton::driveDistance(-20, 1000);
 			intakeMotorGroup.move_voltage(0);
 			auton::driveDistance(5);
 			auton::driveDistance(-20);
@@ -129,9 +131,9 @@ void autonomous() {
 			pros::delay(250);
 
 			// moves towards the corner ball and pushes it
-			auton::driveDistance(4);
-			auton::driveTurn(18, -45, 0.6, 75, 2000);
-			auton::driveDistance(6);
+			auton::driveDistance(5);
+			auton::driveTurn(24, -45, 0.6, 75, 2000); //18
+			//auton::driveDistance(6);
 			wingBackRight.set_value(true);
 			auton::turnAngle(-100);
 			intakeMotorGroup.move_voltage(-12000);
@@ -139,8 +141,10 @@ void autonomous() {
 			pros::delay(250);
 
 			// heads under the hang bar
-			auton::absTurn(-30);
-			auton::driveDistance(38);
+			auton::absTurn(0);
+			auton::driveDistance(5);
+			auton::absTurn(-45);
+			auton::driveDistance(35);
 
 			break;
 		case 2: //Close Side Elim
@@ -174,37 +178,55 @@ void autonomous() {
 			break;
 		case 3:
 			break;
-		case -1: //  far side 5 ball safe
+		case -1: //  far side safe
 
-			// push corner ball into goal
 			intakeMotorGroup.move_voltage(-12000);
-			auton::driveDistance(6);
-			auton::driveTurn(6, -45, 0.5, 75, 2000);
+			pros::delay(250);
+			intakeMotorGroup.move_voltage(8000);
+			auton::driveTurn(20, -45, 0.5, 75, 2000);
+			intakeMotorGroup.move_voltage(0);
+			wingBackRight.set_value(true);
 			auton::turnAngle(-90);
-			auton::absTurn(90);
-			auton::driveDistance(-20);
-			auton::driveDistance(5);
-			auton::driveDistance(-15);
-
-			// grab first mid ball
-			auton::driveDistance(5);
-			auton::absTurn(180);
-			auton::driveDistance(-5);
-			intakeMotorGroup.move_voltage(10000);
-			auton::driveDistance(70);
+			wingBackRight.set_value(false);
 			auton::absTurn(-45);
-			auton::driveDistance(24);
-			intakeMotorGroup.move_voltage(-12000);
-			
-			// grabs last mid ball
-			auton::turnAngle(-90);
-			auton::driveDistance(20);
-			intakeMotorGroup.move_voltage(10000);
-			auton::absTurn(0);
+			auton::driveTurn(10, -45, 0.5, 75, 2000);
+			intakeMotorGroup.move_voltage(-6000);
 			wingFrontLeft.set_value(true);
-			wingFrontRight.set_value(true);
-			intakeMotorGroup.move_voltage(-12000);
-			auton::driveDistance(72);
+			auton::driveDistance(20);
+			wingFrontLeft.set_value(false);
+
+
+			//nevin brain farside 5 ball
+
+			// // push corner ball into goal
+			// intakeMotorGroup.move_voltage(-12000);
+			// auton::driveDistance(6);
+			// auton::driveTurn(6, -45, 0.5, 75, 2000);
+			// auton::turnAngle(-90);
+			// auton::absTurn(90);
+			// auton::driveDistance(-20);
+			// auton::driveDistance(5);
+			// auton::driveDistance(-15);
+
+			// // grab first mid ball
+			// auton::driveDistance(5);
+			// auton::absTurn(180);
+			// auton::driveDistance(-5);
+			// intakeMotorGroup.move_voltage(10000);
+			// auton::driveDistance(70);
+			// auton::absTurn(-45);
+			// auton::driveDistance(24);
+			// intakeMotorGroup.move_voltage(-12000);
+			
+			// // grabs last mid ball
+			// auton::turnAngle(-90);
+			// auton::driveDistance(20);
+			// intakeMotorGroup.move_voltage(10000);
+			// auton::absTurn(0);
+			// wingFrontLeft.set_value(true);
+			// wingFrontRight.set_value(true);
+			// intakeMotorGroup.move_voltage(-12000);
+			// auton::driveDistance(72);
 			
 
 
@@ -237,6 +259,14 @@ void autonomous() {
 			// auton::driveDistance(54, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1500});
 			break;
 		case -2:
+
+			intakeMotorGroup.move_voltage(-12000);
+			pros::delay(100);
+			intakeMotorGroup.move_voltage(10000);
+			auton::driveDistance(10);
+			intakeMotorGroup.move_voltage(0);
+			auton::driveDistance(-24);
+			auton::turnAngle(180);
 
 			//saved kenny far safe
 			// intakeMotorGroup.move_voltage(12000);

@@ -47,7 +47,7 @@ namespace auton{
 
     //                                  0-Max Voltage, 1-KP, 2-KI, 3-KD, 4-startI, 5-settle time, 6-settle error, 7-timeout
     std::vector<float> driveConstants = {12000, 0.17, 0.0005, 1, 2, 75, 0.25, 1000}; //1.25
-    std::vector<float> turnConstants = {12000, 0.015, 0.0075, 0.104, 2, 75, 0.5, 1000};    //.01
+    std::vector<float> turnConstants = {12000, 0.015, 0.00, 0.103, 2, 75, 0.5, 1000};    //.0075
 
     float wheel_diameter = 3.25;
     float wheel_ratio = 0.75;
@@ -98,9 +98,9 @@ namespace auton{
         driveRight.move_voltage(rightVoltage);
     }
 
-    void driveDistance(float distance, std::vector<float> dConstants = driveConstants) {
-        PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
-        PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], dConstants[7]);
+    void driveDistance(float distance, float timeout, std::vector<float> dConstants = driveConstants) {
+        PID leftPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], timeout);
+        PID rightPID(distance, dConstants[1], dConstants[2], dConstants[3], dConstants[4], dConstants[5], dConstants[6], timeout);
 
         driveLeftBack.tare_position();
         driveRightBack.tare_position();
@@ -174,6 +174,7 @@ namespace auton{
             printf("%f %f\n", error, output);
             delay(10);
         }
+        printf("%s", "settled");
     }
 
     void absTurn(float angle, std::vector<float> tConstants = turnConstants) {       // absolute turning
@@ -236,7 +237,7 @@ namespace auton{
         driveVoltage(0,0);
     }
 
-    void absDriveTurn(float distance, float angle, float turnWeight, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
+    void absDriveTurn(float distance, float angle, float turnWeight, float settleTime, float timeout, std::vector<float> dConstants = driveConstants, std::vector<float> tConstants = turnConstants) {
         
         driveLeftFront.tare_position();
         driveRightFront.tare_position();
