@@ -180,10 +180,10 @@ void autonomous() {
 
 			// kicks the ball out of the corner
 			intakeMotorGroup.move_voltage(-12000);
-			pros::delay(250);
-			intakeMotorGroup.move_voltage(8000);
+			pros::delay(100);
+			intakeMotorGroup.move_voltage(8000);		
 			auton::driveDistance(4, 750);
-			auton::driveTurn(15, -45, 0.5, 75, 2000);
+			auton::driveTurn(15, -45, 0.5, 75, 500);
 			wingBackRight.set_value(true);
 			pros::delay(250);
 			auton::turnAngle(-90);
@@ -193,7 +193,7 @@ void autonomous() {
 			// pushes both the balls into the goal
 			auton::absTurn(-45);
 			intakeMotorGroup.move_voltage(-6000);
-			auton::driveTurn(10, -45, 0.25, 75, 2000);
+			auton::driveTurn(10, -45, 0.25, 75, 500);
 			wingFrontLeft.set_value(true);
 			auton::driveDistance(40);
 			wingFrontLeft.set_value(false);
@@ -207,7 +207,7 @@ void autonomous() {
 			// goes for first mid ball and score
 			intakeMotorGroup.move_voltage(8000);
 			auton::driveDistance(40);
-			auton::driveTurn(12, 30, 0.6, 75, 2000);
+			auton::driveTurn(12, 30, 0.6, 75, 500);
 			auton::turnAngle(125);
 			auton::driveDistance(12, 750);
 			intakeMotorGroup.move_voltage(-10000);
@@ -223,9 +223,11 @@ void autonomous() {
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			intakeMotorGroup.move_voltage(-12000);
-			auton::driveDistance(54);
-
-
+			auton::driveDistance(54, 500);
+			intakeMotorGroup.move_voltage(0);
+			wingFrontLeft.set_value(false);
+			wingFrontRight.set_value(false);
+			auton::driveDistance(-20, 500);
 			break;
 		case -2:
 
