@@ -117,34 +117,32 @@ void autonomous() {
 	switch(selector::auton) {				// close safe wp
 		case 1:
 
-			// auton::turnAngle(90);
+			// //pushes the colored ball into goal
+			// intakeMotorGroup.move_voltage(-12000);
+			// auton::driveDistance(-20);
+			// auton::driveTurn(-7, 45, 0.4, 75, 2000);
+		    // auton::driveDistance(-20, 1000);
+			// intakeMotorGroup.move_voltage(0);
+			// auton::driveDistance(5);
+			// auton::driveDistance(-20);
+			// auton::absTurn(45);
+			// pros::delay(250);
 
-			//pushes the colored ball into goal
-			intakeMotorGroup.move_voltage(-12000);
-			auton::driveDistance(-20);
-			auton::driveTurn(-7, 45, 0.4, 75, 2000);
-		    auton::driveDistance(-20, 1000);
-			intakeMotorGroup.move_voltage(0);
-			auton::driveDistance(5);
-			auton::driveDistance(-20);
-			auton::absTurn(45);
-			pros::delay(250);
+			// // moves towards the corner ball and pushes it
+			// auton::driveDistance(5);
+			// auton::driveTurn(24, -45, 0.6, 75, 2000);
+			// //auton::driveDistance(6);
+			// wingBackRight.set_value(true);
+			// auton::turnAngle(-100);
+			// intakeMotorGroup.move_voltage(-12000);
+			// wingBackRight.set_value(false);
+			// pros::delay(250);
 
-			// moves towards the corner ball and pushes it
-			auton::driveDistance(5);
-			auton::driveTurn(24, -45, 0.6, 75, 2000); //18
-			//auton::driveDistance(6);
-			wingBackRight.set_value(true);
-			auton::turnAngle(-100);
-			intakeMotorGroup.move_voltage(-12000);
-			wingBackRight.set_value(false);
-			pros::delay(250);
-
-			// heads under the hang bar
-			auton::absTurn(0);
-			auton::driveDistance(5);
-			auton::absTurn(-45);
-			auton::driveDistance(35);
+			// // heads under the hang bar
+			// auton::absTurn(0);
+			// auton::driveDistance(5);
+			// auton::absTurn(-45);
+			// auton::driveDistance(35);
 
 			break;
 		case 2: //Close Side Elim
@@ -180,83 +178,54 @@ void autonomous() {
 			break;
 		case -1: //  far side safe
 
+			// kicks the ball out of the corner
 			intakeMotorGroup.move_voltage(-12000);
 			pros::delay(250);
 			intakeMotorGroup.move_voltage(8000);
-			auton::driveTurn(20, -45, 0.5, 75, 2000);
-			intakeMotorGroup.move_voltage(0);
+			auton::driveDistance(4, 750);
+			auton::driveTurn(15, -45, 0.5, 75, 2000);
 			wingBackRight.set_value(true);
+			pros::delay(250);
 			auton::turnAngle(-90);
 			wingBackRight.set_value(false);
+			intakeMotorGroup.move_voltage(0);
+
+			// pushes both the balls into the goal
 			auton::absTurn(-45);
-			auton::driveTurn(10, -45, 0.5, 75, 2000);
 			intakeMotorGroup.move_voltage(-6000);
+			auton::driveTurn(10, -45, 0.25, 75, 2000);
 			wingFrontLeft.set_value(true);
-			auton::driveDistance(20);
+			auton::driveDistance(40);
 			wingFrontLeft.set_value(false);
+			intakeMotorGroup.move_voltage(0);
+
+			// bumps the wall to line up
+			auton::driveDistance(-7.5);
+			auton::turnAngle(-90);
+			auton::driveDistance(-10, 500);
+
+			// goes for first mid ball and score
+			intakeMotorGroup.move_voltage(8000);
+			auton::driveDistance(40);
+			auton::driveTurn(12, 30, 0.6, 75, 2000);
+			auton::turnAngle(125);
+			auton::driveDistance(12, 750);
+			intakeMotorGroup.move_voltage(-12000);
+			pros::delay(500);
+
+			// goes for second mid ball
+			intakeMotorGroup.move_voltage(8000);
+			auton::turnAngle(-100);
+			auton::driveDistance(24);
+			auton::absTurn(0);
+
+			// scores the two balls
+			wingFrontLeft.set_value(true);
+			wingFrontRight.set_value(true);
+			intakeMotorGroup.move_voltage(-12000);
+			auton::driveDistance(54);
 
 
-			//nevin brain farside 5 ball
-
-			// // push corner ball into goal
-			// intakeMotorGroup.move_voltage(-12000);
-			// auton::driveDistance(6);
-			// auton::driveTurn(6, -45, 0.5, 75, 2000);
-			// auton::turnAngle(-90);
-			// auton::absTurn(90);
-			// auton::driveDistance(-20);
-			// auton::driveDistance(5);
-			// auton::driveDistance(-15);
-
-			// // grab first mid ball
-			// auton::driveDistance(5);
-			// auton::absTurn(180);
-			// auton::driveDistance(-5);
-			// intakeMotorGroup.move_voltage(10000);
-			// auton::driveDistance(70);
-			// auton::absTurn(-45);
-			// auton::driveDistance(24);
-			// intakeMotorGroup.move_voltage(-12000);
-			
-			// // grabs last mid ball
-			// auton::turnAngle(-90);
-			// auton::driveDistance(20);
-			// intakeMotorGroup.move_voltage(10000);
-			// auton::absTurn(0);
-			// wingFrontLeft.set_value(true);
-			// wingFrontRight.set_value(true);
-			// intakeMotorGroup.move_voltage(-12000);
-			// auton::driveDistance(72);
-			
-
-
-			// auton::driveDistance(-1);
-			// wingBackLeft.set_value(true);
-			// intakeMotorGroup.move_voltage(12000);
-			// auton::driveTurn(-15, -45, 0.45, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.01, 0.00002, 0.08, 10000, 100, 0.75, 2000});
-			// intakeMotorGroup.move_voltage(0);
-			// wingBackLeft.set_value(false);
-			// auton::driveDistance(-3);
-			// auton::driveTurn(-5, -45, 0.4, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.01, 0.00002, 0.08, 10000, 100, 0.75, 2000});
-			// auton::absTurn(-90, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 500});
-			// auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
-			// auton::driveDistance(5, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
-			// auton::driveDistance(-20, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 500});
-			// intakeMotorGroup.move_voltage(12000);
-			// auton::driveTurn(30, 105, 0.7, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 3000}, {12000, 0.01, 0.00002, 0.08, 10000, 100, 0.75, 2000});
-			// auton::driveDistance(30);
-			// auton::turnAngle(115, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 500});
-			// intakeMotorGroup.move_voltage(-12000);
-			// auton::driveDistance(10);
-			// intakeMotorGroup.move_voltage(0);
-			// auton::turnAngle(-75, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 500});
-			// intakeMotorGroup.move_voltage(12000);
-			// auton::driveDistance(15);
-			// auton::absTurn(180, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 500}); //test
-			// intakeMotorGroup.move_voltage(-12000);
-			// wingFrontLeft.set_value(true);
-			// wingFrontRight.set_value(true);
-			// auton::driveDistance(54, {12000, 0.15, 0.01, 0.9, 1, 150, 0.25, 1500});
 			break;
 		case -2:
 
