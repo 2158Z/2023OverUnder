@@ -210,7 +210,7 @@ void autonomous() {
 			auton::driveTurn(12, 30, 0.6, 75, 2000);
 			auton::turnAngle(125);
 			auton::driveDistance(12, 750);
-			intakeMotorGroup.move_voltage(-12000);
+			intakeMotorGroup.move_voltage(-10000);
 			pros::delay(500);
 
 			// goes for second mid ball
