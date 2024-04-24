@@ -13,8 +13,8 @@ const int driveRightBackID = 20;
 const int intakeMotorLeftID = 2;
 const int intakeMotorRightID = 9;
 
-const int cata1MotorID = 21;
-const int cata2MotorID = 15;
+const int cata1MotorID = 3;
+const int cata2MotorID = 7;
 
 // Inertial
 const int inertialID = 5;

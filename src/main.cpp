@@ -387,28 +387,31 @@ void autonomous() {
 			// Skills (no front sweep):
 
 			// pushes the triball into the goal
-			auton::driveTurn(-24, 45, 0.25);
+			cataMotorGroup.move_voltage(12000);
+			auton::driveTurn(-24, 45, 0.25); //0.25
+			cataMotorGroup.move_voltage(0);
 			auton::absTurn(45);
 			auton::driveDistance(-20);
 
 			// positions the robot and starts kicker
-			auton::driveDistance(11);
-			auton::turnAngle(-108);
-			auton::driveDistance(-6);
+			// auton::driveDistance(11);
+			// auton::turnAngle(-108);
+			auton::driveTurn(10, -108, 0.6); //driveturn so it doesnt hit wall?
+			auton::driveDistance(-10);
 			wingBackRight.set_value(true);
 			cataMotorGroup.move_voltage(11000);
-			fullMotorGroup.move_voltage(250);
+			fullMotorGroup.move_voltage(-1000);
+			pros::delay(3000);
 			// delay(27000);
 			cataMotorGroup.move_voltage(0); 
 			wingBackRight.set_value(false);
-			delay(1000);
 
 			// cross under right middle bar
-            auton::driveDistance(4, 250);
+            auton::driveDistance(4, 1000);
 			auton::absTurn(0);
-			auton::driveDistance(20, 500);
-			auton::driveTurn(24, -35, 0.3, 75, 750);
-			auton::driveDistance(46);       
+			auton::driveDistance(20, 1000);
+			auton::driveTurn(24, -35, 0.3, 75, 1000);
+			auton::driveDistance(44);       
 
 			// arc into the goal
 			auton::driveTurn(48, -90, 0.225);
@@ -418,8 +421,8 @@ void autonomous() {
 			auton::driveDistance(-20);
 
 			// first "curve"
-			auton::driveDistance(36);
-			auton::driveTurn(28, 135, 0.4, 75, 1000); // 26 , .25
+			auton::driveDistance(34);
+			auton::driveTurn(30, 135, 0.4, 75, 1000); // 26 , .25
 			auton::absTurn(-45);
 			//wingFrontLeft.set_value(true);
 			auton::driveDistance(40);
@@ -437,7 +440,7 @@ void autonomous() {
 			auton::absTurn(-40); //-40
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
-			auton::driveDistance(40);
+			auton::driveDistance(36);
 			auton::absTurn(-45);
 			wingFrontLeft.set_value(false);
 			wingFrontRight.set_value(false);
@@ -445,14 +448,14 @@ void autonomous() {
 
 			// reset position
 			auton::driveTurn(-30, -45, 0.3);
-			auton::absTurn(-105);
+			auton::absTurn(-120);
 
 			// third "curve"
 			auton::driveDistance(64);
 			auton::absTurn(0);
 			auton::driveTurn(40, 45, 0.25);
 			auton::absTurn(45);
-			auton::driveDistance(50);
+			auton::driveDistance(30);
 			auton::driveDistance(-15);
 
 			break;
@@ -604,7 +607,8 @@ void opcontrol() {
 		// }
 
 		// Catapult control
-		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) ? 11000 : 0);
+		
+		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) ? 11000 : 0);
 
 		driveLeft.move_voltage(arcadeControl()[0] * 12000);
 		driveRight.move_voltage(arcadeControl()[1] * 12000);
