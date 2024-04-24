@@ -4,7 +4,7 @@
 #include "main.h"
 
 #define DEFAULT 1
-#define REDAUTONS "Winpoint", "Elim", "3"
+#define REDAUTONS "Winpoint Safe", "Elim", "3"
 #define BLUEAUTONS "Far Side Safe", "2", "-3"
 
 namespace selector{
