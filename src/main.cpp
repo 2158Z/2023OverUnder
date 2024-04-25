@@ -55,8 +55,6 @@ pros::ADIDigitalIn hangLimit(hangLimitID);
 void initialize() {
 	selector::init();
 
-    driveLeft.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
-    driveRight.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
 	fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
 	cataMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_COAST);
 
@@ -411,7 +409,7 @@ void autonomous() {
 			auton::absTurn(0);
 			auton::driveDistance(20, 1000);
 			auton::driveTurn(24, -35, 0.3, 75, 1000);
-			auton::driveDistance(44);       
+			auton::driveDistance(44);
 
 			// arc into the goal
 			auton::driveTurn(48, -90, 0.225);
@@ -421,7 +419,7 @@ void autonomous() {
 			auton::driveDistance(-20);
 
 			// first "curve"
-			auton::driveDistance(34);
+			auton::driveDistance(32);
 			auton::driveTurn(30, 135, 0.4, 75, 1000); // 26 , .25
 			auton::absTurn(-45);
 			//wingFrontLeft.set_value(true);
@@ -437,7 +435,7 @@ void autonomous() {
 			// second "curve"
 			auton::driveDistance(11);
 			auton::driveTurn(20, 90, 0.2);
-			auton::absTurn(-40); //-40
+			auton::absTurn(-45); //-40
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			auton::driveDistance(36);
@@ -455,6 +453,7 @@ void autonomous() {
 			auton::absTurn(0);
 			auton::driveTurn(40, 45, 0.25);
 			auton::absTurn(45);
+			wingFrontRight.set_value(true);
 			auton::driveDistance(30);
 			auton::driveDistance(-15);
 
@@ -528,6 +527,15 @@ void opcontrol() {
 		//intakeMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) ? -12000 : (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) ? 12000 : 0));
 		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_A)) {
 			hang.set_value(true);
+		}
+
+
+		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)) {
+			if(fullMotorGroup.get_brake_modes()[0] == motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE) {
+				fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+			} else {
+				fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
+			}
 		}
 
 	    	if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_X)) {
