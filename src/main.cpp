@@ -128,9 +128,10 @@ void autonomous() {
 
 			// moves towards the corner ball and pushes it
 			auton::driveDistance(5);
-			auton::driveTurn(24, -45, 0.6, 75, 2000);
+			auton::driveTurn(22, -45, 0.6, 75, 2000);
 			//auton::driveDistance(6);
 			wingBackRight.set_value(true);
+			delay(200);
 			auton::turnAngle(-100);
 			intakeMotorGroup.move_voltage(-12000);
 			wingBackRight.set_value(false);
@@ -154,37 +155,32 @@ void autonomous() {
 			auton::turnAngle(20);
 			wingFrontLeft.set_value(false);
 			intakeMotorGroup.move_voltage(8000);
-			auton::driveDistance(44);
-			pros::delay(250);
-
+			auton::driveDistance(48);
 			// return
 			auton::driveDistance(-44);
-
+			intakeMotorGroup.move_voltage(4000);
 			// score preload
-			auton::absTurn(-45);
-			intakeMotorGroup.move_voltage(-8000);
-			pros::delay(250);
 			auton::absTurn(125);
-		    auton::driveDistance(-25);
+		    auton::driveDistance(-27);
 			auton::absTurn(180);
-			auton::driveDistance(-15);
-			auton::driveDistance(5);
-			auton::driveDistance(-10);
+			auton::driveDistance(-30,500);
+			auton::driveDistance(10);
+			auton::driveDistance(-30,500);
 
 			// gets out corner ball
-			auton::driveDistance(5);
-			auton::driveTurn(20, -45, 0.6, 75, 2000);
+			auton::driveDistance(15.5);
+			auton::driveTurn(15, -50, 0.6, 75, 2000);
 			wingBackRight.set_value(true);
             pros::delay(250);
 			auton::turnAngle(-100);
-			intakeMotorGroup.move_voltage(-12000);
 			wingBackRight.set_value(false);
 
 			// heads under the hang bar
 			auton::absTurn(135);
-			auton::driveDistance(5);
+			auton::driveDistance(8);
 			auton::absTurn(90);
-			auton::driveDistance(35);
+			intakeMotorGroup.move_voltage(-12000);
+			auton::driveDistance(33);
 
 			break;
 		case 3:
@@ -196,7 +192,7 @@ void autonomous() {
 			pros::delay(100);
 			intakeMotorGroup.move_voltage(8000);		
 			auton::driveDistance(4, 750);
-			auton::driveTurn(15, -45, 0.5, 75, 500);
+			auton::driveTurn(15, -45, 0.5, 75, 2000);
 			wingBackRight.set_value(true);
 			pros::delay(250);
 			auton::turnAngle(-90);
@@ -206,7 +202,7 @@ void autonomous() {
 			// pushes both the balls into the goal
 			auton::absTurn(-45);
 			intakeMotorGroup.move_voltage(-6000);
-			auton::driveTurn(10, -45, 0.25, 75, 500);
+			auton::driveTurn(10, -45, 0.25, 75, 2000);
 			wingFrontLeft.set_value(true);
 			auton::driveDistance(40);
 			wingFrontLeft.set_value(false);
@@ -215,12 +211,12 @@ void autonomous() {
 			// bumps the wall to line up
 			auton::driveDistance(-7.5);
 			auton::turnAngle(-90);
-			auton::driveDistance(-10, 500);
+			auton::driveDistance(-10, 2000);
 
 			// goes for first mid ball and score
 			intakeMotorGroup.move_voltage(8000);
 			auton::driveDistance(40);
-			auton::driveTurn(12, 30, 0.6, 75, 500);
+			auton::driveTurn(12, 30, 0.6, 75, 2000);
 			auton::turnAngle(125);
 			auton::driveDistance(12, 750);
 			intakeMotorGroup.move_voltage(-6000);
@@ -236,20 +232,48 @@ void autonomous() {
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			intakeMotorGroup.move_voltage(-6000);
-			auton::driveDistance(54, 500, {9000, 0.17, 0.0005, 1, 2, 75, 0.25, 500});
+			auton::driveDistance(54, 500, {9000, 0.17, 0.0005, 1, 2, 75, 0.25, 2000});
 			pros::delay(250);
 			auton::driveDistance(-20);
 			break;
-		case -2:
-
+		case -2: // far side mid rush
+            // rushes towards the far middle ball and scores both
 			intakeMotorGroup.move_voltage(-12000);
-			pros::delay(100);
-			intakeMotorGroup.move_voltage(10000);
-			auton::driveDistance(10);
-			intakeMotorGroup.move_voltage(0);
-			auton::driveDistance(-24);
-			auton::turnAngle(180);
+			wingFrontRight.set_value(true);
+			auton::driveTurn(10, -40, 0.35, 0);
+			wingFrontRight.set_value(false);
+			intakeMotorGroup.move_voltage(6000);
+			auton::driveDistance(49);
 
+			//Score into goal
+			auton::absTurn(90);
+			intakeMotorGroup.move_voltage(-12000);
+			auton::driveDistance(33);
+			intakeMotorGroup.move_voltage(0);
+
+			// Intake third ball
+			auton::driveTurn(-30, -90, 0.35);
+			auton::absTurn(-90);
+			intakeMotorGroup.move_voltage(6000);
+			auton::driveDistance(14);
+
+			// return to the start
+			auton::driveTurn(-46, 65, 0.325);
+			auton::absTurn(50);
+			intakeMotorGroup.move_voltage(-6000);
+			pros::delay(500);
+
+			auton::absTurn(-90);
+			intakeMotorGroup.move_voltage(6000);
+			auton::driveDistance(26);
+			auton::absTurn(90);
+
+			auton::driveDistance(25);
+			wingBackRight.set_value(true);
+			auton::driveTurn(24, -90, 0.35);
+			wingBackRight.set_value(false);
+			intakeMotorGroup.move_voltage(-6000);
+			auton::driveDistance(20);
 			//saved kenny far safe
 			// intakeMotorGroup.move_voltage(12000);
 			// auton::driveTurn(-18, -35, 0.35);
@@ -389,19 +413,23 @@ void autonomous() {
 			auton::driveTurn(-24, 45, 0.25); //0.25
 			cataMotorGroup.move_voltage(0);
 			auton::absTurn(45);
-			auton::driveDistance(-20);
+			auton::driveDistance(-40);
+			auton::driveDistance(5);
 
 			// positions the robot and starts kicker
 			// auton::driveDistance(11);
 			// auton::turnAngle(-108);
-			auton::driveTurn(10, -108, 0.6); //driveturn so it doesnt hit wall?
-			auton::driveDistance(-10);
+			auton::driveTurn(10, -100, 0.6); //driveturn so it doesnt hit wall?
+			auton::driveDistance(-20);
 			wingBackRight.set_value(true);
-			cataMotorGroup.move_voltage(11000);
-			fullMotorGroup.move_voltage(-1000);
-			pros::delay(3000);
-			// delay(27000);
+			cataMotorGroup.move_voltage(12000);
+			driveRight.move_voltage(-4000);
+			driveLeft.move_voltage(-1000);
+			// pros::delay(5000);
+			delay(27000);
 			cataMotorGroup.move_voltage(0); 
+			driveRight.move_voltage(0);
+			driveLeft.move_voltage(0);
 			wingBackRight.set_value(false);
 
 			// cross under right middle bar
@@ -446,7 +474,7 @@ void autonomous() {
 
 			// reset position
 			auton::driveTurn(-30, -45, 0.3);
-			auton::absTurn(-120);
+			auton::absTurn(-120); 
 
 			// third "curve"
 			auton::driveDistance(64);
@@ -464,17 +492,18 @@ void autonomous() {
 }
 
 void skillsLineup() {
-	// pushes the triball into the goal
-	// intakeMotorGroup.move_voltage(12000);
-	// auton::driveTurn(-24, 45, 0.3, {12000, 0.15, 0.0001, 1.7, 100, 100, 0.25, 2000}, {12000, 0.015, 0, 0.109, 2, 100, 0.3, 1000});
-	// auton::absTurn(45, {12000, 0.015, 0, 0.109, 2, 100, 0.75, 500});
-	// auton::driveDistance(-20);
-	// intakeMotorGroup.move_voltage(0);
+	cataMotorGroup.move_voltage(12000);
+	auton::driveTurn(-24, 45, 0.25); //0.25
+	cataMotorGroup.move_voltage(0);
+	auton::absTurn(45);
+	auton::driveDistance(-40);
+	auton::driveDistance(5);
 
-	// // positions the robot and starts kicker
-	// auton::driveDistance(10);
-	// auton::turnAngle(-110);
-	// auton::driveDistance(-3);
+	// positions the robot and starts kicker
+	// auton::driveDistance(11);
+	// auton::turnAngle(-108);
+	auton::driveTurn(10, -100, 0.6); //driveturn so it doesnt hit wall?
+	auton::driveDistance(-20);
 }
 
 /**
@@ -557,9 +586,9 @@ void opcontrol() {
 			hang.set_value(false);
 		}
 
-		// if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-		// 	skillsLineup();
-		// }	
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+			skillsLineup();
+		}	
 
 		// if(master.get_digital(E_CONTROLLER_DIGITAL_LEFT)){
 		// 	while(inertial.is_calibrating()){
@@ -616,7 +645,7 @@ void opcontrol() {
 
 		// Catapult control
 		
-		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) ? 11000 : 0);
+		cataMotorGroup.move_voltage(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT) ? 12000 : 0);
 
 		driveLeft.move_voltage(arcadeControl()[0] * 12000);
 		driveRight.move_voltage(arcadeControl()[1] * 12000);
