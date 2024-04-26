@@ -128,7 +128,7 @@ void autonomous() {
 
 			// moves towards the corner ball and pushes it
 			auton::driveDistance(5);
-			auton::driveTurn(22, -45, 0.6, 75, 2000);
+			auton::driveTurn(24, -47, 0.6, 75, 2000);
 			//auton::driveDistance(6);
 			wingBackRight.set_value(true);
 			delay(200);
@@ -157,7 +157,7 @@ void autonomous() {
 			intakeMotorGroup.move_voltage(8000);
 			auton::driveDistance(48);
 			// return
-			auton::driveDistance(-44);
+			auton::driveDistance(-48);
 			intakeMotorGroup.move_voltage(4000);
 			// score preload
 			auton::absTurn(125);
@@ -177,13 +177,50 @@ void autonomous() {
 
 			// heads under the hang bar
 			auton::absTurn(135);
+			intakeMotorGroup.move_voltage(-12000);
 			auton::driveDistance(8);
 			auton::absTurn(90);
-			intakeMotorGroup.move_voltage(-12000);
-			auton::driveDistance(33);
+			auton::driveDistance(35);
 
 			break;
-		case 3:
+		case 3: //close side mid rush ball2
+
+		    // push preload with wing
+			intakeMotorGroup.move_voltage(-12000);
+			wingFrontLeft.set_value(true);
+
+
+			// grab middle ball
+			auton::turnAngle(35);
+			wingFrontLeft.set_value(false);
+			intakeMotorGroup.move_voltage(8000);
+			auton::driveDistance(58);
+			// return
+			auton::driveDistance(-58);
+			intakeMotorGroup.move_voltage(4000);
+			// score preload
+			auton::absTurn(125);
+		    auton::driveDistance(-27);
+			auton::absTurn(180);
+			auton::driveDistance(-30,500);
+			auton::driveDistance(10);
+			auton::driveDistance(-30,500);
+
+			// gets out corner ball
+			auton::driveDistance(15.5);
+			auton::driveTurn(15, -50, 0.6, 75, 2000);
+			wingBackRight.set_value(true);
+            pros::delay(250);
+			auton::turnAngle(-100);
+			wingBackRight.set_value(false);
+
+			// heads under the hang bar
+			auton::absTurn(135);
+			intakeMotorGroup.move_voltage(-12000);
+			auton::driveDistance(8);
+			auton::absTurn(90);
+			auton::driveDistance(35);
+
 			break;
 		case -1: //  far side safe
 
@@ -191,8 +228,8 @@ void autonomous() {
 			intakeMotorGroup.move_voltage(-12000);
 			pros::delay(100);
 			intakeMotorGroup.move_voltage(8000);		
-			auton::driveDistance(4, 750);
-			auton::driveTurn(15, -45, 0.5, 75, 2000);
+			auton::driveDistance(4);
+			auton::driveTurn(13, -45, 0.5);
 			wingBackRight.set_value(true);
 			pros::delay(250);
 			auton::turnAngle(-90);
@@ -202,24 +239,24 @@ void autonomous() {
 			// pushes both the balls into the goal
 			auton::absTurn(-45);
 			intakeMotorGroup.move_voltage(-6000);
-			auton::driveTurn(10, -45, 0.25, 75, 2000);
+			auton::driveTurn(10, -45, 0.25, 0);
 			wingFrontLeft.set_value(true);
-			auton::driveDistance(40);
-			wingFrontLeft.set_value(false);
+			auton::driveDistance(40, 750);jj
+			//wingFrontLeft.set_value(false);
 			intakeMotorGroup.move_voltage(0);
 
 			// bumps the wall to line up
-			auton::driveDistance(-7.5);
+			auton::driveDistance(-7.5, 500);
 			auton::turnAngle(-90);
-			auton::driveDistance(-10, 2000);
+			auton::driveDistance(-10, 500);
 
 			// goes for first mid ball and score
 			intakeMotorGroup.move_voltage(8000);
 			auton::driveDistance(40);
-			auton::driveTurn(12, 30, 0.6, 75, 2000);
+			auton::driveTurn(12, 30, 0.6, 0);
 			auton::turnAngle(125);
-			auton::driveDistance(12, 750);
-			intakeMotorGroup.move_voltage(-6000);
+			auton::driveDistance(12);
+			intakeMotorGroup.move_voltage(-8000);
 			pros::delay(500);
 
 			// goes for second mid ball
@@ -232,7 +269,7 @@ void autonomous() {
 			wingFrontLeft.set_value(true);
 			wingFrontRight.set_value(true);
 			intakeMotorGroup.move_voltage(-6000);
-			auton::driveDistance(54, 500, {9000, 0.17, 0.0005, 1, 2, 75, 0.25, 2000});
+			auton::driveDistance(40, 500);
 			pros::delay(250);
 			auton::driveDistance(-20);
 			break;
@@ -240,38 +277,40 @@ void autonomous() {
             // rushes towards the far middle ball and scores both
 			intakeMotorGroup.move_voltage(-12000);
 			wingFrontRight.set_value(true);
-			auton::driveTurn(10, -40, 0.35, 0);
+			auton::driveTurn(10, -37, 0.35, 0);
 			wingFrontRight.set_value(false);
 			intakeMotorGroup.move_voltage(6000);
-			auton::driveDistance(49);
+			auton::driveDistance(47);
 
 			//Score into goal
 			auton::absTurn(90);
 			intakeMotorGroup.move_voltage(-12000);
+			wingFrontLeft.set_value(true);
 			auton::driveDistance(33);
+			wingFrontLeft.set_value(false);
 			intakeMotorGroup.move_voltage(0);
 
 			// Intake third ball
-			auton::driveTurn(-30, -90, 0.35);
+			auton::driveTurn(-37, -90, 0.35);
 			auton::absTurn(-90);
 			intakeMotorGroup.move_voltage(6000);
 			auton::driveDistance(14);
 
 			// return to the start
-			auton::driveTurn(-46, 65, 0.325);
-			auton::absTurn(50);
+			auton::driveTurn(-47, 65, 0.325, 200);
+			auton::absTurn(50, {12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
 			intakeMotorGroup.move_voltage(-6000);
 			pros::delay(500);
 
 			auton::absTurn(-90);
 			intakeMotorGroup.move_voltage(6000);
-			auton::driveDistance(26);
-			auton::absTurn(90);
+			auton::driveDistance(30);
 
-			auton::driveDistance(25);
+			auton::driveDistance(-33);
+			auton::absTurn(90);
+			auton::driveTurn(22, -45, 0.5);
 			wingBackRight.set_value(true);
-			auton::driveTurn(24, -90, 0.35);
-			wingBackRight.set_value(false);
+			auton::absTurn(0, {12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
 			intakeMotorGroup.move_voltage(-6000);
 			auton::driveDistance(20);
 			//saved kenny far safe

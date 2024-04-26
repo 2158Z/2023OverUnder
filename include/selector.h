@@ -4,7 +4,7 @@
 #include "main.h"
 
 #define DEFAULT 1
-#define REDAUTONS "Winpoint Safe", "Steal Near Goal", "3"
+#define REDAUTONS "Winpoint Safe", "Steal Near Goal", "Steal Near Bar"
 #define BLUEAUTONS "Far Side Safe", "Far Side Mid Rush", "-3"
 
 namespace selector{
