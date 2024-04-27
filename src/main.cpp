@@ -565,7 +565,9 @@ std::vector<float> arcadeControl() {
 
 		//normalize inputs to [-1,1]
 		float leftInput = (float)master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 127;
-		float rightInput = ((float)master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127) * ((float) 5/8);
+		float rightInput = (float)master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X) / 127;
+
+		rightInput = clamp(rightInput, -0.5, 0.5);
 
 		float max = std::max(fabs(leftInput), fabs(rightInput));
 		float difference = leftInput - rightInput;
