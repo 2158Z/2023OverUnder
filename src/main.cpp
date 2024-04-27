@@ -168,7 +168,7 @@ void autonomous() {
 			auton::driveDistance(-30,500);
 
 			// gets out corner ball
-			auton::driveDistance(15.5);
+			auton::driveDistance(12);
 			auton::driveTurn(15, -50, 0.6, 75, 2000);
 			wingBackRight.set_value(true);
             pros::delay(250);
@@ -241,8 +241,8 @@ void autonomous() {
 			intakeMotorGroup.move_voltage(-6000);
 			auton::driveTurn(10, -45, 0.25, 0);
 			wingFrontLeft.set_value(true);
-			auton::driveDistance(40, 750);jj
-			//wingFrontLeft.set_value(false);
+			auton::driveDistance(40, 750);
+			wingFrontLeft.set_value(false);
 			intakeMotorGroup.move_voltage(0);
 
 			// bumps the wall to line up
@@ -292,25 +292,25 @@ void autonomous() {
 
 			// Intake third ball
 			auton::driveTurn(-37, -90, 0.35);
-			auton::absTurn(-90);
+			auton::absTurn(-90,{12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
 			intakeMotorGroup.move_voltage(6000);
-			auton::driveDistance(14);
+			auton::driveDistance(8);
 
 			// return to the start
-			auton::driveTurn(-47, 65, 0.325, 200);
-			auton::absTurn(50, {12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
+			auton::driveTurn(-48, 65, 0.2725, 200);
+			auton::absTurn(51, {12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
 			intakeMotorGroup.move_voltage(-6000);
 			pros::delay(500);
 
 			auton::absTurn(-90);
-			intakeMotorGroup.move_voltage(6000);
-			auton::driveDistance(30);
+			intakeMotorGroup.move_voltage(12000);
+			auton::driveDistance(33);
 
-			auton::driveDistance(-33);
+			auton::driveDistance(-32);
 			auton::absTurn(90);
-			auton::driveTurn(22, -45, 0.5);
-			wingBackRight.set_value(true);
-			auton::absTurn(0, {12000, 0.015, 0.00, 0.103, 2, 0, 1, 1000});
+			auton::driveTurn(16, -45, 0.5);
+
+			auton::turnAngle(-45);
 			intakeMotorGroup.move_voltage(-6000);
 			auton::driveDistance(20);
 			//saved kenny far safe
@@ -598,13 +598,13 @@ void opcontrol() {
 		}
 
 
-		if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)) {
-			if(fullMotorGroup.get_brake_modes()[0] == motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE) {
-				fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
-			} else {
-				fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
-			}
-		}
+		// if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_LEFT)) {
+		// 	if(fullMotorGroup.get_brake_modes()[0] == motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE) {
+		// 		fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_HOLD);
+		// 	} else {
+		// 		fullMotorGroup.set_brake_modes(motor_brake_mode_e_t::E_MOTOR_BRAKE_BRAKE);
+		// 	}
+		// }
 
 	    	if(master.get_digital_new_press(E_CONTROLLER_DIGITAL_X)) {
 			hang.set_value(false);
