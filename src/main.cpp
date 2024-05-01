@@ -3,6 +3,7 @@
 #include "api.h"
 #include "okapi/api.hpp"
 #include "auton.h"
+#include "util/odom.h"
 
 
 
@@ -44,6 +45,8 @@ pros::Motor_Group cataMotorGroup( {cata1, cata2} );
 pros::IMU inertial(inertialID);
 
 pros::ADIDigitalIn hangLimit(hangLimitID);
+
+odom testOdom(driveLeftFront, driveRightFront, 3.25, 0.75, 10.5);
 
 
 /**
@@ -691,6 +694,8 @@ void opcontrol() {
 		driveLeft.move_voltage(arcadeControl()[0] * 12000);
 		driveRight.move_voltage(arcadeControl()[1] * 12000);
 
+		
+
 		//printf("%f", driveLeftBack.get_position() / 360 * M_PI * 2.75 * 0.75);
 
         // Naturalize input to a range between -1 and 1
@@ -701,6 +706,7 @@ void opcontrol() {
 		//leftMotorGroup.move_voltage(12000 * (rightInput + leftInput));
 
         pros::delay(20);
+		//testOdom.compute();
     }
 /*
  R1 - Intake in
